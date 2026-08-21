@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -48,15 +47,17 @@ __status__ = "production"
 __copyright__ = "2007-2009 Risoe National Laboratory; 2010-2020 ESRF"
 __licence__ = "MIT"
 
-import logging
-import numpy
-from math import ceil
-import os
-import io
 import getpass
+import io
+import logging
+import os
 import time
+from math import ceil
+
+import numpy
+
 from .fabioimage import FabioImage
-from .fabioutils import pad, StringTypes
+from .fabioutils import StringTypes, pad
 
 logger = logging.getLogger(__name__)
 
@@ -319,7 +320,7 @@ class BrukerImage(FabioImage):
                     slope = (max_data - offset) / float(max_range)
                 else:
                     slope = 1.0
-            tmp_data = numpy.round(((self.data - offset) / slope)).astype(numpy.uint32)
+            tmp_data = numpy.round((self.data - offset) / slope).astype(numpy.uint32)
             self.header["LINEAR"] = "%s %s" % (slope, offset)
         else:
             tmp_data = self.data
@@ -376,7 +377,7 @@ class BrukerImage(FabioImage):
                         line += str(value)
                     else:
                         for i in range(len(value) // 72):
-                            headers.append((line + str(value[72 * i : 72 * (i + 1)])))
+                            headers.append(line + str(value[72 * i : 72 * (i + 1)]))
                             line = key.ljust(7) + ":"
                         line += value[72 * (i + 1) :]
                 elif "__len__" in dir(value):

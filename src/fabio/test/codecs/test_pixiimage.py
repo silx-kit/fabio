@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
 #             https://github.com/silx-kit/fabio
@@ -30,12 +29,14 @@
 Deep test to check IOError exceptions
 """
 
-import unittest
-import os
 import logging
+import os
+import unittest
+
 import fabio
-from ..utilstest import UtilsTest
+
 from ..test_frames import _CommonTestFrames
+from ..utilstest import UtilsTest
 
 logger = logging.getLogger(__name__)
 
@@ -46,11 +47,11 @@ class TestPixiImage(_CommonTestFrames):
     @classmethod
     def setUpClass(cls):
         cls.create_fake_images()
-        super(TestPixiImage, cls).setUpClass()
+        super().setUpClass()
 
     @classmethod
     def getMeta(cls):
-        class Meta(object):
+        class Meta:
             pass
 
         meta = Meta()

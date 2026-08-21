@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: FabIO X-ray image reader
 #
@@ -46,8 +45,9 @@ __date__ = "27/10/2025"
 import logging
 import os
 import posixpath
+
 from . import fabioimage
-from .fabioutils import previous_filename, next_filename
+from .fabioutils import next_filename, previous_filename
 
 try:
     import h5py
@@ -64,7 +64,7 @@ class Hdf5Frame(fabioimage.FabioFrame):
         if not isinstance(hdf5image, Hdf5Image):
             raise TypeError("Expected class %s", Hdf5Image)
         data = hdf5image.dataset[frame_num, :, :]
-        super(Hdf5Frame, self).__init__(data=data, header=hdf5image.header)
+        super().__init__(data=data, header=hdf5image.header)
         self.hdf5 = hdf5image.hdf5
         self.dataset = hdf5image.dataset
         self.filename = hdf5image.filename

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
 #             https://github.com/silx-kit/fabio
@@ -32,12 +31,15 @@ Updated by Jerome Kieffer (jerome.kieffer@esrf.eu), 2011
 28/11/2014
 """
 
-import unittest
-import os
-import numpy
 import logging
+import os
+import unittest
+
+import numpy
+
 import fabio
 from fabio.fit2dmaskimage import fit2dmaskimage
+
 from ..utilstest import UtilsTest
 
 logger = logging.getLogger(__name__)

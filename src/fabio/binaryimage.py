@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -45,9 +44,11 @@ __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __date__ = "13/03/2026"
 
 import io
-from .fabioimage import FabioImage
-import numpy
 import logging
+
+import numpy
+
+from .fabioimage import FabioImage
 
 logger = logging.getLogger(__name__)
 
@@ -113,11 +114,9 @@ class BinaryImage(FabioImage):
             else:
                 try:
                     f.seek(-size + offset + 1, 2)  # seek from EOF backwards
-                except IOError:
+                except OSError:
                     logger.warning(
-                        "expected datablock too large, please check bytecode settings: {}".format(
-                            bytecode
-                        )
+                        f"expected datablock too large, please check bytecode settings: {bytecode}"
                     )
                 except Exception:
                     logger.debug("Backtrace", exc_info=True)

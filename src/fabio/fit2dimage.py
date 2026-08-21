@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: FabIO X-ray image reader
 #
@@ -36,7 +35,9 @@ __copyright__ = "2016-2016 European Synchrotron Radiation Facility"
 __date__ = "27/10/2025"
 
 import logging
+
 import numpy
+
 from .fabioimage import FabioImage, OrderedDict
 
 logger = logging.getLogger(__name__)

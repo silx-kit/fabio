@@ -1,5 +1,4 @@
 #!/usr/bin/python
-# coding: utf-8
 #
 #    Project: Azimuthal integration
 #             https://github.com/pyFAI/pyFAI
@@ -34,13 +33,12 @@ __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __date__ = "03/07/2024"
 
+import logging
 import sys
-import unittest
 import time
+import unittest
 
 from . import test_all
-
-import logging
 
 profiler = logging.getLogger("memProf")
 profiler.setLevel(logging.DEBUG)

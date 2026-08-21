@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -42,17 +41,19 @@ __date__ = "27/10/2025"
 __status__ = "production"
 
 
+import argparse
 import logging
-import sys
 import os
 import shutil
-from .. import esperantoimage, eigerimage, limaimage, sparseimage, xcaliburimage
-from ..openimage import openimage as fabio_open
+import sys
+
+import numpy
+
+from .. import eigerimage, esperantoimage, limaimage, sparseimage, xcaliburimage
 from .. import version as fabio_version
 from ..nexus import get_isotime
+from ..openimage import openimage as fabio_open
 from ..utils.cli import ProgressBar, expand_args
-import numpy
-import argparse
 
 try:
     import hdf5plugin  # noqa
@@ -540,14 +541,8 @@ class Converter:
             )
             maskfile.write(b"#CHIP BADPOINT 630 422 REPLACE 632 422 0 0\r\n")
             maskfile.write(b"#CHIP BADRECTANGLE xl xr yb yt\r\n")
-            for r in ccd.pschipbadpolygon:
-                maskfile.write(
-                    f"CHIP BADRECTANGLE {r.iax[0]} {r.iax[1]} {r.iay[0]} {r.iay[1]}\r\n".encode()
-                )
-            for r in ccd.pschipbadpoint:
-                maskfile.write(
-                    f"CHIP BADPOINT {r.spt.ix} {r.spt.iy} IGNORE {r.spt.ix} {r.spt.iy} {r.spt.ix} {r.spt.iy}\r\n".encode()
-                )
+            maskfile.writelines(f"CHIP BADRECTANGLE {r.iax[0]} {r.iax[1]} {r.iay[0]} {r.iay[1]}\r\n".encode() for r in ccd.pschipbadpolygon)
+            maskfile.writelines(f"CHIP BADPOINT {r.spt.ix} {r.spt.iy} IGNORE {r.spt.ix} {r.spt.iy} {r.spt.ix} {r.spt.iy}\r\n".encode() for r in ccd.pschipbadpoint)
             maskfile.write(b"#END OF XCALIBUR CHIP CHARACTERISTICS FILE\r\n")
         # Make a backup as the original could be overwritten by Crysalis at import
         shutil.copyfile(

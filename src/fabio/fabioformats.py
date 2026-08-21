@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -39,6 +38,7 @@ __status__ = "stable"
 __docformat__ = "restructuredtext"
 
 import logging
+
 from . import fabioimage
 from .fabioutils import OrderedDict
 

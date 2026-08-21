@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
 #             https://github.com/silx-kit/fabio
@@ -32,10 +31,12 @@ Test for Nonius Kappa CCD cameras.
 
 """
 
-import unittest
-import os
 import logging
+import os
+import unittest
+
 import fabio
+
 from ...kcdimage import kcdimage
 from ...openimage import openimage
 from ..utilstest import UtilsTest

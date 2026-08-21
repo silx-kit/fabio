@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fast Azimuthal integration
 #             https://github.com/silx-kit/pyFAI
@@ -38,11 +37,11 @@ Portable diffraction images viewer/converter
 import numpy
 from qtpy import QtWidgets as qt
 from qtpy.QtWidgets import (
-    QMessageBox,
-    QLabel,
     QDialog,
     QDialogButtonBox,
     QGroupBox,
+    QLabel,
+    QMessageBox,
 )
 
 numpy.seterr(divide="ignore")

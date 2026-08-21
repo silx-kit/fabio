@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: FabIO X-ray image reader
 #
@@ -47,12 +46,13 @@ __license__ = "MIT"
 __copyright__ = "ESRF, Grenoble & Risoe National Laboratory"
 __status__ = "stable"
 
-import time
 import logging
+import time
+
 import numpy
+
+from . import TiffIO, fabioimage
 from .utils import pilutils
-from . import fabioimage
-from . import TiffIO
 
 logger = logging.getLogger(__name__)
 
@@ -73,7 +73,7 @@ class TiffFrame(fabioimage.FabioFrame):
     """Frame container for TIFF format"""
 
     def __init__(self, data, tiff_header):
-        super(TiffFrame, self).__init__(data, tiff_header)
+        super().__init__(data, tiff_header)
         # also expose the tiff header as 'tiff header' attribute
         self.tiff_header = tiff_header
 
@@ -217,7 +217,7 @@ class TifImage(fabioimage.FabioImage):
         if self._tiffio is not None:
             self._tiffio.close()
             self._tiffio = None
-        super(TifImage, self).close()
+        super().close()
 
     def _get_frame(self, num):
         """Inherited function returning a FabioFrame"""

@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: CCD mask image reader/writer. Format used in CrysalisPro software
 #             https://github.com/silx-kit/fabio
@@ -37,13 +36,15 @@ __copyright__ = "2022 ESRF"
 __date__ = "27/10/2025"
 
 import logging
-import time
 import os
-import numpy
-from .fabioimage import FabioImage
+import struct
+import time
 from dataclasses import dataclass
 from enum import Enum
-import struct
+
+import numpy
+
+from .fabioimage import FabioImage
 
 logger = logging.getLogger(__name__)
 

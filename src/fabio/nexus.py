@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: FabIO X-ray image reader
 #
@@ -38,9 +37,10 @@ __status__ = "production"
 __docformat__ = "restructuredtext"
 
 import logging
-import sys
 import os
+import sys
 import time
+
 from .fabioutils import exists
 from .version import version
 
@@ -111,13 +111,13 @@ def is_hdf5(filename):
     """
     signature = b"\x89\x48\x44\x46\x0d\x0a\x1a\x0a"
     if not exists(filename):
-        raise IOError("No such file %s" % (filename))
+        raise OSError("No such file %s" % (filename))
     with open(filename.split("::")[0], "rb") as f:
         sig = f.read(len(signature))
     return sig == signature
 
 
-class Nexus(object):
+class Nexus:
     """
     Writer class to handle Nexus/HDF5 data
 

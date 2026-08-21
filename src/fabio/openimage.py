@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -40,16 +39,18 @@ modification for HDF5 by Jérôme Kieffer
 mods for APS GE by JVB
 """
 
-import os.path
 import logging
+import os.path
 import re
-from . import fabioutils
-from .compression import ExternalCompressors
-from .fabioutils import FilenameObject, BytesIO
-from .fabioimage import FabioImage
 
 # Make sure to load all formats
-from . import fabioformats  # noqa
+from . import (
+    fabioformats,
+    fabioutils,
+)
+from .compression import ExternalCompressors
+from .fabioimage import FabioImage
+from .fabioutils import BytesIO, FilenameObject
 
 logger = logging.getLogger(__name__)
 
@@ -283,7 +284,7 @@ def _openimage(filename):
         imo = FabioImage()
         with imo._open(actual_filename) as f:
             magic_bytes = f.read(18)
-    except IOError:
+    except OSError:
         logger.debug("Backtrace", exc_info=True)
         raise
     else:
@@ -310,10 +311,10 @@ def _openimage(filename):
 
         except Exception:
             logger.debug("Backtrace", exc_info=True)
-            raise IOError(f"Fabio could not identify {filename}")
+            raise OSError(f"Fabio could not identify {filename}")
 
     if filetype is None:
-        raise IOError(f"Fabio could not identify {filename}")
+        raise OSError(f"Fabio could not identify {filename}")
 
     klass_name = "".join(filetype) + "image"
 
@@ -321,7 +322,7 @@ def _openimage(filename):
         obj = fabioformats.factory(klass_name)
     except (RuntimeError, Exception):
         logger.debug("Backtrace", exc_info=True)
-        raise IOError("Filename %s can't be read as format %s" % (filename, klass_name))
+        raise OSError("Filename %s can't be read as format %s" % (filename, klass_name))
 
     obj.filename = filename
     # skip the read for read header

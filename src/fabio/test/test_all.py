@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
 #             https://github.com/silx-kit/fabio
@@ -28,32 +27,35 @@
 
 """Test suite for all fabio modules."""
 
-import sys
 import logging
+import sys
 import unittest
-from . import test_fabio_image
-from . import test_filenames
-from . import test_file_series
-from . import test_filename_steps
-from . import test_header_not_singleton
-from . import test_open_header
-from . import test_open_image
-from . import test_flat_binary
-from . import test_compression
-from . import test_nexus
-from . import test_fabio_convert
-from . import test_failing_files
-from . import test_formats
-from . import test_image_convert
-from . import test_tiffio
-from . import test_frames
-from . import test_fabio
-from . import codecs
-from . import test_agi_bitfield
-from . import test_densification
-from . import test_io_limits
-from . import test_utils_cli
-from . import test_import
+
+from . import (
+    codecs,
+    test_agi_bitfield,
+    test_compression,
+    test_densification,
+    test_fabio,
+    test_fabio_convert,
+    test_fabio_image,
+    test_failing_files,
+    test_file_series,
+    test_filename_steps,
+    test_filenames,
+    test_flat_binary,
+    test_formats,
+    test_frames,
+    test_header_not_singleton,
+    test_image_convert,
+    test_import,
+    test_io_limits,
+    test_nexus,
+    test_open_header,
+    test_open_image,
+    test_tiffio,
+    test_utils_cli,
+)
 
 logger = logging.getLogger(__name__)
 

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
 #             https://github.com/silx-kit/fabio
@@ -30,11 +29,14 @@
 Unittest to read edf files as originally specified by expg.
 """
 
-import unittest
-import os
-import numpy
 import logging
+import os
+import unittest
+
+import numpy
+
 import fabio
+
 from ..utilstest import UtilsTest
 
 logger = logging.getLogger(__name__)
@@ -48,7 +50,7 @@ logger = logging.getLogger(__name__)
 
 
 def open_frame(filename, frameno):
-    logging.debug("fopen(filename={},frameno={})".format(filename, frameno))
+    logging.debug(f"fopen(filename={filename},frameno={frameno})")
 
     image = fabio.open(filename)
     if frameno is None:
@@ -66,17 +68,13 @@ def open_frame(filename, frameno):
 
     if frameno >= npsdframes:
         logging.warning(
-            "Psd frame {} out of range: 0 <= {} < {}".format(
-                frameno, frameno, npsdframes
-            )
+            f"Psd frame {frameno} out of range: 0 <= {frameno} < {npsdframes}"
         )
 
     if frameno < 0:
         if -frameno > nerrorframes:
             logging.warning(
-                "Error frame {} out of range: {} <= {} < 0 ".format(
-                    frameno, -nerrorframes, frameno
-                )
+                f"Error frame {frameno} out of range: {-nerrorframes} <= {frameno} < 0 "
             )
         frameno += nframes
 
@@ -92,8 +90,8 @@ def open_frame(filename, frameno):
             header = image.header
         frame = fabio.fabioimage.FabioFrame(data=data, header=header)
     else:
-        raise IOError(
-            "fopen: Cannot access frame: {} (0<=frame<{})".format(frameno, nframes)
+        raise OSError(
+            f"fopen: Cannot access frame: {frameno} (0<=frame<{nframes})"
         )
 
     return frame
@@ -106,7 +104,7 @@ def get_data_counts(shape=None):
     if shape is None:
         shape = ()
     counts = 1
-    for ishape in range(0, len(shape)):
+    for ishape in range(len(shape)):
         counts *= shape[ishape]
     return counts
 
@@ -137,7 +135,7 @@ def test_00(cls, filename, avglist=None, keylist=None):
 
     # To avoid warnings make different loops over psd data and error data
     # psd data
-    for frameno in range(0, npsdframes):
+    for frameno in range(npsdframes):
         frame = open_frame(filename, frameno)
 
         # check data shape
@@ -147,9 +145,7 @@ def test_00(cls, filename, avglist=None, keylist=None):
         cls.assertEqual(
             counts,
             data_counts,
-            "A:filename={},frameno={}: inconsistent data shapes: header.{},data.{}".format(
-                filename, frameno, frame.shape, frame.data.shape
-            ),
+            f"A:filename={filename},frameno={frameno}: inconsistent data shapes: header.{frame.shape},data.{frame.data.shape}",
         )
 
         # calculate mean value
@@ -157,9 +153,7 @@ def test_00(cls, filename, avglist=None, keylist=None):
         fmean = fsum / counts
 
         logging.debug(
-            "filename={},frameno={},sum={},counts={},fmean={}".format(
-                filename, frameno, fsum, counts, fmean
-            )
+            f"filename={filename},frameno={frameno},sum={fsum},counts={counts},fmean={fmean}"
         )
 
         # read known mean value from avglist
@@ -171,9 +165,7 @@ def test_00(cls, filename, avglist=None, keylist=None):
             cls.assertLessEqual(
                 abs(fmean - avg),
                 abs(fmean + avg) * 5e-6,
-                "B:filename={},frameno={}: unexpected average value: calculated {}, expected {}".format(
-                    filename, frameno, fmean, avg
-                ),
+                f"B:filename={filename},frameno={frameno}: unexpected average value: calculated {fmean}, expected {avg}",
             )
 
         # read a key to read from keylist
@@ -185,27 +177,21 @@ def test_00(cls, filename, avglist=None, keylist=None):
 
             if key in frame.header:
                 logging.debug(
-                    "filename={}, frameno={}: '{}' = {}".format(
-                        filename, frameno, key, frame.header[key]
-                    )
+                    f"filename={filename}, frameno={frameno}: '{key}' = {frame.header[key]}"
                 )
             else:
                 logging.debug(
-                    "filename={}, frameno={}: '{}' = None".format(
-                        filename, frameno, key
-                    )
+                    f"filename={filename}, frameno={frameno}: '{key}' = None"
                 )
 
             cls.assertIn(
                 key,
                 frame.header,
-                "C:filename={},frameno={}: Missing expected header key '{}'".format(
-                    filename, frameno, key
-                ),
+                f"C:filename={filename},frameno={frameno}: Missing expected header key '{key}'",
             )
 
     # error data
-    for frameno in range(0, nerrorframes):
+    for frameno in range(nerrorframes):
         frame = open_frame(filename, -frameno - 1)
 
         # check data shape
@@ -215,9 +201,7 @@ def test_00(cls, filename, avglist=None, keylist=None):
         cls.assertEqual(
             counts,
             data_counts,
-            "D:filename={},frameno={}: inconsistent data shapes: header.{},data.{}".format(
-                filename, frameno, frame.shape, frame.data.shape
-            ),
+            f"D:filename={filename},frameno={frameno}: inconsistent data shapes: header.{frame.shape},data.{frame.data.shape}",
         )
 
         # calculate mean value
@@ -225,9 +209,7 @@ def test_00(cls, filename, avglist=None, keylist=None):
         fmean = sum / counts
 
         logging.debug(
-            "filename={},frameno={},sum={},counts={},fmean={}".format(
-                filename, frameno, fsum, counts, fmean
-            )
+            f"filename={filename},frameno={frameno},sum={fsum},counts={counts},fmean={fmean}"
         )
 
         # read known mean value from avglist
@@ -240,9 +222,7 @@ def test_00(cls, filename, avglist=None, keylist=None):
             cls.assertLessEqual(
                 abs(fmean - avg),
                 abs(fmean + avg) * 5e-6,
-                "E:filename={},frameno={}: unexpected average value: calculated {}, expected {}".format(
-                    filename, frameno, fmean, avg
-                ),
+                f"E:filename={filename},frameno={frameno}: unexpected average value: calculated {fmean}, expected {avg}",
             )
 
         # read a key to read from keylist
@@ -254,26 +234,17 @@ def test_00(cls, filename, avglist=None, keylist=None):
 
             if key in frame.header:
                 logging.debug(
-                    "filename={},frameno={}: key='{}'".format(
-                        filename,
-                        frameno,
-                        key,
-                    )
+                    f"filename={filename},frameno={frameno}: key='{key}'"
                 )
             else:
                 logging.debug(
-                    "filename={},frameno={}: key=None".format(
-                        filename,
-                        frameno,
-                    )
+                    f"filename={filename},frameno={frameno}: key=None"
                 )
 
             cls.assertIn(
                 key,
                 frame.header,
-                "F:filename={},frameno={}: Missing expected header key '{}'".format(
-                    filename, frameno, key
-                ),
+                f"F:filename={filename},frameno={frameno}: Missing expected header key '{key}'",
             )
 
 

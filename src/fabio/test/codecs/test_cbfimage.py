@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
 #             https://github.com/silx-kit/fabio
@@ -36,16 +35,19 @@ http://pilatus.web.psi.ch/DATA/DATASETS/insulin_0.2/
 19/01/2015
 """
 
-import unittest
+import logging
 import os
 import time
-import logging
+import unittest
+
 import numpy
+
 import fabio
-from fabio.cbfimage import CbfImage, CIF
-from fabio.compression import decByteOffset_numpy, decByteOffset_cython
-from ..utilstest import UtilsTest
+from fabio.cbfimage import CIF, CbfImage
+from fabio.compression import decByteOffset_cython, decByteOffset_numpy
+
 from ..testutils import LoggingValidator
+from ..utilstest import UtilsTest
 
 logger = logging.getLogger(__name__)
 

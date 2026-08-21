@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: FabIO X-ray image reader
 #
@@ -49,6 +48,7 @@ __date__ = "27/10/2025"
 
 import logging
 import posixpath
+
 import numpy
 
 from .fabioimage import FabioImage
@@ -241,7 +241,7 @@ class EigerImage(FabioImage):
                 new_img._nframes = self.nframes
                 new_img.currentframe = num
             else:
-                raise IOError(f"getframe {num} out of range [0 {self.nframes}[")
+                raise OSError(f"getframe {num} out of range [0 {self.nframes}[")
         else:
             new_img = FabioImage.getframe(self, num)
         return new_img

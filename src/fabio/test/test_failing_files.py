@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
 #             https://github.com/silx-kit/fabio
@@ -28,11 +27,12 @@
 
 """Test failing files"""
 
-import unittest
 import os
-import io
-import fabio
 import shutil
+import unittest
+
+import fabio
+
 from .utilstest import UtilsTest
 
 
@@ -48,31 +48,31 @@ class TestFailingFiles(unittest.TestCase):
     @classmethod
     def createResources(cls, directory):
         cls.txt_filename = os.path.join(directory, "test.txt")
-        with io.open(cls.txt_filename, "w+t") as f:
+        with open(cls.txt_filename, "w+t") as f:
             f.write("Kikoo")
 
         cls.bad_edf_filename = os.path.join(directory, "bad_edf.edf")
-        with io.open(cls.bad_edf_filename, "w+b") as f:
+        with open(cls.bad_edf_filename, "w+b") as f:
             f.write(b"\r{")
             f.write(b"\x00\xff\x99" * 10)
 
         cls.bad_edf2_filename = os.path.join(directory, "bad_edf2.edf")
-        with io.open(cls.bad_edf2_filename, "w+b") as f:
+        with open(cls.bad_edf2_filename, "w+b") as f:
             f.write(b"\n{\n\n}\n")
             f.write(b"\xff\x00\x99" * 10)
 
         cls.bad_msk_filename = os.path.join(directory, "bad_msk.msk")
-        with io.open(cls.bad_msk_filename, "w+b") as f:
+        with open(cls.bad_msk_filename, "w+b") as f:
             f.write(b"M\x00\x00\x00A\x00\x00\x00S\x00\x00\x00K\x00\x00\x00")
             f.write(b"\x00\xff\x99" * 10)
 
         cls.bad_dm3_filename = os.path.join(directory, "bad_dm3.dm3")
-        with io.open(cls.bad_dm3_filename, "w+b") as f:
+        with open(cls.bad_dm3_filename, "w+b") as f:
             f.write(b"\x00\x00\x00\x03")
             f.write(b"\x00\xff\x99" * 10)
 
         cls.bad_npy_filename = os.path.join(directory, "bad_numpy.npy")
-        with io.open(cls.bad_npy_filename, "w+b") as f:
+        with open(cls.bad_npy_filename, "w+b") as f:
             f.write(b"\x93NUMPY")
             f.write(b"\x00\xff\x99" * 10)
 

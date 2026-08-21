@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -52,17 +51,18 @@ __license__ = "MIT"
 __copyright__ = "ESRF"
 __date__ = "17/06/2026"
 
+import logging
 import os
 import re
 import string
-import logging
-import numpy
 from collections import namedtuple
-from . import fabioimage
-from .fabioutils import isAscii, toAscii, nice_int, OrderedDict, ENDIANNESS
-from .compression import decBzip2, decGzip, decZlib
+
+import numpy
+
 from . import compression as compression_module
-from . import fabioutils
+from . import fabioimage, fabioutils
+from .compression import decBzip2, decGzip, decZlib
+from .fabioutils import ENDIANNESS, OrderedDict, isAscii, nice_int, toAscii
 from .utils import deprecation
 
 logger = logging.getLogger(__name__)
@@ -156,7 +156,6 @@ HeaderBlockType = namedtuple(
 class MalformedHeaderError(IOError):
     """Raised when a header is malformed"""
 
-    pass
 
 
 class EdfFrame(fabioimage.FabioFrame):
@@ -166,7 +165,7 @@ class EdfFrame(fabioimage.FabioFrame):
 
     def __init__(self, data=None, header=None, number=None):
         header = EdfImage.check_header(header)
-        super(EdfFrame, self).__init__(data, header=header)
+        super().__init__(data, header=header)
 
         self._data_compression = None
         self._data_byteorder = None
@@ -223,11 +222,10 @@ class EdfFrame(fabioimage.FabioFrame):
                             index = int(sidx)
                         except ValueError:
                             logger.error(
-                                "Unable converting index of {} to integer.".format(key)
+                                f"Unable converting index of {key} to integer."
                             )
                         else:
-                            if index > rank:
-                                rank = index
+                            rank = max(rank, index)
         return rank
 
     @staticmethod
@@ -265,15 +263,13 @@ class EdfFrame(fabioimage.FabioFrame):
                 capsHeader[key.upper()] = key
         shape = []
         for irank in range(1, rank + 1):
-            strDim = "DIM_{:d}".format(irank)
+            strDim = f"DIM_{irank:d}"
             if strDim in capsHeader:
                 try:
                     dimi = nice_int(header[capsHeader[strDim]])
                 except ValueError:
                     logger.error(
-                        "Unable converting value of {} to integer: {}".format(
-                            capsHeader[strDim], header[capsHeader[strDim]]
-                        )
+                        f"Unable converting value of {capsHeader[strDim]} to integer: {header[capsHeader[strDim]]}"
                     )
             else:
                 if irank == 1:
@@ -298,7 +294,7 @@ class EdfFrame(fabioimage.FabioFrame):
         if shape is None:
             shape = ()
         counts = 1
-        for ishape in range(0, len(shape)):
+        for ishape in range(len(shape)):
             counts *= shape[ishape]
         return counts
 
@@ -400,9 +396,7 @@ class EdfFrame(fabioimage.FabioFrame):
 
         if "COMPRESSION" in capsHeader:
             self._data_compression = self.header[capsHeader["COMPRESSION"]].upper()
-            if self._data_compression == "NONE":
-                self._data_compression = None
-            elif self._data_compression.startswith("NO"):
+            if self._data_compression == "NONE" or self._data_compression.startswith("NO"):
                 self._data_compression = None
         else:
             self._data_compression = None
@@ -447,18 +441,14 @@ class EdfFrame(fabioimage.FabioFrame):
                        the data must be truncated.
                     """
                     logger.warning(
-                        "Malformed file: The physical size of the binary block {} is too small {}. This and the following frames could be broken.".format(
-                            self.blobsize, calcsize
-                        )
+                        f"Malformed file: The physical size of the binary block {self.blobsize} is too small {calcsize}. This and the following frames could be broken."
                     )
             else:
                 if self.bfsize < calcsize:
                     """The size of the binary file is smaller than expected.
                     """
                     logger.warning(
-                        "The size available in the binary file {} is smaller than required {}.".format(
-                            self.bfsize, calcsize
-                        )
+                        f"The size available in the binary file {self.bfsize} is smaller than required {calcsize}."
                     )
 
         if self.size is None:
@@ -532,7 +522,7 @@ class EdfFrame(fabioimage.FabioFrame):
         if len(missing) > 0:
             msg = "EDF file {}{} misses mandatory keys: {} "
             if self.index is not None:
-                frame = " (frame {:d})".format(self.index)
+                frame = f" (frame {self.index:d})"
             else:
                 frame = ""
             logger.info(msg.format(filename, frame, " ".join(missing)))
@@ -546,9 +536,7 @@ class EdfFrame(fabioimage.FabioFrame):
         :return: dataset as numpy.ndarray
         """
         data = None
-        if self._data is not None:
-            data = self._data
-        elif self.file is None:
+        if self._data is not None or self.file is None:
             data = self._data
         else:
             if self._dtype is None:
@@ -589,10 +577,8 @@ class EdfFrame(fabioimage.FabioFrame):
                         f.seek(self.bfstart)
                         fileData = f.read(self.bfsize)
                 else:
-                    raise IOError(
-                        "The binary file {} of {} does not exist".format(
-                            self.bfname, self.file.name
-                        )
+                    raise OSError(
+                        f"The binary file {self.bfname} of {self.file.name} does not exist"
                     )
 
             if self._data_compression is not None:
@@ -1194,14 +1180,14 @@ class EdfImage(fabioimage.FabioImage):
             except MalformedHeaderError:
                 logger.debug("Backtrace", exc_info=True)
                 if len(self._frames) == 0:
-                    raise IOError("Invalid first header")
+                    raise OSError("Invalid first header")
                 self._incomplete_file = True
                 break
 
             if value.header is None:
                 # end of file
                 if len(self._frames) == 0:
-                    raise IOError("Empty file")
+                    raise OSError("Empty file")
                 break
 
             if value.data_format_version is None:
@@ -1247,9 +1233,7 @@ class EdfImage(fabioimage.FabioImage):
                 # This is a general block
                 if self.generalframe is not None:
                     logger.warning(
-                        "_readheader: Overwriting an existing general frame (file={},frame={}).".format(
-                            frame.file, frame._index
-                        )
+                        f"_readheader: Overwriting an existing general frame (file={frame.file},frame={frame._index})."
                     )
                 self.generalframe = frame
             else:
@@ -1352,7 +1336,7 @@ class EdfImage(fabioimage.FabioImage):
             new_image.filename = self.filename
             new_image._file = self._file
         else:
-            raise IOError(
+            raise OSError(
                 "EdfImage.getframe: Cannot access frame %s: 0<=frame<%s"
                 % (num, self.nframes)
             )
@@ -1787,14 +1771,14 @@ class EdfImage(fabioimage.FabioImage):
                 logger.debug("Backtrace", exc_info=True)
                 if index == 0:
                     infile.close()
-                    raise IOError("Invalid first header")
+                    raise OSError("Invalid first header")
                 break
 
             if value.header is None:
                 # end of file
                 if index == 0:
                     infile.close()
-                    raise IOError("Empty file")
+                    raise OSError("Empty file")
                 break
 
             if value.data_format_version is None:

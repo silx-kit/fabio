@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -32,14 +31,21 @@ test cases for fileseries
 28/11/2014
 """
 
-import unittest
 import logging
 import os
 import shutil
+import unittest
+
 import numpy
+
 import fabio
-from fabio.file_series import numbered_file_series, file_series, filename_series
-from fabio.file_series import FileSeries
+from fabio.file_series import (
+    FileSeries,
+    file_series,
+    filename_series,
+    numbered_file_series,
+)
+
 from .utilstest import UtilsTest
 
 logger = logging.getLogger(__name__)
@@ -84,7 +90,7 @@ class TestEdfNumbered(unittest.TestCase):
 
     def testnext(self):
         """check all in order"""
-        mylist = ["mydata%04d.edf" % (i) for i in range(0, 10005)]
+        mylist = ["mydata%04d.edf" % (i) for i in range(10005)]
         i = 1
         while i < len(mylist):
             self.assertEqual(mylist[i], self.fso.next())
@@ -92,7 +98,7 @@ class TestEdfNumbered(unittest.TestCase):
 
     def testprevious(self):
         """check all in order"""
-        mylist = ["mydata%04d.edf" % (i) for i in range(0, 10005)]
+        mylist = ["mydata%04d.edf" % (i) for i in range(10005)]
         i = 10003
         self.fso.jump(10004)
         while i > 0:

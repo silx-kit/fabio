@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -28,7 +27,6 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 #  OTHER DEALINGS IN THE SOFTWARE.
 
-#
 """General purpose utilities functions for fabio"""
 
 __author__ = "Jérôme Kieffer"
@@ -39,16 +37,17 @@ __date__ = "17/06/2026"
 __status__ = "stable"
 __docformat__ = "restructuredtext"
 
-import re
-import os
-import logging
-import sys
 import json
-from collections import OrderedDict as _OrderedDict
-import traceback
-from math import ceil
+import logging
+import os
+import re
+import sys
 import threading
+import traceback
+from collections import OrderedDict as _OrderedDict
 from enum import StrEnum
+from math import ceil
+
 from .compression import bz2, gzip
 
 try:
@@ -58,7 +57,8 @@ except ImportError:
         import pathlib2 as pathlib
     except ImportError:
         pathlib = None
-from io import FileIO, BytesIO as _BytesIO
+from io import BytesIO as _BytesIO
+from io import FileIO
 
 logger = logging.getLogger(__name__)
 StringTypes = (str, bytes)
@@ -111,7 +111,7 @@ COMPRESSED_EXTENSIONS = set(["gz", "bz2"])
 """Set of compressed file extensions provided by Fabio"""
 
 
-class FilenameObject(object):
+class FilenameObject:
     """
     The 'meaning' of a filename ...
     """
@@ -213,8 +213,7 @@ class FilenameObject(object):
             typ = []
             for codec in codec_classes:
                 name = codec.codec_name()
-                if name.endswith("image"):
-                    name = name[:-5]
+                name = name.removesuffix("image")
                 typ.append(name)
             extn = "." + parts[-1] + extn
             try:
@@ -674,7 +673,6 @@ else:
 class NotGoodReader(RuntimeError):
     """The reader used is probably not the good one"""
 
-    pass
 
 
 class DebugSemaphore(threading.Semaphore):

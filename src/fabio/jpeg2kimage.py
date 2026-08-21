@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: FabIO X-ray image reader
 #
@@ -101,7 +100,7 @@ class Jpeg2KImage(FabioImage):
             # inject a shape  to avoid calling the read function
             image = glymur.Jp2k(filename=filename, shape=(1, 1))
         else:
-            raise IOError("Glymur version %s is not supported" % glymur.__version__)
+            raise OSError("Glymur version %s is not supported" % glymur.__version__)
 
         # Move to the end of the file to know the size
         infile.seek(0, 2)
@@ -121,7 +120,7 @@ class Jpeg2KImage(FabioImage):
             image._validate()
         except Exception:
             logger.debug("Backtrace", exc_info=True)
-            raise IOError("File %s is not a valid format" % filename)
+            raise OSError("File %s is not a valid format" % filename)
 
         # Now the image can be used normally
         return image
@@ -145,7 +144,7 @@ class Jpeg2KImage(FabioImage):
                 self.lib = name
                 break
 
-            except IOError as e:
+            except OSError as e:
                 self.data = None
                 self.header = OrderedDict()
                 logger.debug(
@@ -154,7 +153,7 @@ class Jpeg2KImage(FabioImage):
 
         if self.data is None:
             infile.seek(0)
-            raise IOError("No decoder available for the file %s." % filename)
+            raise OSError("No decoder available for the file %s." % filename)
         self.resetvals()
         return self
 

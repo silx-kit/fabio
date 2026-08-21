@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
 #             https://github.com/silx-kit/fabio
@@ -31,16 +30,19 @@
 Unit tests for the d*TREK format.
 """
 
-import unittest
-import os
 import logging
-import numpy
+import os
 import shutil
-from ..utilstest import UtilsTest
+import unittest
+
+import numpy
+
 import fabio
 from fabio.dtrekimage import DtrekImage
 from fabio.edfimage import EdfImage
 from fabio.utils import testutils
+
+from ..utilstest import UtilsTest
 
 logger = logging.getLogger(__name__)
 

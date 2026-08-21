@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -36,12 +35,14 @@ __copyright__ = "ESRF"
 __date__ = "27/10/2025"
 
 import logging
-import posixpath
 import os
+import posixpath
+
 import numpy
+
+from . import nexus
 from .fabioimage import FabioImage
 from .fabioutils import NotGoodReader
-from . import nexus
 
 try:
     import h5py
@@ -199,7 +200,7 @@ class LambdaImage(FabioImage):
                 new_img._nframes = self.nframes
                 new_img.currentframe = num
             else:
-                raise IOError(f"getframe({num}) out of range [0, {self.nframes}[")
+                raise OSError(f"getframe({num}) out of range [0, {self.nframes}[")
         else:
             new_img = FabioImage.getframe(self, num)
         return new_img

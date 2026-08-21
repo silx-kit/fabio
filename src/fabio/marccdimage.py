@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -50,6 +49,7 @@ JPW : Use a parser in case of typos (sorry?)
 # special header
 import logging
 import struct
+
 from .tifimage import TifImage
 
 logger = logging.getLogger(__name__)

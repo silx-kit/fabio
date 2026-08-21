@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
 #             https://github.com/silx-kit/fabio
@@ -34,9 +33,11 @@ __license__ = "MIT"
 __copyright__ = "2011-2016 ESRF"
 __date__ = "27/10/2025"
 
-import unittest
-import numpy
 import logging
+import unittest
+
+import numpy
+
 from fabio import compression
 
 logger = logging.getLogger(__name__)

@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: FabIO X-ray image reader
 #
@@ -33,7 +32,9 @@ __copyright__ = "ESRF"
 __date__ = "15/06/2026"
 
 import logging
+
 import numpy
+
 from . import fabioimage
 
 logger = logging.getLogger(__name__)

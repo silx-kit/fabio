@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: FabIO X-ray image reader
 #
@@ -93,7 +92,7 @@ class JpegImage(FabioImage):
         except Exception:
             pilimage = None
             infile.seek(0)
-            raise IOError("Error in opening %s with PIL" % filename)
+            raise OSError("Error in opening %s with PIL" % filename)
 
         data = pilutils.get_numpy_array(pilimage)
         self.data = data
@@ -111,7 +110,7 @@ class JpegImage(FabioImage):
 
         if self.data is None:
             infile.seek(0)
-            raise IOError("Error in opening %s." % filename)
+            raise OSError("Error in opening %s." % filename)
 
         self.resetvals()
         return self

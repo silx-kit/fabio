@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -40,8 +39,10 @@ Authors: Henning O. Sorensen & Erik Knudsen
 Information about the file format from Masakatzu Kobayashi is highly appreciated
 """
 
-import numpy
 import logging
+
+import numpy
+
 from .fabioimage import FabioImage
 
 logger = logging.getLogger(__name__)
@@ -108,7 +109,7 @@ class HipicImage(FabioImage):
             dim2 = int(self.header["Dim_2"])
             self._shape = dim2, dim1
         except (ValueError, KeyError):
-            raise IOError("HiPic file %s is corrupted, cannot read it" % str(fname))
+            raise OSError("HiPic file %s is corrupted, cannot read it" % str(fname))
         dtype = numpy.dtype(numpy.uint16)
         self._dtype = dtype
 
@@ -122,7 +123,7 @@ class HipicImage(FabioImage):
         except Exception:
             logger.debug("%s %s %s %s %s", len(block), dtype, self.bpp, dim2, dim1)
             logger.debug("Backtrace", exc_info=True)
-            raise IOError(
+            raise OSError(
                 "Size spec in HiPic-header does not match size of image data field"
             )
         self._dtype = None

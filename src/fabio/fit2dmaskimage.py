@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -40,8 +39,10 @@ __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __date__ = "15/06/2026"
 
 import io
-import numpy
 import struct
+
+import numpy
+
 from .fabioimage import FabioImage
 
 

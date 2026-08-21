@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
 #             https://github.com/silx-kit/fabio
@@ -29,11 +28,13 @@
 Deep test to check IOError exceptions
 """
 
-import unittest
-import os
 import logging
-from .utilstest import UtilsTest
+import os
+import unittest
+
 import fabio
+
+from .utilstest import UtilsTest
 
 logger = logging.getLogger(__name__)
 

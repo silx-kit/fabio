@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -42,14 +41,16 @@ Authors:
 
 """
 
-import logging
-import sys
-import os.path
 import collections
+import logging
+import os.path
+import sys
+
 import fabio
+
+from .fabioimage import FabioImage
 from .fabioutils import FilenameObject, next_filename
 from .openimage import openimage
-from .fabioimage import FabioImage
 from .utils import deprecation
 
 logger = logging.getLogger(__name__)
@@ -179,7 +180,7 @@ class file_series(list):
         :param list_of_strings: arg should be a list of strings which are filenames
 
         """
-        super(file_series, self).__init__(list_of_strings)
+        super().__init__(list_of_strings)
         # track current position in list
         self._current = 0
 
@@ -369,10 +370,10 @@ class numbered_file_series(file_series):
             fmt = "%s%i%s"
 
         strings = [fmt % (stem, i, extension) for i in range(first, last + 1, step)]
-        super(numbered_file_series, self).__init__(strings)
+        super().__init__(strings)
 
 
-class filename_series(object):
+class filename_series:
     """Iterator through a list of files indexed by a number.
 
     Supports `next`, `previous` and jump accessors.

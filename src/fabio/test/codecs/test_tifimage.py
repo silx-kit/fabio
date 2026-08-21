@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
 #             https://github.com/silx-kit/fabio
@@ -28,12 +27,15 @@
 #
 """Tiff Unit tests"""
 
-import unittest
-import os
 import logging
+import os
+import unittest
+
 import numpy
+
 import fabio
 from fabio import tifimage
+
 from ..utilstest import UtilsTest
 
 logger = logging.getLogger(__name__)

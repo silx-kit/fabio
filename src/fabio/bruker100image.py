@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -53,13 +52,15 @@ __copyright__ = "2007-2009 Risoe National Laboratory; 2015-2020 ESRF, 2016 GWDG"
 __licence__ = "MIT"
 
 import io
-import os
-from math import ceil
 import logging
+import os
 import time
+from math import ceil
+
 import numpy
+
 from .brukerimage import BrukerImage
-from .fabioutils import pad, StringTypes
+from .fabioutils import StringTypes, pad
 
 logger = logging.getLogger(__name__)
 
@@ -318,13 +319,7 @@ class Bruker100Image(BrukerImage):
                             for k, v in enumerate(value.split())
                             if k < 3
                         )
-                    elif key == "NPIXELB":
-                        line += "".join(
-                            str(v).ljust(36, " ")
-                            for k, v in enumerate(value.split())
-                            if k < 2
-                        )
-                    elif key in ("NROWS", "NCOLS"):
+                    elif key == "NPIXELB" or key in ("NROWS", "NCOLS"):
                         line += "".join(
                             str(v).ljust(36, " ")
                             for k, v in enumerate(value.split())
@@ -336,9 +331,7 @@ class Bruker100Image(BrukerImage):
                             for k, v in enumerate(value.split())
                             if k < 5
                         )
-                    elif key == "DETTYPE":
-                        line += str(value)
-                    elif key == "CFR":
+                    elif key == "DETTYPE" or key == "CFR":
                         line += str(value)
                     elif os.linesep in value:
                         lines = value.split(os.linesep)
@@ -350,7 +343,7 @@ class Bruker100Image(BrukerImage):
                         line += str(value)
                     else:
                         for i in range(len(value) // 72):
-                            headers.append((line + str(value[72 * i : 72 * (i + 1)])))
+                            headers.append(line + str(value[72 * i : 72 * (i + 1)]))
                             line = key.ljust(7) + ":"
                         line += value[72 * (i + 1) :]
                 elif "__len__" in dir(value):
@@ -398,7 +391,7 @@ class Bruker100Image(BrukerImage):
                     slope = (max_data - offset) / float(max_range)
                 else:
                     slope = 1.0
-            tmp_data = numpy.round(((self.data - offset) / slope)).astype(numpy.uint32)
+            tmp_data = numpy.round((self.data - offset) / slope).astype(numpy.uint32)
             self.header["LINEAR"] = "%s %s" % (slope, offset)
         else:
             tmp_data = self.data

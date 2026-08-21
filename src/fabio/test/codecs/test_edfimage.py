@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
 #             https://github.com/silx-kit/fabio
@@ -33,17 +32,19 @@
 28/11/2014
 """
 
-import unittest
-import os
-import numpy
-import shutil
-import io
 import logging
+import os
+import shutil
+import unittest
+
+import numpy
+
 import fabio
+
 from ...edfimage import edfimage
-from ...fabioutils import GzipFile, BZ2File
-from ..utilstest import UtilsTest
+from ...fabioutils import BZ2File, GzipFile
 from ..testutils import LoggingValidator
+from ..utilstest import UtilsTest
 
 logger = logging.getLogger(__name__)
 
@@ -593,7 +594,7 @@ class TestBadFiles(unittest.TestCase):
     def create_resources(cls):
         filename = os.path.join(cls.tmp_directory, cls.filename_template % "base")
         cls.base_filename = filename
-        with io.open(filename, "wb") as fd:
+        with open(filename, "wb") as fd:
             cls.write_header(fd, 1)
             cls.header1 = fd.tell()
             cls.write_data(fd)
@@ -627,8 +628,8 @@ class TestBadFiles(unittest.TestCase):
 
     @classmethod
     def copy_base(cls, filename, size):
-        with io.open(cls.base_filename, "rb") as fd_base:
-            with io.open(filename, "wb") as fd_result:
+        with open(cls.base_filename, "rb") as fd_base:
+            with open(filename, "wb") as fd_result:
                 fd_result.write(fd_base.read(size))
 
     @classmethod
@@ -658,7 +659,7 @@ class TestBadFiles(unittest.TestCase):
         filename = os.path.join(
             self.tmp_directory, self.filename_template % str(self.id())
         )
-        f = io.open(filename, "wb")
+        f = open(filename, "wb")
         f.close()
 
         self.assertRaises(IOError, self.open, filename)
@@ -667,7 +668,7 @@ class TestBadFiles(unittest.TestCase):
         filename = os.path.join(
             self.tmp_directory, self.filename_template % str(self.id())
         )
-        f = io.open(filename, "wb")
+        f = open(filename, "wb")
         f.write(b"\x10\x20\x30")
         f.close()
 

@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -42,9 +41,11 @@ __copyright__ = "Brian R. Pauw"
 __date__ = "17/06/2026"
 
 import logging
-import struct
 import os
+import struct
+
 import numpy
+
 from .fabioimage import FabioImage
 from .fabioutils import OrderedDict
 
@@ -298,7 +299,7 @@ class RaxisImage(FabioImage):
                     infile.seek(
                         -size + offset + 1, os.SEEK_END
                     )  # seek from EOF backwards
-            except IOError as error:
+            except OSError as error:
                 logger.warning(
                     "expected datablock too large, please check bytecode settings: %s, IOError: %s"
                     % (self._dtype.type, error)

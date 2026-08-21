@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
 #             https://github.com/silx-kit/fabio
@@ -28,9 +27,11 @@
 #
 """Multiwire Unit tests"""
 
-import unittest
 import logging
+import unittest
+
 import fabio
+
 from ..utilstest import UtilsTest
 
 logger = logging.getLogger(__name__)

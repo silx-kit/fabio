@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -39,8 +38,10 @@ __copyright__ = "2007-2020 APS; 2010-2020 ESRF"
 __licence__ = "MIT"
 
 import io
-import numpy
 import struct
+
+import numpy
+
 from .edfimage import EdfImage
 from .fabioimage import FabioImage
 from .fabioutils import next_filename, previous_filename
@@ -266,7 +267,7 @@ class GeImage(FabioImage):
                 header_size = self.header["StandardHeaderSizeInBytes"]
                 bytes_per_frames = rows * cols * depth
                 if not numpy.remainder(file_size, bytes_per_frames) == header_size:
-                    raise IOError("GE file size is incorrect")
+                    raise OSError("GE file size is incorrect")
                 nframes = file_size // bytes_per_frames
                 self.header["NumberOfFrames"] = nframes
         elif any(
@@ -337,7 +338,7 @@ class GeImage(FabioImage):
 
         datatype = self.BITDEPTH_TO_DATATYPES.get(bitdepth, None)
         if datatype is None:
-            raise IOError("Data depth format %sbits is not supported" % bitdepth)
+            raise OSError("Data depth format %sbits is not supported" % bitdepth)
 
         raw = filepointer.read(imglength)
         data = numpy.frombuffer(raw, self.get_stype(datatype, "little")).copy()

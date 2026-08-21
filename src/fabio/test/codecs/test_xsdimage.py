@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
 #             https://github.com/silx-kit/fabio
@@ -32,10 +31,13 @@
 # builds on stuff from ImageD11.test.testpeaksearch
 """
 
-import unittest
-import numpy
 import logging
+import unittest
+
+import numpy
+
 import fabio.xsdimage
+
 from ..utilstest import UtilsTest
 
 logger = logging.getLogger(__name__)

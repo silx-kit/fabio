@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
 #             https://github.com/silx-kit/fabio
@@ -32,13 +31,15 @@ testsuite by Jerome Kieffer (Jerome.Kieffer@esrf.eu)
 28/11/2014
 """
 
-import unittest
-import os
-import numpy
 import copy
 import logging
-from ..fabioimage import FabioImage
+import os
+import unittest
+
+import numpy
+
 from .. import fabioutils
+from ..fabioimage import FabioImage
 from ..utils import pilutils
 from .utilstest import UtilsTest
 

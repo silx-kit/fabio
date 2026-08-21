@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
 #             https://github.com/silx-kit/fabio
@@ -28,12 +27,14 @@
 
 """Test Eiger images"""
 
-import unittest
-import os
 import logging
+import os
+import unittest
+
 from fabio.fabioutils import exists
-from fabio.openimage import openimage
 from fabio.hdf5image import Hdf5Image, h5py
+from fabio.openimage import openimage
+
 from ..utilstest import UtilsTest
 
 logger = logging.getLogger(__name__)
@@ -66,7 +67,7 @@ class TestHdf5(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        super(TestHdf5, cls).setUpClass()
+        super().setUpClass()
         cls.fn2 = os.path.join(UtilsTest.tempdir, "eiger2d.h5")
         cls.fn2 = make_hdf5(cls.fn2, (99, 101))
         cls.fn3 = os.path.join(UtilsTest.tempdir, "eiger3d.h5")
@@ -74,7 +75,7 @@ class TestHdf5(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        super(TestHdf5, cls).tearDownClass()
+        super().tearDownClass()
         if exists(cls.fn3):
             os.unlink(cls.fn3.split("::")[0])
         if exists(cls.fn2):

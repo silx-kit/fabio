@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
 #             https://github.com/silx-kit/fabio
@@ -31,13 +30,16 @@ Test frame concept of FabioImage
 
 """
 
-import unittest
-import logging
-import numpy
 import contextlib
-import fabio.fabioimage
+import logging
+import unittest
+
+import numpy
+
 import fabio.edfimage
+import fabio.fabioimage
 import fabio.file_series
+
 from .utilstest import UtilsTest
 
 logger = logging.getLogger(__name__)
@@ -136,7 +138,7 @@ class TestVirtualEdf(_CommonTestFrames):
         image.append_frame(data=data3, header=header3)
         frames = [(header1, data1), (header2, data2), (header3, data3)]
 
-        class Meta(object):
+        class Meta:
             pass
 
         meta = Meta()
@@ -170,7 +172,7 @@ class TestEdf(_CommonTestFrames):
         filename = filename.replace(".bz2", "")
         image = fabio.open(filename)
 
-        class Meta(object):
+        class Meta:
             pass
 
         meta = Meta()
@@ -200,7 +202,7 @@ class TestTiff(_CommonTestFrames):
         filename = filename.replace(".bz2", "")
         image = fabio.open(filename)
 
-        class Meta(object):
+        class Meta:
             pass
 
         meta = Meta()
@@ -251,7 +253,7 @@ class TestFileSeries(_CommonTestFrames):
         filenames.append(filename)
         image = fabio.file_series.FileSeries(filenames)
 
-        class Meta(object):
+        class Meta:
             pass
 
         meta = Meta()

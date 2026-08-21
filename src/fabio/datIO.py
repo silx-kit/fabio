@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -44,7 +43,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class fabiodata(object):
+class fabiodata:
     """
     A common class for dataIO in fable
     Contains a 2d numpy array for keeping data, and two lists (clabels and rlabels)

@@ -1,4 +1,3 @@
-# coding: utf-8
 # /*##########################################################################
 #
 # Copyright (c) 2016-2021 European Synchrotron Radiation Facility
@@ -28,10 +27,11 @@ __authors__ = ["Valentin Valls", "Jérôme Kieffer"]
 __license__ = "MIT"
 __date__ = "19/06/2026"
 
-import sys
 import codecs
 import glob
 import logging
+import sys
+
 try:
     import resource
 except ImportError:
@@ -150,8 +150,7 @@ class ProgressBar:
             coef = (1.0 * value) / self.max_value
         percent = round(coef * 100)
         bar_position = int(coef * self.bar_width)
-        if bar_position > self.bar_width:
-            bar_position = self.bar_width
+        bar_position = min(bar_position, self.bar_width)
 
         # line to display
         line = "\r%15s [%s%s] % 3d%%  %s" % (
@@ -165,8 +164,7 @@ class ProgressBar:
         # trailing to mask the previous message
         line_size = len(line)
         clean_size = self.last_size - line_size
-        if clean_size < 0:
-            clean_size = 0
+        clean_size = max(clean_size, 0)
         self.last_size = line_size
 
         sys.stdout.write(line + " " * clean_size + "\r")

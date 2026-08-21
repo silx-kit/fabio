@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -47,13 +46,15 @@ __license__ = "MIT"
 __copyright__ = "Jérôme Kieffer"
 __date__ = "17/06/2026"
 
-import time
 import logging
 import struct
+import time
+
 import numpy
-from numpy import rad2deg, deg2rad
+from numpy import deg2rad, rad2deg
+
+from .compression import compTY1, decTY1
 from .fabioimage import FabioImage
-from .compression import decTY1, compTY1
 from .fabioutils import to_str
 
 logger = logging.getLogger(__name__)
@@ -265,7 +266,7 @@ class OxdImage(FabioImage):
                 dim2 = int(self.header["NY"])
                 self._shape = dim2, dim1
             except (ValueError, KeyError):
-                raise IOError(
+                raise OSError(
                     "Oxford  file %s is corrupted, cannot read it" % str(fname)
                 )
 
@@ -623,7 +624,7 @@ class OxdImage(FabioImage):
 OXDimage = OxdImage
 
 
-class Section(object):
+class Section:
     """
     Small helper class for writing binary headers
     """

@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -76,7 +75,9 @@ __copyright__ = "Institut"
 __date__ = "09/02/2023"
 
 import logging
+
 import numpy
+
 from .fabioimage import FabioImage
 
 logger = logging.getLogger(__name__)

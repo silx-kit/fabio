@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
 #             https://github.com/silx-kit/fabio
@@ -36,11 +35,13 @@ __license__ = "MIT"
 __date__ = "27/10/2025"
 __contact__ = "jerome.kieffer@esrf.fr"
 
-import unittest
-import os
 import logging
+import os
+import unittest
+
 import fabio
 from fabio.OXDimage import OXDimage
+
 from ..utilstest import UtilsTest
 
 logger = logging.getLogger(__name__)

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
 #             https://github.com/silx-kit/fabio
@@ -38,11 +37,14 @@ __license__ = "MIT"
 __copyright__ = "2022 ESRF"
 __date__ = "27/10/2025"
 
-import unittest
 import logging
+import unittest
+
 import numpy
+
 import fabio
 from fabio.xcaliburimage import CcdCharacteristiscs, XcaliburImage
+
 from ..utilstest import UtilsTest
 
 logger = logging.getLogger(__name__)

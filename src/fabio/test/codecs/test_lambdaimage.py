@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
 #             https://github.com/silx-kit/fabio
@@ -28,13 +27,16 @@
 
 """Test lambda images"""
 
+import logging
 import os
+import unittest
+
 import numpy
+
 import fabio.lambdaimage
 from fabio.openimage import openimage
+
 from ..utilstest import UtilsTest
-import unittest
-import logging
 
 logger = logging.getLogger(__name__)
 

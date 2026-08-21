@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -50,7 +49,9 @@ __status__ = "stable"
 
 import io
 import logging
+
 import numpy
+
 from .fabioimage import FabioImage
 
 logger = logging.getLogger(__name__)
@@ -76,7 +77,7 @@ class PnmImage(FabioImage):
 
         line = f.readline().strip()
         if line not in SUBFORMATS:
-            raise IOError("unknown subformat of pnm: %s" % line)
+            raise OSError("unknown subformat of pnm: %s" % line)
         else:
             self.header[b"SUBFORMAT"] = line
 
@@ -88,7 +89,7 @@ class PnmImage(FabioImage):
                     line = f.readline()
                 s = line.lsplit(" ", 1)
                 if s[0] not in P7HEADERITEMS:
-                    raise IOError("Illegal pam (netpnm p7) headeritem %s" % s[0])
+                    raise OSError("Illegal pam (netpnm p7) headeritem %s" % s[0])
                 self.header[s[0]] = s[1]
         else:
             values = list(line.split())
@@ -117,7 +118,7 @@ class PnmImage(FabioImage):
                 "32-bit pixels are not really supported by the netpgm standard"
             )
         else:
-            raise IOError("could not figure out what kind of pixels you have")
+            raise OSError("could not figure out what kind of pixels you have")
 
     def read(self, fname, frame=None):
         """
@@ -137,7 +138,7 @@ class PnmImage(FabioImage):
             decoder = getattr(PnmImage, decoder_name)
             self.data = decoder(self, infile, self._dtype)
         else:
-            raise IOError("No decoder named %s for file %s" % (decoder_name, fname))
+            raise OSError("No decoder named %s for file %s" % (decoder_name, fname))
         self.resetvals()
         return self
 
@@ -170,7 +171,7 @@ class PnmImage(FabioImage):
             try:
                 data[i, :] = numpy.array(line.split()).astype(bytecode)
             except ValueError:
-                raise IOError(
+                raise OSError(
                     "Size spec in pnm-header does not match size of image data field"
                 )
         return data
@@ -187,7 +188,7 @@ class PnmImage(FabioImage):
             try:
                 data[i, :] = numpy.array(line.split()).astype(bytecode)
             except ValueError:
-                raise IOError(
+                raise OSError(
                     "Size spec in pnm-header does not match size of image data field"
                 )
         return data
@@ -197,7 +198,7 @@ class PnmImage(FabioImage):
         try:
             data = numpy.frombuffer(data, self.get_stype(bytecode, "big")).astype(bytecode)
         except ValueError:
-            raise IOError(
+            raise OSError(
                 "Size spec in pnm-header does not match size of image data field"
             )
         data = data.reshape(self.shape)

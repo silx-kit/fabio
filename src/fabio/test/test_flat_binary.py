@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -32,11 +31,13 @@ testsuite by Jerome Kieffer (Jerome.Kieffer@esrf.eu)
 28/11/2014
 """
 
-import unittest
-import os
 import logging
-from .utilstest import UtilsTest
+import os
+import unittest
+
 import fabio
+
+from .utilstest import UtilsTest
 
 logger = logging.getLogger(__name__)
 

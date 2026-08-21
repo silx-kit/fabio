@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -39,16 +38,17 @@ __license__ = "MIT"
 __copyright__ = "2020-2025 ESRF"
 __date__ = "27/10/2025"
 
-import logging
 import json
+import logging
+
 import numpy
 
 try:
     import h5py
 except ImportError:
     h5py = None
-from .fabioutils import NotGoodReader
 from .fabioimage import FabioImage
+from .fabioutils import NotGoodReader
 
 try:
     from .ext import dense as cython_densify
@@ -320,7 +320,7 @@ class SparseImage(FabioImage):
                 new_img.currentframe = num
                 new_img.normalization = self.normalization
             else:
-                raise IOError(
+                raise OSError(
                     "getframe %s out of range [%s %s[" % (num, 0, self.nframes)
                 )
         else:

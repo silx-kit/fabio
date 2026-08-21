@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -44,22 +43,23 @@ __license__ = "MIT"
 __copyright__ = "ESRF"
 __date__ = "17/06/2026"
 
-import os
 import logging
+import os
 import sys
 import tempfile
 import weakref
+
 import numpy
-from . import fabioutils, converters
-from .fabioutils import OrderedDict, ENDIANNESS
+
+from . import converters, fabioutils
 from .compression import COMPRESSORS
-from .utils import pilutils
-from .utils import deprecation
+from .fabioutils import ENDIANNESS, OrderedDict
+from .utils import deprecation, pilutils
 
 logger = logging.getLogger(__name__)
 
 
-class _FabioArray(object):
+class _FabioArray:
     """ "Abstract class providing array API used by :class:`FabioImage` and
     :class:`FabioFrame`."""
 
@@ -319,7 +319,7 @@ class FabioFrame(_FabioArray):
     """Identify a frame"""
 
     def __init__(self, data=None, header=None):
-        super(FabioFrame, self).__init__()
+        super().__init__()
         self.data = data
         self._header = header
         self._shape = None
@@ -482,7 +482,7 @@ class FabioImage(_FabioArray):
         :param data: numpy array of values
         :param header: dict or ordereddict with metadata
         """
-        super(FabioImage, self).__init__()
+        super().__init__()
         self._classname = None
         self._shape = None
         self._dtype = None
@@ -662,7 +662,7 @@ class FabioImage(_FabioArray):
         from .openimage import openimage
 
         if self.filename is None:
-            raise IOError()
+            raise OSError()
         return openimage(fabioutils.previous_filename(self.filename))
 
     def next(self):
@@ -673,7 +673,7 @@ class FabioImage(_FabioArray):
         from .openimage import openimage
 
         if self.filename is None:
-            raise IOError()
+            raise OSError()
         return openimage(fabioutils.next_filename(self.filename))
 
     def getheader(self):
@@ -833,7 +833,7 @@ class FabioImage(_FabioArray):
             else:
                 self.filename = "stream"
                 try:
-                    setattr(fname, "name", self.filename)
+                    fname.name = self.filename
                 except AttributeError:
                     # cStringIO
                     logger.warning(
@@ -910,8 +910,7 @@ class FabioImage(_FabioArray):
         other = None
         if type(dest) in fabioutils.StringTypes:
             dest = dest.lower()
-            if dest.endswith("image"):
-                dest = dest[:-5]
+            dest = dest.removesuffix("image")
             codec_name = dest + "image"
             from . import fabioformats
 
@@ -945,7 +944,7 @@ class FabioImage(_FabioArray):
             yield current_image
             try:
                 current_image = current_image.next()
-            except (IOError, IndexError):
+            except (OSError, IndexError):
                 break
 
 

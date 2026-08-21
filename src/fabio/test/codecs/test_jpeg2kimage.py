@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
 #             https://github.com/silx-kit/fabio
@@ -30,15 +29,17 @@
 Test JPEG 2000 format
 """
 
-import unittest
-import numpy
 import logging
+import unittest
+
+import numpy
 
 try:
     from PIL import Image
 except ImportError:
     Image = None
 import fabio
+
 from ... import jpeg2kimage
 from ..utilstest import UtilsTest
 
@@ -107,7 +108,7 @@ class TestJpeg2KImage(unittest.TestCase):
         try:
             _image = image_format.read(filename)
             self.fail()
-        except (IOError, RuntimeError):
+        except (OSError, RuntimeError):
             pass
 
     def test_open_missing_file(self):
@@ -116,7 +117,7 @@ class TestJpeg2KImage(unittest.TestCase):
         try:
             _image = image_format.read(filename)
             self.fail()
-        except IOError:
+        except OSError:
             pass
 
 

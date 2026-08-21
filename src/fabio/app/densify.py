@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -40,20 +39,22 @@ __date__ = "27/10/2025"
 __status__ = "production"
 
 
-import logging
-import sys
 import argparse
+import json
+import logging
+import multiprocessing.pool
 import os
 import posixpath
+import sys
 import time
-import multiprocessing.pool
-import json
+
 import numpy
+
 from .. import eigerimage, limaimage, sparseimage
-from ..openimage import openimage as fabio_open
 from .. import version as fabio_version
-from ..utils.cli import ProgressBar, expand_args
 from ..nexus import Nexus, h5py
+from ..openimage import openimage as fabio_open
+from ..utils.cli import ProgressBar, expand_args
 
 try:
     import hdf5plugin  # noqa

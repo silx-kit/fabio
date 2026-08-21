@@ -1,4 +1,3 @@
-# coding: utf-8
 # /*##########################################################################
 #
 # Copyright (c) 2016-2024 European Synchrotron Radiation Facility
@@ -28,12 +27,13 @@ __authors__ = ["Jérôme Kieffer", "H. Payno", "P. Knobel"]
 __license__ = "MIT"
 __date__ = "15/03/2024"
 
-import logging
 import functools
-import traceback
+import logging
 import re
+import traceback
 
-from ..version import calc_hexversion, hexversion as ref_hexversion
+from ..version import calc_hexversion
+from ..version import hexversion as ref_hexversion
 
 depreclog = logging.getLogger("fabio.DEPRECATION")
 

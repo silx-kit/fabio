@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: FabIO X-ray image reader
 #
@@ -43,9 +42,11 @@ __copyright__ = "Jérôme Kieffer"
 __date__ = "27/10/2025"
 
 import logging
+
 import numpy
+
 from .fabioimage import FabioImage
-from .fabioutils import previous_filename, next_filename
+from .fabioutils import next_filename, previous_filename
 
 logger = logging.getLogger(__name__)
 
@@ -135,7 +136,7 @@ class MrcImage(FabioImage):
         self._nframes = self.header["NZ"]
         mode = self.header["MODE"]
         if mode not in self._MODE_TO_DTYPE:
-            raise IOError("Mode %s unsupported" % mode)
+            raise OSError("Mode %s unsupported" % mode)
         dtype = numpy.dtype(self._MODE_TO_DTYPE[mode])
         self._dtype = dtype
         self.imagesize = dim1 * dim2 * dtype.itemsize

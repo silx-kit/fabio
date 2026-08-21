@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
 #             https://github.com/silx-kit/fabio
@@ -39,11 +38,13 @@ Updated by Jerome Kieffer (jerome.kieffer@esrf.eu), 2011
 __date__ = "27/10/2025"
 __author__ = "jerome Kieffer"
 
-import unittest
-import os
 import logging
+import os
+import unittest
+
 import fabio
 from fabio.dm3image import Dm3Image
+
 from ..utilstest import UtilsTest
 
 logger = logging.getLogger(__name__)

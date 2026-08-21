@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -45,14 +44,20 @@ __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 import logging
 from io import BytesIO
-from struct import pack, unpack as unpack_
+from struct import pack
+from struct import unpack as unpack_
+
 import numpy
 
 try:
     from ..ext._agi_bitfield import (
-        get_fieldsize as _get_fieldsize,
-        compress_row as _compress_row,
         compress as _compress,
+    )
+    from ..ext._agi_bitfield import (
+        compress_row as _compress_row,
+    )
+    from ..ext._agi_bitfield import (
+        get_fieldsize as _get_fieldsize,
     )
 except ImportError:
     _get_fieldsize = None
@@ -81,7 +86,7 @@ def compress(frame):
 
     row_start = numpy.zeros(dim[0], dtype=numpy.uint32)
 
-    for row_index in range(0, dim[0]):
+    for row_index in range(dim[0]):
         row_start[row_index] = buffer.tell()
         _compress_row(frame[row_index], buffer)
 
@@ -106,7 +111,7 @@ def compress_row(data, buffer):
     n_fields = len(pixel_diff) // 16
     n_restpx = len(pixel_diff) % 16
 
-    for _ in range(0, n_fields):
+    for _ in range(n_fields):
         fielda = pixel_diff[:8]
         fieldb = pixel_diff[8:16]
 
@@ -123,7 +128,7 @@ def compress_row(data, buffer):
 
         pixel_diff = pixel_diff[16:]
 
-    for restpx in range(0, n_restpx):
+    for restpx in range(n_restpx):
         write_escaped(pixel_diff[restpx], buffer)
 
 

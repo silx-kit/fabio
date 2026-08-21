@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
 #             https://github.com/silx-kit/fabio
@@ -28,12 +27,15 @@
 
 """Test Esperanto images"""
 
-import os
-import fabio.esperantoimage
-from ..utilstest import UtilsTest
-import unittest
 import logging
+import os
+import unittest
+
 import numpy
+
+import fabio.esperantoimage
+
+from ..utilstest import UtilsTest
 
 logger = logging.getLogger(__name__)
 

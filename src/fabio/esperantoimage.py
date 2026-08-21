@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -31,11 +30,13 @@ __copyright__ = "2019-2020 ESRF"
 __date__ = "27/10/2025"
 
 import io
-from collections import OrderedDict
 import logging
+from collections import OrderedDict
+
 import numpy
-from .fabioimage import FabioImage
+
 from .compression import agi_bitfield
+from .fabioimage import FabioImage
 
 logger = logging.getLogger(__name__)
 

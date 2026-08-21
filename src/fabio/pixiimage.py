@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -39,11 +38,13 @@ __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __date__ = "27/10/2025"
 
-import numpy
-import os
 import logging
+import os
+
+import numpy
+
 from . import fabioimage
-from .fabioutils import previous_filename, next_filename
+from .fabioutils import next_filename, previous_filename
 
 logger = logging.getLogger(__name__)
 

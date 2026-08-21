@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Bootstrap helps you to test scripts without installing them
 by patching your PYTHONPATH on the fly
@@ -12,11 +11,12 @@ __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __date__ = "12/03/2026"
 
-import sys
-import os
-import subprocess
 import argparse
 import logging
+import os
+import subprocess
+import sys
+
 if sys.version_info[:2] < (3, 11):
     import tomli
 else:
@@ -43,7 +43,7 @@ def is_debug_python():
         import sysconfig
     except ImportError:  # pragma nocover
         # Python < 2.7
-        import distutils.sysconfig as sysconfig
+        from distutils import sysconfig
 
     if sysconfig.get_config_var("Py_DEBUG"):
         return True

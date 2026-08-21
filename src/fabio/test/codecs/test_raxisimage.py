@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
 #             https://github.com/silx-kit/fabio
@@ -32,11 +31,13 @@
 """
 
 __date__ = "27/10/2025"
-import unittest
-import os
 import logging
+import os
+import unittest
+
 import fabio
 from fabio.raxisimage import raxisimage
+
 from ..utilstest import UtilsTest
 
 logger = logging.getLogger(__name__)

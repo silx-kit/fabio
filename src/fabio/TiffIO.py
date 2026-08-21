@@ -29,11 +29,13 @@ __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __date__ = "17/06/2026"
 
-import sys
+import logging
 import os
 import struct
+import sys
+
 import numpy
-import logging
+
 from .fabioimage import FabioImage
 
 ALLOW_MULTIPLE_STRIPS = False
@@ -113,14 +115,14 @@ SAMPLE_FORMAT_COMPLEXIEEEFP = 6
 logger = logging.getLogger(__name__)
 
 
-class TiffIO(object):
+class TiffIO:
     def __init__(self, filename, mode=None, cache_length=20, mono_output=False):
         if mode is None:
             mode = "rb"
         if "b" not in mode:
             mode = mode + "b"
         if "a" in mode.lower():
-            raise IOError("Mode %s makes no sense on TIFF files. Consider 'rb+'" % mode)
+            raise OSError("Mode %s makes no sense on TIFF files. Consider 'rb+'" % mode)
         if "w" in mode:
             if "+" not in mode:
                 mode += "+"
@@ -162,11 +164,11 @@ class TiffIO(object):
                 fileOrder = "big"
                 self._structChar = ">"
             else:
-                raise IOError("File is not a Mar CCD file, nor a TIFF file")
+                raise OSError("File is not a Mar CCD file, nor a TIFF file")
             a = fd.read(2)
             fortyTwo = struct.unpack(self._structChar + "H", a)[0]
             if fortyTwo != 42:
-                raise IOError("Invalid TIFF version %d" % fortyTwo)
+                raise OSError("Invalid TIFF version %d" % fortyTwo)
             else:
                 logger.debug("VALID TIFF VERSION")
             if sys.byteorder != fileOrder:
@@ -321,9 +323,7 @@ class TiffIO(object):
         _ftype, vfmt = FIELD_TYPE[fieldTypeList[idx]]
         vfmt = st + "%d%s" % (nValues, vfmt)
         requestedBytes = struct.calcsize(vfmt)
-        if nValues == 1:
-            output.append(valueOffsetList[idx])
-        elif requestedBytes < 5:
+        if nValues == 1 or requestedBytes < 5:
             output.append(valueOffsetList[idx])
         else:
             fd.seek(struct.unpack(st + "I", valueOffsetList[idx])[0])
@@ -616,7 +616,7 @@ class TiffIO(object):
         compression_type = info["compression_type"]
         if compression:
             if compression_type != 32773:
-                raise IOError("Compressed TIFF images not supported except packbits")
+                raise OSError("Compressed TIFF images not supported except packbits")
             else:
                 # PackBits compression
                 logger.debug("Using PackBits compression")
@@ -754,7 +754,7 @@ class TiffIO(object):
                 nBytes = stripByteCounts[i]
                 if compression_type == 32773:
                     try:
-                        bufferBytes = bytes()
+                        bufferBytes = b""
                     except Exception:
                         # python 2.5 ...
                         bufferBytes = ""

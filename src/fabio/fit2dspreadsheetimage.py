@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -32,8 +31,10 @@ Read the fit2d ascii image output
         + Jon Wright, ESRF
 """
 
-import numpy
 import logging
+
+import numpy
+
 from .fabioimage import FabioImage
 
 _logger = logging.getLogger(__name__)
@@ -77,7 +78,7 @@ class Fit2dSpreadsheetImage(FabioImage):
             dim2 = int(self.header["Dim_2"])
             self._shape = dim2, dim1
         except (ValueError, KeyError):
-            raise IOError("file %s is corrupt, cannot read it" % str(fname))
+            raise OSError("file %s is corrupt, cannot read it" % str(fname))
 
         self._dtype = numpy.dtype(numpy.float32)
 
@@ -95,7 +96,7 @@ class Fit2dSpreadsheetImage(FabioImage):
             self._dtype = None
         except Exception:
             _logger.debug("Backtrace", exc_info=True)
-            raise IOError("Error reading ascii")
+            raise OSError("Error reading ascii")
 
         self.resetvals()
         return self

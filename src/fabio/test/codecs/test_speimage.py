@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -34,11 +33,14 @@ __license__ = "MIT"
 __copyright__ = "Clemens Prescher/Univeristy Köln, Germany"
 __date__ = "27/10/2025"
 
-import unittest
-import numpy
 import logging
+import unittest
+
+import numpy
+
 import fabio
 from fabio.speimage import SpeImage
+
 from ..utilstest import UtilsTest
 
 logger = logging.getLogger(__name__)
@@ -47,7 +49,7 @@ logger = logging.getLogger(__name__)
 class TestSpeImage(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        super(TestSpeImage, cls).setUpClass()
+        super().setUpClass()
         cls.v2_spe_filename = UtilsTest.getimage("v2.SPE.bz2")[:-4]
         cls.v2_converted_spe_filename = UtilsTest.getimage("v2_converted.SPE.bz2")[:-4]
         cls.v3_spe_filename = UtilsTest.getimage("v3.spe.bz2")[:-4]
@@ -56,7 +58,7 @@ class TestSpeImage(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        super(TestSpeImage, cls).tearDownClass()
+        super().tearDownClass()
 
     def setUp(self):
         self.v2_spe_file = SpeImage()
@@ -83,7 +85,6 @@ class TestSpeImage(unittest.TestCase):
         self.assertGreater(len(self.v3_spe_file.header["x_calibration"]), 0)
         self.assertGreater(len(self.v2_converted_spe_file.header["x_calibration"]), 0)
 
-    #
     def test_time(self):
         self.assertEqual(self.v2_spe_file.header["time"], "07/13/2013 19:42:23")
         self.assertEqual(self.v3_spe_file.header["time"], "09/06/2013 16:50:39.445678")

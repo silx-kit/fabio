@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     sphinx.ext.mathjax
     ~~~~~~~~~~~~~~~~~~
@@ -12,7 +11,6 @@
 """
 
 from docutils import nodes
-
 from sphinx.application import ExtensionError
 from sphinx.ext.mathbase import setup_math as mathbase_setup
 

@@ -4,17 +4,20 @@ __date__ = "27/10/2025"
 __author__ = "Jérôme Kieffer"
 __license__ = "MIT"
 
+import argparse
+import logging
 import os
 import sys
-import argparse
 from io import StringIO
-import logging
-import numpy
-from .. import version as fabio_version, date as fabio_date
-from ..openimage import openimage as fabio_open
-from ..nexus import Nexus
+
 import h5py
 import hdf5plugin
+import numpy
+
+from .. import date as fabio_date
+from .. import version as fabio_version
+from ..nexus import Nexus
+from ..openimage import openimage as fabio_open
 
 application_name = os.path.splitext(os.path.basename(__file__))[0]
 logger = logging.getLogger(application_name)

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fast Azimuthal integration
 #             https://github.com/silx-kit/pyFAI
@@ -41,40 +40,45 @@ __copyright__ = "2015-2026 ESRF"
 __licence__ = "MIT"
 
 import os
+
 import numpy
-import fabio
-from fabio.nexus import Nexus
+
+# Matplotlib imports (unchanged)
+from matplotlib.figure import Figure
+from qtpy import QtCore as qtc
+
 # ----------------------------------------------------------------------
 # Qt imports via QtPy – this works with PyQt5, PySide2, PySide6, etc.
 # ----------------------------------------------------------------------
 from qtpy import QtWidgets as qt
-from qtpy import QtCore as qtc
 from qtpy.QtGui import QIcon
 from qtpy.QtWidgets import (
-    QSizePolicy,
-    QFileDialog,
-    QMessageBox,
     QAction,
+    QButtonGroup,
+    QCheckBox,
     QComboBox,
-    QPlainTextEdit,
+    QFileDialog,
+    QGroupBox,
+    QHBoxLayout,
     QLabel,
+    QListWidget,
+    QMessageBox,
+    QPlainTextEdit,
+    QProgressBar,
+    QPushButton,
+    QSizePolicy,
     QSplitter,
     QTabWidget,
-    QWidget,
-    QProgressBar,
-    QGroupBox,
     QVBoxLayout,
-    QHBoxLayout,
-    QPushButton,
-    QListWidget,
-    QCheckBox,
-    QButtonGroup
+    QWidget,
 )
-# Matplotlib imports (unchanged)
-from matplotlib.figure import Figure
-from .matplotlib import FigureCanvasQTAgg
-from .matplotlib import NavigationToolbar2QT
-from .dialogs import CounterFormatOptionDialog, DownSamplingDialog, BinDialog
+
+import fabio
+from fabio.nexus import Nexus
+
+from .dialogs import BinDialog, CounterFormatOptionDialog, DownSamplingDialog
+from .matplotlib import FigureCanvasQTAgg, NavigationToolbar2QT
+
 # ----------------------------------------------------------------------
 # Global configuration
 # ----------------------------------------------------------------------

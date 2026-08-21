@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 import sys
+
 import numpy
+
 print("Python %s bits" % (tuple.__itemsize__ * 8))
 print("       maxsize: %s\t maxunicode: %s" % (sys.maxsize, sys.maxunicode))
 print(sys.version)

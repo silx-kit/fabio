@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: FabIO X-ray image reader
 #
@@ -36,17 +35,18 @@ __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
-import logging
-import numpy
 import base64
 import hashlib
+import logging
+
+import numpy
 
 from .fabioimage import FabioImage
 
 logger = logging.getLogger(__name__)
 
 try:
-    import lxml.etree as etree
+    from lxml import etree
 except ImportError:
     try:
         # Try using the standard library

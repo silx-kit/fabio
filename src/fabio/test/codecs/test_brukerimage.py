@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
 #             https://github.com/silx-kit/fabio
@@ -33,12 +32,14 @@
 19/01/2015
 """
 
-import unittest
-import os
-import numpy
 import logging
-from ...brukerimage import brukerimage
+import os
+import unittest
+
+import numpy
+
 from ... import fabioutils
+from ...brukerimage import brukerimage
 from ..utilstest import UtilsTest
 
 logger = logging.getLogger(__name__)
@@ -92,8 +93,7 @@ class TestBruker(unittest.TestCase):
             fout.write(MYIMAGE.tobytes())
 
             noverfl = int(MYHEADER["NOVERFL"])
-            for ovf in OVERFLOWS:
-                fout.write((ovf[0] + ovf[1]).encode("ASCII"))
+            fout.writelines((ovf[0] + ovf[1]).encode("ASCII") for ovf in OVERFLOWS)
             fout.write(b"." * (512 - (16 * noverfl) % 512))
 
     def tearDown(self):

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
 #             https://github.com/silx-kit/fabio
@@ -32,12 +31,13 @@
 28/11/2014
 """
 
-import unittest
 import logging
+import unittest
+
 import fabio
+
 from .. import fabioformats
-from ..utils import deprecation
-from ..utils import testutils
+from ..utils import deprecation, testutils
 
 logger = logging.getLogger(__name__)
 

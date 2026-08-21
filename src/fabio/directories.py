@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -36,10 +35,10 @@ __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __date__ = "24/07/2017"
 __status__ = "stable"
 
-import os
 import getpass
-import tempfile
 import logging
+import os
+import tempfile
 
 logger = logging.getLogger(__name__)
 

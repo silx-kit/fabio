@@ -1,11 +1,14 @@
 # Demonstrator for Byte offset decompression in OpenCL
 
+import os
+import time
+
 import numpy
-import fabio
 import pyopencl
 import pyopencl.array
-import time
-import os
+
+import fabio
+
 # os.environ["PYOPENCL_CTX"] = "1:0"
 os.environ["PYOPENCL_COMPILER_OUTPUT"] = "1"
 

@@ -3,14 +3,15 @@
 Check we can read all the test images
 """
 
-import glob
-import os
-import time
-import fabio.openimage
-import gzip
 import bz2
+import glob
+import gzip
+import os
 import pstats
 import sys
+import time
+
+import fabio.openimage
 
 try:
     import cProfile

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -36,13 +35,14 @@ __licence__ = "MIT"
 __date__ = "27/10/2025"
 __status__ = "production"
 
+import argparse
 import logging
-import sys
 import os
+import sys
+
 import fabio
 from fabio import fabioformats, fabioutils
 from fabio.utils.cli import expand_args
-import argparse
 
 logging.basicConfig()
 logger = logging.getLogger("fabio-convert")

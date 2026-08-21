@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# coding: utf-8
 # /*##########################################################################
 #
 # Copyright (c) 2015-2026 European Synchrotron Radiation Facility
@@ -35,16 +34,16 @@ __authors__ = ["Jérôme Kieffer", "Thomas Vincent"]
 __date__ = "10/03/2026"
 __license__ = "MIT"
 
+import collections
 import logging
 import os
-from argparse import ArgumentParser
 import sys
 import time
 import unittest
-import collections
 import warnings
+from argparse import ArgumentParser
 
-from bootstrap import get_project_name, build_project
+from bootstrap import build_project, get_project_name
 
 
 class StreamHandlerUnittestReady(logging.StreamHandler):
@@ -59,7 +58,7 @@ class StreamHandlerUnittestReady(logging.StreamHandler):
         :type record: logging.LogRecord
         """
         self.stream = sys.stderr
-        super(StreamHandlerUnittestReady, self).emit(record)
+        super().emit(record)
 
     def flush(self):
         pass
@@ -349,7 +348,7 @@ def main():
     if not options.test_name:
         # Do not use test loader to avoid cryptic exception
         # when an error occur during import
-        project_test_suite = getattr(test_module, 'suite')
+        project_test_suite = test_module.suite
         test_suite.addTest(project_test_suite())
     else:
         test_suite.addTest(

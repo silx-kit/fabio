@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -34,13 +33,14 @@ kcd images are 2D images written by the old KappaCCD diffractometer built by Non
 Based on the edfimage.py parser.
 """
 
-import numpy
+import io
 import logging
 import os
 import string
-from .fabioimage import FabioImage
-import io
 
+import numpy
+
+from .fabioimage import FabioImage
 
 logger = logging.getLogger(__name__)
 
@@ -130,7 +130,7 @@ class KcdImage(FabioImage):
                 dim2 = int(self.header["Y dimension"])
                 self._shape = dim2, dim1
             except (KeyError, ValueError):
-                raise IOError("KCD file %s is corrupt, cannot read it" % fname)
+                raise OSError("KCD file %s is corrupt, cannot read it" % fname)
             try:
                 bytecode = DATA_TYPES[self.header["Data type"]]
             except KeyError:

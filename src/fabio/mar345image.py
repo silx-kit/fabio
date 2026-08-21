@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -52,14 +51,17 @@ __status__ = "production"
 __copyright__ = "2007-2009 Risoe National Laboratory; 2010-2020 ESRF"
 __licence__ = "MIT"
 
+import logging
 import struct
 import time
-import logging
+
 import numpy
+
 import fabio
-from .fabioutils import ENDIANNESS
-from .fabioimage import FabioImage
+
 from .compression import compPCK, decPCK
+from .fabioimage import FabioImage
+from .fabioutils import ENDIANNESS
 
 logger = logging.getLogger(__name__)
 

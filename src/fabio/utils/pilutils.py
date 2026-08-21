@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -35,7 +34,9 @@ __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __status__ = "stable"
 
 import logging
+
 import numpy
+
 from ..fabioutils import ENDIANNESS
 
 logger = logging.getLogger(__name__)

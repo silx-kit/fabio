@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -38,10 +37,10 @@ Authors: Henning O. Sorensen & Erik Knudsen
 
 """
 
-import numpy
+import logging
 import re
 
-import logging
+import numpy
 
 from .fabioimage import FabioImage
 from .fabioutils import ENDIANNESS
@@ -93,7 +92,7 @@ class DtrekImage(FabioImage):
                 self._readheader(infile)
             except Exception:
                 logger.debug("Backtrace", exc_info=True)
-                raise IOError("Error processing d*TREK header")
+                raise OSError("Error processing d*TREK header")
 
             # FIXME: It would be good to read only the expected data
             binary = infile.read()
@@ -112,12 +111,12 @@ class DtrekImage(FabioImage):
             numpy_type = numpy.uint16
         else:
             if data_type not in _DATA_TYPES:
-                raise IOError(
+                raise OSError(
                     "Data_type key contains an invalid/unsupported value: %s", data_type
                 )
             numpy_type = _DATA_TYPES[data_type]
             if type is None:
-                raise IOError("Data_type %s is not supported by fabio", data_type)
+                raise OSError("Data_type %s is not supported by fabio", data_type)
 
         # Stored in case data reading fails
         self._dtype = numpy.dtype(numpy_type)
@@ -144,7 +143,7 @@ class DtrekImage(FabioImage):
             try:
                 data = data.reshape(self._shape)
             except ValueError:
-                raise IOError(
+                raise OSError(
                     "Size spec in d*TREK header does not match "
                     + "size of image data field %s != %s" % (self._shape, data.size)
                 )

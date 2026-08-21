@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -39,7 +38,9 @@ Authors: Henning O. Sorensen & Erik Knudsen
 """
 
 import logging
+
 import numpy
+
 from .fabioimage import FabioImage
 from .fabioutils import ENDIANNESS
 
@@ -200,7 +201,7 @@ class Dm3Image(FabioImage):
     def read_tag_type(self):
         read = self.infile.read(4)
         if read != b"%%%%":
-            raise IOError(f"Inconsistent file reading {read}")
+            raise OSError(f"Inconsistent file reading {read}")
         self.tag_data_type = self.readbytes(4, BE_uint32)[0]
         logger.debug(
             "data is of type: %s - 1 = simple, 2 = string, 3 = array, >3 structs.",

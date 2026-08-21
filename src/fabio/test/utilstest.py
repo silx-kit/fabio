@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# coding: utf-8
 #
 #    Project: FabIO tests class utilities
 #
@@ -32,12 +31,13 @@ __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __date__ = "27/10/2025"
 
+import getpass
+import logging
 import os
 import sys
-import getpass
-import threading
-import logging
 import tempfile
+import threading
+
 from ..utils.ExternalResources import ExternalResources
 
 logger = logging.getLogger(__name__)
@@ -47,7 +47,7 @@ DATA_KEY = "FABIO_DATA"
 TEST_HOME = os.path.dirname(os.path.abspath(__file__))
 
 
-class TestOptions(object):
+class TestOptions:
     def __init__(self):
         self.options = None
         self.timeout = 60  # timeout in seconds for downloading images

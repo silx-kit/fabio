@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: FabIO X-ray image reader
 #
@@ -35,7 +34,9 @@ mpaimage can read ascii and binary .mpa (multiwire) files
 """
 
 import logging
+
 import numpy
+
 from .fabioimage import FabioImage, OrderedDict
 
 logger = logging.getLogger(__name__)
@@ -103,7 +104,7 @@ class MpaImage(FabioImage):
             or "mpafmt" not in self.header.keys()
         ):
             logger.error("Error in opening %s: badly formatted mpa header.", fname)
-            raise IOError("Error in opening %s: badly formatted mpa header." % fname)
+            raise OSError("Error in opening %s: badly formatted mpa header." % fname)
 
         dim2 = int(self.header["ADC1_range"])
         dim1 = int(self.header["ADC2_range"])

@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: FabIO X-ray image reader
 #
@@ -41,16 +40,17 @@ __license__ = "MIT"
 __date__ = "07/10/2024"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
-import os
 import logging
-import numpy
+import os
 from collections import OrderedDict
 from typing import NamedTuple
 
-from .fabioimage import FabioImage
+import numpy
+
+from . import date, version
 from .compression import compByteOffset, decByteOffset, md5sum
 from .ext._cif import split_tokens
-from . import version, date
+from .fabioimage import FabioImage
 
 logger = logging.getLogger(__name__)
 __version__ = [
@@ -200,7 +200,7 @@ class CbfImage(FabioImage):
             fast = int(self.header["X-Binary-Size-Second-Dimension"])
             self._shape = fast, slow
         except (KeyError, ValueError):
-            raise IOError("CBF file %s is corrupt, no dimensions in it" % inStream.name)
+            raise OSError("CBF file %s is corrupt, no dimensions in it" % inStream.name)
         try:
             bytecode = DATA_TYPES[self.header["X-Binary-Element-Type"]]
         except KeyError:
@@ -355,13 +355,7 @@ class CbfImage(FabioImage):
             if key.startswith("_"):
                 if key not in self.cif or self.cif[key] != self.header[key]:
                     self.cif[key] = self.header[key]
-            elif key.startswith("X-Binary-"):
-                pass
-            elif key.startswith("Content-"):
-                pass
-            elif key.startswith("conversions"):
-                pass
-            elif key.startswith("filename"):
+            elif key.startswith("X-Binary-") or key.startswith("Content-") or key.startswith("conversions") or key.startswith("filename"):
                 pass
             elif key in self.header:
                 nonCifHeaders.append("%s %s" % (key, self.header[key]))
@@ -684,13 +678,7 @@ class CIF(dict):
                 finished = True
         data = []
         while True:
-            if i >= len(fields):
-                break
-            elif len(fields[i]) == 0:
-                break
-            elif fields[i][0] == cls.UNDERSCORE:
-                break
-            elif fields[i] in (cls.LOOP, cls.STOP, cls.GLOBAL, cls.DATA, cls.SAVE):
+            if i >= len(fields) or len(fields[i]) == 0 or fields[i][0] == cls.UNDERSCORE or fields[i] in (cls.LOOP, cls.STOP, cls.GLOBAL, cls.DATA, cls.SAVE):
                 break
             else:
                 data.append(fields[i])
@@ -866,7 +854,7 @@ class CIF(dict):
         if not os.path.isfile(_strFilename):
             errStr = "I cannot find the file %s" % _strFilename
             logger.error(errStr)
-            raise IOError(errStr)
+            raise OSError(errStr)
         lInFile = open(_strFilename, "r").readlines()
         self["_audit_creation_method"] = "From 2-D detector using FIT2D and CIFfile"
         self["_pd_meas_scan_method"] = "fixed"
@@ -896,10 +884,8 @@ class CIF(dict):
             if len(data) == 2:
                 if not limitsOK:
                     f2Theta = float(data[0])
-                    if f2Theta < f2ThetaMin:
-                        f2ThetaMin = f2Theta
-                    if f2Theta > f2ThetaMax:
-                        f2ThetaMax = f2Theta
+                    f2ThetaMin = min(f2ThetaMin, f2Theta)
+                    f2ThetaMax = max(f2ThetaMax, f2Theta)
                 lOneLoop.append({"_pd_meas_intensity_total": data[1]})
         if not iLenData:
             iLenData = len(lOneLoop)
@@ -938,7 +924,7 @@ class PilatusKey(NamedTuple):
     repr: str = "{}"
 
 
-class PilatusHeader(object):
+class PilatusHeader:
     KEYWORDS = OrderedDict()
     KEYWORDS["Detector"] = PilatusKey(
         "Detector", 0, slice(1, None), str, "Detector: {}"
@@ -1089,7 +1075,7 @@ class PilatusHeader(object):
                 if words[v.key_index] == k:
                     if isinstance(v.types, (list, tuple)):
                         if len(v.value_indices) == 1:
-                            dico[k] = v.types[0]((words[v.value_indices[0]]))
+                            dico[k] = v.types[0](words[v.value_indices[0]])
                         else:
                             dico[k] = tuple(
                                 i(words[j]) for i, j in zip(v.types, v.value_indices)

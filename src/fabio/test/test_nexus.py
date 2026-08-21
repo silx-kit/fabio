@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -27,11 +26,12 @@
 #  THE SOFTWARE.
 """Unit tests for nexus file reader"""
 
-import unittest
-import os
 import logging
-from .utilstest import UtilsTest
+import os
+import unittest
+
 from .. import nexus
+from .utilstest import UtilsTest
 
 logger = logging.getLogger(__name__)
 

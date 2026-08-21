@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -35,11 +34,13 @@ __license__ = "MIT"
 __copyright__ = "Clemens Prescher"
 __date__ = "27/10/2025"
 
-import logging
 import datetime
+import logging
 from xml.dom.minidom import parseString
+
 import numpy as np
 from numpy.polynomial.polynomial import polyval
+
 from .fabioimage import FabioImage
 
 logger = logging.getLogger(__name__)

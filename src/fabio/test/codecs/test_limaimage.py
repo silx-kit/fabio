@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
 #             https://github.com/silx-kit/fabio
@@ -28,14 +27,17 @@
 
 """Test Eiger images"""
 
-import unittest
-import os
 import logging
+import os
+import unittest
+
 import numpy
-from fabio.openimage import openimage
+
 from fabio.limaimage import LimaImage, h5py
-from ..utilstest import UtilsTest
+from fabio.openimage import openimage
+
 from ..test_frames import _CommonTestFrames
+from ..utilstest import UtilsTest
 
 logger = logging.getLogger(__name__)
 
@@ -71,13 +73,13 @@ class TestLima(_CommonTestFrames):
         cls.fn3 = os.path.join(UtilsTest.tempdir, "lima3d.h5")
         print(cls.fn3)
         make_hdf5(cls.fn3, (17, 99, 101))
-        super(TestLima, cls).setUpClass()
+        super().setUpClass()
 
     @classmethod
     def getMeta(cls):
         filename = cls.fn3
 
-        class Meta(object):
+        class Meta:
             pass
 
         meta = Meta()
@@ -88,7 +90,7 @@ class TestLima(_CommonTestFrames):
 
     @classmethod
     def tearDownClass(cls):
-        super(TestLima, cls).tearDownClass()
+        super().tearDownClass()
         if os.path.exists(cls.fn3):
             os.unlink(cls.fn3)
 
