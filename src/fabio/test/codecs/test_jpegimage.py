@@ -87,8 +87,8 @@ class TestJpegImage(unittest.TestCase):
 
     def test_read_empty_file(self):
         filename = os.path.join(TEST_DIRECTORY, "3.jpg")
-        f = open(filename, "wb")
-        f.close()
+        with open(filename, "wb"):
+            pass
 
         image_format = jpegimage.JpegImage()
         try:

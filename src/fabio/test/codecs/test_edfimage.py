@@ -652,8 +652,8 @@ class TestBadFiles(unittest.TestCase):
         filename = os.path.join(
             self.tmp_directory, self.filename_template % str(self.id())
         )
-        f = open(filename, "wb")
-        f.close()
+        with open(filename, "wb"):
+            pass
 
         self.assertRaises(IOError, self.open, filename)
 
@@ -661,9 +661,8 @@ class TestBadFiles(unittest.TestCase):
         filename = os.path.join(
             self.tmp_directory, self.filename_template % str(self.id())
         )
-        f = open(filename, "wb")
-        f.write(b"\x10\x20\x30")
-        f.close()
+        with open(filename, "wb") as f:
+            f.write(b"\x10\x20\x30")
 
         self.assertRaises(IOError, self.open, filename)
 

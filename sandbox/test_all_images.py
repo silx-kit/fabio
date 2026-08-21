@@ -51,11 +51,13 @@ if __name__ == "__main__":
     for im in images:
         # Network/disk io time first
         start = time.perf_counter()
-        the_file = open(im, "rb").read()
+        with open(im, "rb") as f:
+            the_file = f.read()
         times[im] = [time.perf_counter() - start]
         start = time.perf_counter()
         # Network/disk should be cached
-        the_file = open(im, "rb").read()
+        with open(im, "rb") as f:
+            the_file = f.read()
         times[im].append(time.perf_counter() - start)
         start = time.perf_counter()
         try:
@@ -97,8 +99,8 @@ if __name__ == "__main__":
     
         cProfile.run("fabio.openimage.openimage(im)", "stats")
         p = pstats.Stats("stats")
-        # Hack around python2.4
         s = sys.stdout
-        sys.stdout = open("profile.txt", "a")
-        p.strip_dirs().sort_stats(-1).print_stats()
+        with open("profile.txt", "a") as profile_file:
+            sys.stdout = profile_file
+            p.strip_dirs().sort_stats(-1).print_stats()
         sys.stdout = s

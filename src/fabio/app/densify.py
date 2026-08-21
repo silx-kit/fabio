@@ -351,7 +351,7 @@ def main():
         c.decompress()
     except Exception as err:
         logger.error("%s: %s", err.__class__.__name__, str(err))
-        logger.error("Backtrace", exc_info=True)
+        logger.exception("Backtrace")
         return EXIT_FAILURE
     else:
         return EXIT_SUCCESS

@@ -50,7 +50,7 @@ logger = logging.getLogger(__name__)
 
 
 def open_frame(filename, frameno):
-    logging.debug(f"fopen(filename={filename},frameno={frameno})")
+    logger.debug(f"fopen(filename={filename},frameno={frameno})")
 
     image = fabio.open(filename)
     if frameno is None:
@@ -67,13 +67,13 @@ def open_frame(filename, frameno):
         nerrorframes = 0
 
     if frameno >= npsdframes:
-        logging.warning(
+        logger.warning(
             f"Psd frame {frameno} out of range: 0 <= {frameno} < {npsdframes}"
         )
 
     if frameno < 0:
         if -frameno > nerrorframes:
-            logging.warning(
+            logger.warning(
                 f"Error frame {frameno} out of range: {-nerrorframes} <= {frameno} < 0 "
             )
         frameno += nframes
@@ -152,7 +152,7 @@ def test_00(cls, filename, avglist=None, keylist=None):
         fsum = numpy.sum(frame.data)
         fmean = fsum / counts
 
-        logging.debug(
+        logger.debug(
             f"filename={filename},frameno={frameno},sum={fsum},counts={counts},fmean={fmean}"
         )
 
@@ -176,11 +176,11 @@ def test_00(cls, filename, avglist=None, keylist=None):
                 key = keylist[-1]
 
             if key in frame.header:
-                logging.debug(
+                logger.debug(
                     f"filename={filename}, frameno={frameno}: '{key}' = {frame.header[key]}"
                 )
             else:
-                logging.debug(
+                logger.debug(
                     f"filename={filename}, frameno={frameno}: '{key}' = None"
                 )
 
@@ -208,7 +208,7 @@ def test_00(cls, filename, avglist=None, keylist=None):
         fsum = numpy.sum(frame.data)
         fmean = sum / counts
 
-        logging.debug(
+        logger.debug(
             f"filename={filename},frameno={frameno},sum={fsum},counts={counts},fmean={fmean}"
         )
 
@@ -233,11 +233,11 @@ def test_00(cls, filename, avglist=None, keylist=None):
                 key = keylist[-1]
 
             if key in frame.header:
-                logging.debug(
+                logger.debug(
                     f"filename={filename},frameno={frameno}: key='{key}'"
                 )
             else:
-                logging.debug(
+                logger.debug(
                     f"filename={filename},frameno={frameno}: key=None"
                 )
 

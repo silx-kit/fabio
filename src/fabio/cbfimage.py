@@ -850,7 +850,8 @@ class CIF(dict):
             errStr = f"I cannot find the file {_strFilename}"
             logger.error(errStr)
             raise OSError(errStr)
-        lInFile = open(_strFilename, "r").readlines()
+        with open(_strFilename, "r") as f:
+            lInFile = f.readlines()
         self["_audit_creation_method"] = "From 2-D detector using FIT2D and CIFfile"
         self["_pd_meas_scan_method"] = "fixed"
         self["_pd_spec_description"] = lInFile[0].strip()

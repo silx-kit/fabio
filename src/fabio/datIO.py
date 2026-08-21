@@ -87,12 +87,12 @@ class columnfile(fabiodata):
         except Exception:
             logger.debug("Backtrace", exc_info=True)
             raise Exception("columnfile: file" + str(fname) + "not found.")
-        try:
-            (self.data, self.clabels) = cf_io.read(infile)
-        except Exception:
-            logger.debug("Backtrace", exc_info=True)
-            raise Exception(
-                "columnfile: read error, file " + str(fname) + " possibly corrupt"
-            )
+        with infile:
+            try:
+                (self.data, self.clabels) = cf_io.read(infile)
+            except Exception:
+                logger.debug("Backtrace", exc_info=True)
+                raise Exception(
+                    "columnfile: read error, file " + str(fname) + " possibly corrupt"
+                )
         self.dims = self.data.shape
-        infile.close()

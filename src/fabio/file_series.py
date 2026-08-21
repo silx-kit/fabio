@@ -139,7 +139,7 @@ def new_file_series(first_object, nimages=0, step=1, traceback=False):
             # Skip bad images
             logger.warning("Got a problem here: next() failed %s", ex)
             if traceback:
-                logger.error("Backtrace", exc_info=True)
+                logger.exception("Backtrace")
             else:
                 logger.debug("Backtrace", exc_info=True)
             # Skip bad images

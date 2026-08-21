@@ -55,7 +55,8 @@ tmp3_d = pyopencl.array.zeros_like(data_d)
 lem_d = pyopencl.array.empty_like(data_d)
 zero_d = pyopencl.array.zeros(queue, shape=1, dtype="int32")
 
-src = open("sandbox/cbf.cl").read()
+with open("sandbox/cbf.cl") as _f:
+    src = _f.read()
 prg = pyopencl.Program(ctx, src).build()
 
 for i in range(11):
