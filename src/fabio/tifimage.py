@@ -180,17 +180,16 @@ class TifImage(fabioimage.FabioImage):
                 logger.debug("Backtrace", exc_info=True)
                 infile.seek(0)
 
-        if self.lib is None:
-            if _USE_PIL and PIL is not None:
-                try:
-                    self._read_with_pil(infile)
-                except Exception as error:
-                    logger.error("Error in opening %s with PIL: %s", fname, error)
-                    logger.debug("Backtrace", exc_info=True)
-                    if infile.closed:
-                        infile = self._open(fname, "rb")
-                    else:
-                        infile.close()
+        if self.lib is None and _USE_PIL and PIL is not None:
+            try:
+                self._read_with_pil(infile)
+            except Exception as error:
+                logger.error("Error in opening %s with PIL: %s", fname, error)
+                logger.debug("Backtrace", exc_info=True)
+                if infile.closed:
+                    infile = self._open(fname, "rb")
+                else:
+                    infile.close()
 
         if self.lib is None:
             logger.error(

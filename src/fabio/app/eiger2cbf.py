@@ -217,9 +217,9 @@ def select_pilatus_detecor(shape):
     }
     best = None
     for k in valid_detectors:
-        if k[0] >= shape[-2] and k[1] >= shape[-1]:
-            if best is None or k[0] < best[0] or k[1] < best[1]:
-                best = k
+        if (k[0] >= shape[-2] and k[1] >= shape[-1]
+                and (best is None or k[0] < best[0] or k[1] < best[1])):
+            best = k
     return best
 
 

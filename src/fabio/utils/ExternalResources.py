@@ -347,9 +347,9 @@ class ExternalResources:
         basefilename = os.path.basename(filename)
         fullfilename = os.path.abspath(os.path.join(self.data_home, basefilename))
 
-        if filename in self.all_data and os.path.isfile(fullfilename):
-            if self.all_data[filename] == self.get_hash(filename):
-                return fullfilename
+        if (filename in self.all_data and os.path.isfile(fullfilename)
+                and self.all_data[filename] == self.get_hash(filename)):
+            return fullfilename
 
         # Else we download them all and decompress/recompress.
         if basefilename.endswith(".bz2"):

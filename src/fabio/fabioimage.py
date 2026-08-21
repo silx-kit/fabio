@@ -190,16 +190,14 @@ class _FabioArray:
 
     def getmax(self):
         """Find max value in self.data, caching for the future"""
-        if self.maxval is None:
-            if self.data is not None:
-                self.maxval = self.data.max()
+        if self.maxval is None and self.data is not None:
+            self.maxval = self.data.max()
         return self.maxval
 
     def getmin(self):
         """Find min value in self.data, caching for the future"""
-        if self.minval is None:
-            if self.data is not None:
-                self.minval = self.data.min()
+        if self.minval is None and self.data is not None:
+            self.minval = self.data.min()
         return self.minval
 
     def make_slice(self, coords):
@@ -743,9 +741,8 @@ class FabioImage(_FabioArray):
         """
         To be overwritten - write the file
         """
-        if isinstance(fname, fabioutils.PathTypes):
-            if not isinstance(fname, fabioutils.StringTypes):
-                fname = str(fname)
+        if isinstance(fname, fabioutils.PathTypes) and not isinstance(fname, fabioutils.StringTypes):
+            fname = str(fname)
         module = sys.modules[self.__class__.__module__]
         raise NotImplementedError(
             f"Writing {module.__name__} format is not implemented"
@@ -760,9 +757,8 @@ class FabioImage(_FabioArray):
         Call the _readheader function...
         """
         # Override the needs asserting that all headers can be read via python modules
-        if isinstance(filename, fabioutils.PathTypes):
-            if not isinstance(filename, fabioutils.StringTypes):
-                filename = str(filename)
+        if isinstance(filename, fabioutils.PathTypes) and not isinstance(filename, fabioutils.StringTypes):
+            filename = str(filename)
         save_state = self._need_a_real_file, self._need_a_seek_to_read
         self._need_a_real_file, self._need_a_seek_to_read = False, False
         fin = self._open(filename)
@@ -800,9 +796,8 @@ class FabioImage(_FabioArray):
         Method reading Region of Interest.
         This implementation is the trivial one, just doing read and crop
         """
-        if isinstance(filename, fabioutils.PathTypes):
-            if not isinstance(filename, fabioutils.StringTypes):
-                filename = str(filename)
+        if isinstance(filename, fabioutils.PathTypes) and not isinstance(filename, fabioutils.StringTypes):
+            filename = str(filename)
         self.read(filename, frame)
         if len(coords) == 4:
             self.slice = self.make_slice(coords)

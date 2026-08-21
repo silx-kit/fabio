@@ -73,11 +73,10 @@ class TestJpegImage(unittest.TestCase):
         filename = os.path.join(TEST_DIRECTORY, "2.jpg")
         filename_source = UtilsTest.getimage("rand_uint8.jpg.bz2")[:-4]
 
-        with open(filename_source, "r+b") as fsource:
-            with open(filename, "w+b") as ftest:
-                ftest.write(fsource.read())
-                ftest.seek(1)
-                ftest.write(b".")
+        with open(filename_source, "r+b") as fsource, open(filename, "w+b") as ftest:
+            ftest.write(fsource.read())
+            ftest.seek(1)
+            ftest.write(b".")
 
         image_format = jpegimage.JpegImage()
         try:

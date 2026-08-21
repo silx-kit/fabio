@@ -206,9 +206,8 @@ def openimage(filename, frame=None):
     :param Union[int,None] frame: A specific frame inside this file.
     :rtype: FabioImage
     """
-    if isinstance(filename, fabioutils.PathTypes):
-        if not isinstance(filename, fabioutils.StringTypes):
-            filename = str(filename)
+    if isinstance(filename, fabioutils.PathTypes) and not isinstance(filename, fabioutils.StringTypes):
+        filename = str(filename)
 
     if isinstance(filename, FilenameObject):
         try:
@@ -245,9 +244,8 @@ def openimage(filename, frame=None):
 
 def openheader(filename):
     """return only the header"""
-    if isinstance(filename, fabioutils.PathTypes):
-        if not isinstance(filename, fabioutils.StringTypes):
-            filename = str(filename)
+    if isinstance(filename, fabioutils.PathTypes) and not isinstance(filename, fabioutils.StringTypes):
+        filename = str(filename)
 
     obj = _openimage(filename)
     obj.readheader(obj.filename)

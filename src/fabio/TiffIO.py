@@ -123,9 +123,8 @@ class TiffIO:
             mode = mode + "b"
         if "a" in mode.lower():
             raise OSError(f"Mode {mode} makes no sense on TIFF files. Consider 'rb+'")
-        if "w" in mode:
-            if "+" not in mode:
-                mode += "+"
+        if "w" in mode and "+" not in mode:
+            mode += "+"
 
         if hasattr(filename, "seek") and hasattr(filename, "read"):
             fd = filename
@@ -807,15 +806,13 @@ class TiffIO:
         if close:
             self.__makeSureFileIsClosed()
 
-        if len(image.shape) == 3:
-            # color image
-            if self._forceMonoOutput:
-                # color image, convert to monochrome
-                image = (
-                    image[:, :, 0] * 0.114
-                    + image[:, :, 1] * 0.587
-                    + image[:, :, 2] * 0.299
-                ).astype(numpy.float32)
+        if len(image.shape) == 3 and self._forceMonoOutput:
+            # color image, convert to monochrome
+            image = (
+                image[:, :, 0] * 0.114
+                + image[:, :, 1] * 0.587
+                + image[:, :, 2] * 0.299
+            ).astype(numpy.float32)
 
         if (rowMin == 0) and (rowMax == (nRows - 1)):
             self._imageDataCacheIndex.insert(0, nImage)
@@ -1304,9 +1301,8 @@ class TiffIO:
         if date is not None:
             outputIFD += datePackedString
 
-        if imageDescription is not None:
-            if descriptionLength > 4:
-                outputIFD += imageDescription
+        if imageDescription is not None and descriptionLength > 4:
+            outputIFD += imageDescription
 
         if stripOffsetsString is not None:
             outputIFD += stripOffsetsString

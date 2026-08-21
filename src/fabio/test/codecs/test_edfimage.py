@@ -148,9 +148,8 @@ class TestBzipEdf(TestFlatEdfs):
         """set it up"""
         TestFlatEdfs.setUp(self)
         if not os.path.isfile(self.filename + ".bz2"):
-            with BZ2File(self.filename + ".bz2", "wb") as f:
-                with open(self.filename, "rb") as d:
-                    f.write(d.read())
+            with BZ2File(self.filename + ".bz2", "wb") as f, open(self.filename, "rb") as d:
+                f.write(d.read())
         self.filename += ".bz2"
 
 
@@ -161,9 +160,8 @@ class TestGzipEdf(TestFlatEdfs):
         """set it up"""
         TestFlatEdfs.setUp(self)
         if not os.path.isfile(self.filename + ".gz"):
-            with GzipFile(self.filename + ".gz", "wb") as f:
-                with open(self.filename, "rb") as d:
-                    f.write(d.read())
+            with GzipFile(self.filename + ".gz", "wb") as f, open(self.filename, "rb") as d:
+                f.write(d.read())
         self.filename += ".gz"
 
 
@@ -624,9 +622,8 @@ class TestBadFiles(unittest.TestCase):
 
     @classmethod
     def copy_base(cls, filename, size):
-        with open(cls.base_filename, "rb") as fd_base:
-            with open(filename, "wb") as fd_result:
-                fd_result.write(fd_base.read(size))
+        with open(cls.base_filename, "rb") as fd_base, open(filename, "wb") as fd_result:
+            fd_result.write(fd_base.read(size))
 
     @classmethod
     def open(cls, filename):

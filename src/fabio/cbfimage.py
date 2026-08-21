@@ -813,10 +813,9 @@ class CIF(dict):
         :rtype: boolean
         """
         bExists = False
-        if sKey in self:
-            if len(self[sKey]) >= 1:
-                if self[sKey][0] not in (self.QUESTIONMARK, self.DOT):
-                    bExists = True
+        if (sKey in self and len(self[sKey]) >= 1
+                and self[sKey][0] not in (self.QUESTIONMARK, self.DOT)):
+            bExists = True
         return bExists
 
     def existsInLoop(self, sKey):

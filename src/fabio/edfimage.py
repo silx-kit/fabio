@@ -403,11 +403,10 @@ class EdfFrame(fabioimage.FabioFrame):
         calcsize = counts * bpp
 
         # only if blobsize is None it can be replaced with calcsize
-        if self.blobsize is None:
-            if self._data_compression is None:
-                # In some edf files the blobsize is not written.
-                # For uncompressed data it can be set to the calculated size.
-                self.blobsize = calcsize
+        if self.blobsize is None and self._data_compression is None:
+            # In some edf files the blobsize is not written.
+            # For uncompressed data it can be set to the calculated size.
+            self.blobsize = calcsize
 
         infile = self.file.name
         dirname = os.path.dirname(infile)
@@ -491,11 +490,12 @@ class EdfFrame(fabioimage.FabioFrame):
             for key in defaultheader:
                 # exceptions
                 # EDF_*, Size, Image, HeaderID
-                if (key[0:4] != "EDF_") and (
-                    key.upper() not in ["SIZE", "IMAGE", "HEADERID"]
+                if (
+                    (key[0:4] != "EDF_")
+                    and (key.upper() not in ["SIZE", "IMAGE", "HEADERID"])
+                    and key not in self.header
                 ):
-                    if key not in self.header:
-                        self.header[key] = defaultheader[key]
+                    self.header[key] = defaultheader[key]
 
         for key in self.header:
             capsHeader[key.upper()] = key
@@ -555,11 +555,10 @@ class EdfFrame(fabioimage.FabioFrame):
                         try:
                             fileData = self.file.read(self.blobsize)
                         except Exception as e:
-                            if isinstance(self.file, fabioutils.GzipFile):
-                                if compression_module.is_incomplete_gz_block_exception(
-                                    e
-                                ):
-                                    return numpy.zeros(shape)
+                            if isinstance(
+                                self.file, fabioutils.GzipFile
+                            ) and compression_module.is_incomplete_gz_block_exception(e):
+                                return numpy.zeros(shape)
                             raise
 
             else:
@@ -962,11 +961,12 @@ class EdfImage(fabioimage.FabioImage):
         try:
             block = infile.read(BLOCKSIZE)
         except Exception as e:
-            if isinstance(infile, fabioutils.GzipFile):
-                if compression_module.is_incomplete_gz_block_exception(e):
-                    raise MalformedHeaderError(
-                        "Incomplete GZ block for header frame %i", frame_id
-                    )
+            if isinstance(
+                infile, fabioutils.GzipFile
+            ) and compression_module.is_incomplete_gz_block_exception(e):
+                raise MalformedHeaderError(
+                    "Incomplete GZ block for header frame %i", frame_id
+                )
             raise
 
         if len(block) == 0:
@@ -1007,21 +1007,20 @@ class EdfImage(fabioimage.FabioImage):
             # Check that EDF_HeaderSize starts inside this header
             end_pattern = re.compile(b"}(\r{0,1})\n")
             end = end_pattern.search(block)
-            if end is not None:
-                if start < end.start():
-                    equal = block.index(b"=", start + len(b"EDF_HeaderSize"))
-                    end = block.index(b";", equal + 1)
-                    try:
-                        chunk = block[equal + 1 : end].strip()
-                        max_header_size = int(chunk)
-                    except Exception:
-                        logger.warning("Unable to read header size, got: %s", chunk)
-                    else:
-                        if max_header_size > MAX_HEADER_SIZE:
-                            logger.info(
-                                "Redefining MAX_HEADER_SIZE to %s", max_header_size
-                            )
-                            MAX_HEADER_SIZE = max_header_size
+            if end is not None and start < end.start():
+                equal = block.index(b"=", start + len(b"EDF_HeaderSize"))
+                end = block.index(b";", equal + 1)
+                try:
+                    chunk = block[equal + 1 : end].strip()
+                    max_header_size = int(chunk)
+                except Exception:
+                    logger.warning("Unable to read header size, got: %s", chunk)
+                else:
+                    if max_header_size > MAX_HEADER_SIZE:
+                        logger.info(
+                            "Redefining MAX_HEADER_SIZE to %s", max_header_size
+                        )
+                        MAX_HEADER_SIZE = max_header_size
 
         # All other EDF_ keys should be read from the header dictionary. Then
         # there is no danger of reading behind the end of the header.
@@ -1073,12 +1072,11 @@ class EdfImage(fabioimage.FabioImage):
                     start_blob = block_size + 2
                     offset = start_blob - block_size - len(nextblock)
                     break
-            elif block[-2:] == b"}\r":
-                if nextblock[:1] == b"\n":
-                    end_block = block_size - 1
-                    start_blob = block_size + 1
-                    offset = start_blob - block_size - len(nextblock)
-                    break
+            elif block[-2:] == b"}\r" and nextblock[:1] == b"\n":
+                end_block = block_size - 1
+                start_blob = block_size + 1
+                offset = start_blob - block_size - len(nextblock)
+                break
 
             block = nextblock
 
@@ -1205,10 +1203,9 @@ class EdfImage(fabioimage.FabioImage):
             frame._index = len(self._frames)
 
             defaultheader = None
-            if not is_general_header:
+            if not is_general_header and self.generalframe is not None:
                 # This is not a general block, include a general header
-                if self.generalframe is not None:
-                    defaultheader = self.generalframe._header
+                defaultheader = self.generalframe._header
 
             capsHeader = frame._create_header(value.header, defaultheader)
 
@@ -1257,11 +1254,12 @@ class EdfImage(fabioimage.FabioImage):
                     # Out of the file
                     break
             except Exception as error:
-                if isinstance(infile, fabioutils.GzipFile):
-                    if compression_module.is_incomplete_gz_block_exception(error):
-                        self._incomplete_file = True
-                        frame.incomplete_data = True
-                        break
+                if isinstance(
+                    infile, fabioutils.GzipFile
+                ) and compression_module.is_incomplete_gz_block_exception(error):
+                    self._incomplete_file = True
+                    frame.incomplete_data = True
+                    break
                 logger.warning("infile is %s", infile)
                 logger.warning("position is %s", infile.tell())
                 logger.warning("blobsize is %s", frame.blobsize)
@@ -1793,10 +1791,9 @@ class EdfImage(fabioimage.FabioImage):
             frame._set_file_container(edf, index)
 
             defaultheader = None
-            if not is_general_header:
+            if not is_general_header and edf.generalframe is not None:
                 # This is a standard block, use the general header as default
-                if edf.generalframe is not None:
-                    defaultheader = edf.generalframe._header
+                defaultheader = edf.generalframe._header
 
             capsHeader = frame._create_header(value.header, defaultheader)
 
@@ -1827,10 +1824,11 @@ class EdfImage(fabioimage.FabioImage):
                     # read data
                     frame._unpack()
                 except Exception as error:
-                    if isinstance(infile, fabioutils.GzipFile):
-                        if compression_module.is_incomplete_gz_block_exception(error):
-                            frame.incomplete_data = True
-                            break
+                    if isinstance(
+                        infile, fabioutils.GzipFile
+                    ) and compression_module.is_incomplete_gz_block_exception(error):
+                        frame.incomplete_data = True
+                        break
                     logger.warning("infile is %s", infile)
                     logger.warning("position is %s", infile.tell())
                     logger.warning("blobsize is %s", blobsize)

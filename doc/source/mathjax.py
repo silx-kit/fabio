@@ -34,11 +34,10 @@ def html_visit_displaymath(self, node):
     parts = [prt for prt in node['latex'].split('\n\n') if prt.strip()]
     for i, part in enumerate(parts):
         part = self.encode(part)
-        if i == 0:
+        if i == 0 and node['number']:
             # necessary to e.g. set the id property correctly
-            if node['number']:
-                number = node['number']
-                self.body.append(f'<span class="eqno">({number})</span>')
+            number = node['number']
+            self.body.append(f'<span class="eqno">({number})</span>')
         if '&' in part or '\\\\' in part:
             self.body.append(self.builder.config.mathjax_display[0] +
                              '\\begin{split}' + part + '\\end{split}' +

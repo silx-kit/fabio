@@ -118,9 +118,8 @@ class TestBzipBruker(TestBruker):
         TestBruker.setUp(self)
         if os.path.isfile(self.filename + ".bz2"):
             os.unlink(self.filename + ".bz2")
-        with fabioutils.BZ2File(self.filename + ".bz2", "wb") as wf:
-            with open(self.filename, "rb") as rf:
-                wf.write(rf.read())
+        with fabioutils.BZ2File(self.filename + ".bz2", "wb") as wf, open(self.filename, "rb") as rf:
+            wf.write(rf.read())
         self.filename = self.filename + ".bz2"
 
 
@@ -132,9 +131,8 @@ class TestGzipBruker(TestBruker):
         TestBruker.setUp(self)
         if os.path.isfile(self.filename + ".gz"):
             os.unlink(self.filename + ".gz")
-        with fabioutils.GzipFile(self.filename + ".gz", "wb") as wf:
-            with open(self.filename, "rb") as rf:
-                wf.write(rf.read())
+        with fabioutils.GzipFile(self.filename + ".gz", "wb") as wf, open(self.filename, "rb") as rf:
+            wf.write(rf.read())
         self.filename = self.filename + ".gz"
 
 
