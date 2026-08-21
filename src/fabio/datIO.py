@@ -83,7 +83,7 @@ class columnfile(fabiodata):
         from .ext import cf_io
 
         try:
-            infile = open(fname, "rb")
+            infile = open(fname, "rb")  # noqa: SIM115
         except Exception:
             logger.debug("Backtrace", exc_info=True)
             raise Exception("columnfile: file" + str(fname) + "not found.")

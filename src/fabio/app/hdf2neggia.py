@@ -112,7 +112,7 @@ class XDSbuilder:
             return 1
         try:
             self.poni = load(self.options.geometry)
-        except Exception as err:
+        except Exception:
             logger.error("Unable to parse PONI-file: %s", self.options.geometry)
             raise
 

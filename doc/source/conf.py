@@ -42,7 +42,7 @@ except ImportError:
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 try:
     import sphinx.ext.mathjax
-except:
+except ImportError:
     print("Not using math extension for sphinx")
     sys.path.append(os.path.dirname(os.path.abspath(__file__)))
     import mathjax

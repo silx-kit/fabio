@@ -218,7 +218,7 @@ class _FabioArray:
             # a matrix is given as row,col
             # also the (for whichever reason) the image is flipped upside
             # down wrt to the matrix hence these tranformations
-            dim2, dim1 = self.data.shape
+            dim2, _dim1 = self.data.shape
             # FIXME: This code is just not working dim2 is used in place of dim1
             fixme = (dim2 - coords[3] - 1, coords[0], dim2 - coords[1] - 1, coords[2])
         return (

@@ -68,7 +68,7 @@ class TestKcd(unittest.TestCase):
         for ext in ["", ".gz", ".bz2"]:
             try:
                 obj = openimage(self.fn[self.kcdfilename] + ext)
-            except Exception as err:
+            except Exception:
                 logger.error("unable to read: %s", self.fn[self.kcdfilename] + ext)
                 raise
             self.assertAlmostEqual(mini, obj.getmin(), 4, "getmin" + ext)

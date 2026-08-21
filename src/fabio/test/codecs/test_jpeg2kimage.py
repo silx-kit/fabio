@@ -68,9 +68,7 @@ def isGlymurUsable():
         return None
     import glymur
 
-    if tuple(glymur.version.openjpeg_version_tuple) < (1, 5, 0):
-        return False
-    return True
+    return tuple(glymur.version.openjpeg_version_tuple) >= (1, 5, 0)
 
 
 class TestJpeg2KImage(unittest.TestCase):

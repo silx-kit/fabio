@@ -8,7 +8,7 @@ print(f"       maxsize: {sys.maxsize}\t maxunicode: {sys.maxunicode}")
 print(sys.version)
 try:
     from distutils.sysconfig import get_config_vars
-except:
+except ImportError:
     from sysconfig import get_config_vars
 print("Config "+" ".join(get_config_vars("CONFIG_ARGS")))
 print()

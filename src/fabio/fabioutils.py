@@ -280,7 +280,7 @@ def numstem(name):
         # return [ r[::-1] for r in res[::-1]]
         if len(res[0]) == len(res[1]) == 0:  # Hack for file without number
             return [res[2], "", ""]
-        return [r for r in res]
+        return list(res)
     except AttributeError:  # no digits found
         return [name, "", ""]
 

@@ -77,11 +77,10 @@ class TestFlatEdfs(unittest.TestCase):
         self.common_setup()
         self.filename = os.path.join(UtilsTest.tempdir, "im0000.edf")
         if not os.path.isfile(self.filename):
-            outf = open(self.filename, "wb")
             assert len(self.MYHEADER) % 1024 == 0
-            outf.write(self.MYHEADER)
-            outf.write(self.MYIMAGE.tobytes())
-            outf.close()
+            with open(self.filename, "wb") as outf:
+                outf.write(self.MYHEADER)
+                outf.write(self.MYIMAGE.tobytes())
 
         obj = edfimage()
         obj.read(self.filename)

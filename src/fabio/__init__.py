@@ -58,7 +58,7 @@ from .openimage import open_series as open_series
 from .openimage import openheader as openheader
 from .openimage import openimage as open  # noqa
 from .version import __date__ as date  # noqa
-from .version import hexversion, strictversion, version, version_info
+from .version import hexversion, strictversion, version, version_info  # noqa
 
 if "ps1" in dir(sys):
     # configure logging with interactive console

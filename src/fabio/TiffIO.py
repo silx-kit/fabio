@@ -588,10 +588,7 @@ class TiffIO:
 
     def _readImage(self, nImage, **kw):
         logger.debug("Reading image %d", nImage)
-        if "close" in kw:
-            close = kw["close"]
-        else:
-            close = True
+        close = kw.get("close", True)
         rowMin = kw.get("rowMin", None)
         rowMax = kw.get("rowMax", None)
         if nImage in self._imageDataCacheIndex:

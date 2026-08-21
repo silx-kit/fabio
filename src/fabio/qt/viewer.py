@@ -279,7 +279,6 @@ class AppForm(qt.QMainWindow):
             imgDict = {}
             base_name = os.path.basename(os.path.splitext(fname)[0])
             self.images_list.clear()
-            safeiid = 0
             for iid in range(total):
                 self.progressBar.setValue(int((iid + 1) / total * 100.0))
                 self.log.appendPlainText(
@@ -290,9 +289,8 @@ class AppForm(qt.QMainWindow):
                 self.header_series.append(
                     {"Info": "No header information available in hdf5 Archive"}
                 )
-                imgDict[f"{base_name}{iid}"] = safeiid
+                imgDict[f"{base_name}{iid}"] = iid
                 self.images_list.addItem(f"{base_name}{iid}")
-                safeiid += 1
         self.statusBar().clearMessage()
         self.progressBar.setValue(0)
         self.log.appendPlainText("Hdf5 Extraction: Complete")
