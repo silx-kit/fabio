@@ -35,7 +35,7 @@ stack of frames in Eiger, Lima ... images.
 __author__ = "Jéröme Kieffer"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __licence__ = "MIT"
-__date__ = "27/10/2025"
+__date__ = "21/08/2026"
 __status__ = "production"
 
 
@@ -345,7 +345,7 @@ class Converter:
 def main():
     args = parse_args()
     if args == EXIT_ARGUMENT_FAILURE:
-        raise
+        raise RuntimeError("Error parsing CLI arguments")
     try:
         c = Converter(args)
         c.decompress()
