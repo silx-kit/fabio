@@ -36,13 +36,14 @@ import numpy
 import fabio.esperantoimage
 
 from ..utilstest import UtilsTest
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
 
 class TestEsperanto(unittest.TestCase):
     # filename dim1 dim2 min max mean stddev
-    TESTIMAGES = [
+    TESTIMAGES: ClassVar[list] = [
         (
             "sucrose_1s__1_1.esperanto.bz2",
             2048,

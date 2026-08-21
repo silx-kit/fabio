@@ -52,6 +52,7 @@ from .fabioimage import FabioImage
 from .fabioutils import FilenameObject, next_filename
 from .openimage import openimage
 from .utils import deprecation
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
@@ -537,7 +538,7 @@ class FileSeries(FabioImage):
         serie = FileSeries(filenames=filenames, fixed_frame_number=100)
     """
 
-    DEFAULT_EXTENSIONS = []
+    DEFAULT_EXTENSIONS: ClassVar[list] = []
 
     def __init__(
         self, filenames, single_frame=None, fixed_frames=None, fixed_frame_number=None

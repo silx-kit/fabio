@@ -49,6 +49,7 @@ import logging
 import numpy
 
 from .fabioimage import FabioImage
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
@@ -66,7 +67,7 @@ class BinaryImage(FabioImage):
 
     DESCRIPTION = "Binary format (none-compressed 2D images)"
 
-    DEFAULT_EXTENSIONS = ["bin"]
+    DEFAULT_EXTENSIONS: ClassVar[list] = ["bin"]
 
     def __init__(self, *args, **kwargs):
         FabioImage.__init__(self, *args, **kwargs)

@@ -39,6 +39,7 @@ import logging
 import numpy
 
 from .fabioimage import FabioImage, OrderedDict
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
@@ -62,7 +63,7 @@ class Fit2dImage(FabioImage):
 
     DESCRIPTION = "Fit2d file format"
 
-    DEFAULT_EXTENSIONS = ["f2d"]
+    DEFAULT_EXTENSIONS: ClassVar[list] = ["f2d"]
 
     BUFFER_SIZE = 512  # size of the buffer
     PIXELS_PER_CHUNK = 128

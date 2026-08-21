@@ -43,6 +43,7 @@ import numpy
 from . import nexus
 from .fabioimage import FabioImage
 from .fabioutils import NotGoodReader
+from typing import ClassVar
 
 try:
     import h5py
@@ -64,7 +65,7 @@ class LambdaImage(FabioImage):
 
     DESCRIPTION = "HDF5 file produces by Lambda"
 
-    DEFAULT_EXTENSIONS = ["h5", "hdf5", "nxs"]
+    DEFAULT_EXTENSIONS: ClassVar[list] = ["h5", "hdf5", "nxs"]
     DETECTOR_GRP = "/entry/instrument/detector"
 
     def __init__(self, data=None, header=None):

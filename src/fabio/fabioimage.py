@@ -55,6 +55,7 @@ from . import converters, fabioutils
 from .compression import COMPRESSORS
 from .fabioutils import ENDIANNESS, OrderedDict
 from .utils import deprecation, pilutils
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
@@ -455,7 +456,7 @@ class FabioImage(_FabioArray):
     _need_a_seek_to_read = False
     _need_a_real_file = False
 
-    RESERVED_HEADER_KEYS = []
+    RESERVED_HEADER_KEYS: ClassVar[list] = []
     # List of header keys which are reserved by the file format
 
     @classmethod

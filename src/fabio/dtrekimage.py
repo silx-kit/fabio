@@ -44,6 +44,7 @@ import numpy
 
 from .fabioimage import FabioImage
 from .fabioutils import ENDIANNESS
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
@@ -76,7 +77,7 @@ class DtrekImage(FabioImage):
 
     DESCRIPTION = "D*trek format (Rigaku specification 1.1)"
 
-    DEFAULT_EXTENSIONS = ["img"]
+    DEFAULT_EXTENSIONS: ClassVar[list] = ["img"]
 
     _keyvalue_pattern = None
 

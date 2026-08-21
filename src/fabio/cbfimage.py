@@ -43,7 +43,7 @@ __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 import logging
 import os
 from collections import OrderedDict
-from typing import NamedTuple
+from typing import ClassVar, NamedTuple
 
 import numpy
 
@@ -85,7 +85,7 @@ class CbfImage(FabioImage):
 
     DESCRIPTION = "Cif Binary Files format (used by the Pilatus detectors and others)"
 
-    DEFAULT_EXTENSIONS = ["cbf"]
+    DEFAULT_EXTENSIONS: ClassVar[list] = ["cbf"]
 
     STARTER = b"\x0c\x1a\x04\xd5"
     PADDING = 512
@@ -388,8 +388,8 @@ class CIF(dict):
     values are bytes
     """
 
-    EOL = [numpy.bytes_(i) for i in ("\r", "\n", "\r\n", "\n\r")]
-    BLANK = [numpy.bytes_(i) for i in (" ", "\t")] + EOL
+    EOL: ClassVar[list] = [numpy.bytes_(i) for i in ("\r", "\n", "\r\n", "\n\r")]
+    BLANK: ClassVar[list] = [numpy.bytes_(i) for i in (" ", "\t")] + EOL
     SINGLE_QUOTE = numpy.bytes_("'")
     DOUBLE_QUOTE = numpy.bytes_('"')
     SEMICOLUMN = numpy.bytes_(";")
@@ -913,13 +913,13 @@ cbfimage = CbfImage
 class PilatusKey(NamedTuple):
     keyword: str
     key_index: int = 0
-    value_indices: list = [1]
-    types: list = [str]
+    value_indices: tuple = (1,)
+    types: tuple = (str,)
     repr: str = "{}"
 
 
 class PilatusHeader:
-    KEYWORDS = OrderedDict()
+    KEYWORDS: ClassVar[OrderedDict] = OrderedDict()
     KEYWORDS["Detector"] = PilatusKey(
         "Detector", 0, slice(1, None), str, "Detector: {}"
     )

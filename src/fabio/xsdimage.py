@@ -42,6 +42,7 @@ import logging
 import numpy
 
 from .fabioimage import FabioImage
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
@@ -65,7 +66,7 @@ class XsdImage(FabioImage):
 
     DESCRIPTION = "XSDataImage XML file format"
 
-    DEFAULT_EXTENSIONS = ["xml", "xsd"]
+    DEFAULT_EXTENSIONS: ClassVar[list] = ["xml", "xsd"]
 
     def __init__(self, data=None, header=None, fname=None):
         """

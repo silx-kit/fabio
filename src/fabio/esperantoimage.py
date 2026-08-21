@@ -37,6 +37,7 @@ import numpy
 
 from .compression import agi_bitfield
 from .fabioimage import FabioImage
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
@@ -45,7 +46,7 @@ class EsperantoImage(FabioImage):
     """FabIO image class for Esperanto image files"""
 
     DESCRIPTION = "CrysAlis Pro Esperanto file format"
-    DEFAULT_EXTENSIONS = ["eseperanto", "esper"]
+    DEFAULT_EXTENSIONS: ClassVar[list] = ["eseperanto", "esper"]
     HEADER_SEPARATOR = "\x0d\x0a"
     HEADER_END = b"\x0d\x1a"
     HEADER_LINES = 25
@@ -53,7 +54,7 @@ class EsperantoImage(FabioImage):
     VALID_FORMATS = ("AGI_BITFIELD", "4BYTE_LONG")
     DUMMY = 0  # Value to fill empty regions with when padding
 
-    HEADER_KEYS = OrderedDict(
+    HEADER_KEYS: ClassVar[OrderedDict] = OrderedDict(
         [
             ("IMAGE", "lnx lny lbx lby spixelformat"),
             (

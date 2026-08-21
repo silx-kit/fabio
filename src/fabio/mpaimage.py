@@ -38,6 +38,7 @@ import logging
 import numpy
 
 from .fabioimage import FabioImage, OrderedDict
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
@@ -49,7 +50,7 @@ class MpaImage(FabioImage):
 
     DESCRIPTION = "multiwire data files"
 
-    DEFAULT_EXTENSIONS = ["mpa"]
+    DEFAULT_EXTENSIONS: ClassVar[list] = ["mpa"]
 
     def _readheader(self, infile):
         """

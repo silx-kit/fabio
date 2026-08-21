@@ -41,6 +41,7 @@ except ImportError:
     Image = None
 from .fabioimage import FabioImage
 from .utils import pilutils
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
@@ -74,7 +75,7 @@ class JpegImage(FabioImage):
 
     DESCRIPTION = "JPEG format"
 
-    DEFAULT_EXTENSIONS = ["jpg", "jpeg"]
+    DEFAULT_EXTENSIONS: ClassVar[list] = ["jpg", "jpeg"]
 
     RESERVED_HEADER_KEYS = JPEG_RESERVED_HEADER_KEYS
 

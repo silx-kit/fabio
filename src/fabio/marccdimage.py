@@ -51,6 +51,7 @@ import logging
 import struct
 
 from .tifimage import TifImage
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
@@ -311,7 +312,7 @@ class MarccdImage(TifImage):
 
     DESCRIPTION = "File format from MarCCD and MarMosaic images"
 
-    DEFAULT_EXTENSIONS = ["mccd"]
+    DEFAULT_EXTENSIONS: ClassVar[list] = ["mccd"]
 
     def _readheader(self, infile):
         """

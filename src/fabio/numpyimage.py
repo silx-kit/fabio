@@ -36,6 +36,7 @@ import logging
 import numpy
 
 from . import fabioimage
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
@@ -106,7 +107,7 @@ class NumpyImage(fabioimage.FabioImage):
 
     DESCRIPTION = "Numpy array file format"
 
-    DEFAULT_EXTENSIONS = ["npy"]
+    DEFAULT_EXTENSIONS: ClassVar[list] = ["npy"]
 
     def __init__(self, data=None, header=None):
         """

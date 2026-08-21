@@ -48,6 +48,7 @@ import posixpath
 
 from . import fabioimage
 from .fabioutils import next_filename, previous_filename
+from typing import ClassVar
 
 try:
     import h5py
@@ -82,7 +83,7 @@ class Hdf5Image(fabioimage.FabioImage):
 
     DESCRIPTION = "Hierarchical Data Format HDF5 flat reader"
 
-    DEFAULT_EXTENSIONS = ["h5"]
+    DEFAULT_EXTENSIONS: ClassVar[list] = ["h5"]
 
     def __init__(self, *arg, **kwargs):
         """

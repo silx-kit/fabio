@@ -64,6 +64,7 @@ from . import fabioimage, fabioutils
 from .compression import decBzip2, decGzip, decZlib
 from .fabioutils import ENDIANNESS, OrderedDict, isAscii, nice_int, toAscii
 from .utils import deprecation
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
@@ -833,9 +834,9 @@ class EdfImage(fabioimage.FabioImage):
 
     DESCRIPTION = "European Synchrotron Radiation Facility data format"
 
-    DEFAULT_EXTENSIONS = ["edf", "cor"]
+    DEFAULT_EXTENSIONS: ClassVar[list] = ["edf", "cor"]
 
-    RESERVED_HEADER_KEYS = [
+    RESERVED_HEADER_KEYS: ClassVar[list] = [
         "HEADERID",
         "IMAGE",
         "BYTEORDER",

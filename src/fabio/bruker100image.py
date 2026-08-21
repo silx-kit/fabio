@@ -61,6 +61,7 @@ import numpy
 
 from .brukerimage import BrukerImage
 from .fabioutils import StringTypes, pad
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
@@ -164,9 +165,9 @@ def _merge_data(data, baseline=0, underflow=None, overflow1=None, overflow2=None
 class Bruker100Image(BrukerImage):
     DESCRIPTION = "SFRM File format used by Bruker detectors (version 100)"
 
-    DEFAULT_EXTENSIONS = ["sfrm"]
+    DEFAULT_EXTENSIONS: ClassVar[list] = ["sfrm"]
 
-    bpp_to_numpy = {1: numpy.uint8, 2: numpy.uint16, 4: numpy.int32}
+    bpp_to_numpy: ClassVar[dict] = {1: numpy.uint8, 2: numpy.uint16, 4: numpy.int32}
     version = 100
 
     def __init__(self, data=None, header=None):

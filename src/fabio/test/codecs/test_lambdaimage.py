@@ -37,13 +37,14 @@ import fabio.lambdaimage
 from fabio.openimage import openimage
 
 from ..utilstest import UtilsTest
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
 
 class TestLambda(unittest.TestCase):
     # filename dim1 dim2 min max mean stddev
-    TESTIMAGES = [
+    TESTIMAGES: ClassVar[list] = [
         ("l1_test02_00002_m01.nxs", 1554, 516, 0, 548, 0.00, 0.81024),  # WIP
         ("l1_test02_00002_m02.nxs", 1554, 516, 0, 0, 0.0, 0.0),  # WIP
         ("l1_test02_00002_m03.nxs", 1554, 516, 0, 45, 0.00, 0.0534),  # WIP

@@ -33,6 +33,7 @@ import unittest
 import fabio
 
 from ..utilstest import UtilsTest
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
@@ -42,7 +43,7 @@ class TestMpa(unittest.TestCase):
     Test classe for multiwire (mpa) images
     """
 
-    TESTIMAGES = [
+    TESTIMAGES: ClassVar[list] = [
         # filename dim1 dim2 min max mean stddev
         ("mpa_test.mpa", 1024, 1024, 0, 1295, 0.8590, 18.9393),
     ]

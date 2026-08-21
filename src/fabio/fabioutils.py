@@ -59,6 +59,7 @@ except ImportError:
         pathlib = None
 from io import BytesIO as _BytesIO
 from io import FileIO
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 StringTypes = (str, bytes)
@@ -684,7 +685,7 @@ class DebugSemaphore(threading.Semaphore):
     """
 
     write_lock = threading.Semaphore()
-    blocked = []
+    blocked: ClassVar[list] = []
 
     def __init__(self, *arg, **kwarg):
         threading.Semaphore.__init__(self, *arg, **kwarg)

@@ -45,6 +45,7 @@ from ...edfimage import edfimage
 from ...fabioutils import BZ2File, GzipFile
 from ..testutils import LoggingValidator
 from ..utilstest import UtilsTest
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
@@ -780,7 +781,7 @@ class TestSphere2SaxsSamples(unittest.TestCase):
         unittest.TestCase.setUp(self)
         self.samples = UtilsTest.resources.getdir("sphere2saxs_output.tar.bz2")
 
-    SAMPLES = {
+    SAMPLES: ClassVar[dict] = {
         "multi.edf": (
             5,
             (200, 100),

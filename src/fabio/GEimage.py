@@ -46,6 +46,7 @@ from .edfimage import EdfImage
 from .fabioimage import FabioImage
 from .fabioutils import next_filename, previous_filename
 from .openimage import MAGIC_NUMBERS
+from typing import ClassVar
 
 EDF_MAGIC_NUMBERS = [(x, y) for x, y in MAGIC_NUMBERS if y == "edf"]
 
@@ -214,17 +215,17 @@ class GeImage(FabioImage):
 
     DESCRIPTION = "GE a-Si Angio detector file format"
 
-    DEFAULT_EXTENSIONS = []
+    DEFAULT_EXTENSIONS: ClassVar[list] = []
 
     _need_a_seek_to_read = True
 
-    BITDEPTH_TO_DATATYPES = {
+    BITDEPTH_TO_DATATYPES: ClassVar[dict] = {
         8: numpy.uint8,
         16: numpy.uint16,
         32: numpy.uint32,
     }
 
-    BLANKED_HEADER_METADATA = {
+    BLANKED_HEADER_METADATA: ClassVar[dict] = {
         "StandardHeaderSizeInBytes": 8192,
         "UserHeaderSizeInBytes": 0,
         "NumberOfRowsInFrame": 2048,

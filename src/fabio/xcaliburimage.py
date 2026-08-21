@@ -45,6 +45,7 @@ from enum import Enum
 import numpy
 
 from .fabioimage import FabioImage
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
@@ -1032,7 +1033,7 @@ class XcaliburImage(FabioImage):
 
     DESCRIPTION = "Xcalibur binary struct of masked pixels"
 
-    DEFAULT_EXTENSIONS = []
+    DEFAULT_EXTENSIONS: ClassVar[list] = []
 
     def __init__(self, *arg, **kwargs):
         """ """

@@ -53,6 +53,7 @@ import numpy
 
 from . import TiffIO, fabioimage
 from .utils import pilutils
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
@@ -86,7 +87,7 @@ class TifImage(fabioimage.FabioImage):
 
     DESCRIPTION = "Tagged image file format"
 
-    DEFAULT_EXTENSIONS = ["tif", "tiff"]
+    DEFAULT_EXTENSIONS: ClassVar[list] = ["tif", "tiff"]
 
     _need_a_seek_to_read = True
 

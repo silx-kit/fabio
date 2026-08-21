@@ -33,13 +33,14 @@ import unittest
 import fabio
 
 from ..utilstest import UtilsTest
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
 
 class TestPilatus(unittest.TestCase):
     # filename dim1 dim2 min max mean stddev
-    TESTIMAGES = [
+    TESTIMAGES: ClassVar[list] = [
         ("lysb_5mg-1.90s_SAXS.bz2", 487, 619, 0, 1300, 29.4260, 17.7367),
         ("lysb_5mg-1.90s_SAXS.gz", 487, 619, 0, 1300, 29.4260, 17.7367),
         ("lysb_5mg-1.90s_SAXS", 487, 619, 0, 1300, 29.4260, 17.7367),
@@ -131,7 +132,7 @@ class TestPilatus(unittest.TestCase):
 
 class TestPilatus1M(unittest.TestCase):
     # filename dim1 dim2 min max mean stddev
-    TESTIMAGES = [
+    TESTIMAGES: ClassVar[list] = [
         ("Pilatus1M.tif.bz2", 981, 1043),
         ("Pilatus1M.tif", 981, 1043),
     ]

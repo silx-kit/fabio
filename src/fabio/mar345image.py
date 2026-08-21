@@ -62,6 +62,7 @@ import fabio
 from .compression import compPCK, decPCK
 from .fabioimage import FabioImage
 from .fabioutils import ENDIANNESS
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
@@ -71,7 +72,7 @@ class Mar345Image(FabioImage):
 
     DESCRIPTION = "File format from Mar345 imaging plate and Mar555 flat panel"
 
-    DEFAULT_EXTENSIONS = [
+    DEFAULT_EXTENSIONS: ClassVar[list] = [
         "mar2300",
         "mar1200",
         "mar1600",

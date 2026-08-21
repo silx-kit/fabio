@@ -54,6 +54,7 @@ import numpy
 from .fabioimage import FabioImage
 from .fabioutils import NotGoodReader
 from .nexus import Nexus
+from typing import ClassVar
 
 try:
     import h5py
@@ -73,7 +74,7 @@ class EigerImage(FabioImage):
 
     DESCRIPTION = "Eiger data files based on HDF5"
 
-    DEFAULT_EXTENSIONS = ["h5", "hdf5"]
+    DEFAULT_EXTENSIONS: ClassVar[list] = ["h5", "hdf5"]
 
     def __init__(self, data=None, header=None):
         """

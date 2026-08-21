@@ -41,6 +41,7 @@ import string
 import numpy
 
 from .fabioimage import FabioImage
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
@@ -70,7 +71,7 @@ class KcdImage(FabioImage):
 
     DESCRIPTION = "KCD file format from Nonius's KappaCCD diffractometer"
 
-    DEFAULT_EXTENSIONS = ["kcd"]
+    DEFAULT_EXTENSIONS: ClassVar[list] = ["kcd"]
 
     def _readheader(self, infile):
         """

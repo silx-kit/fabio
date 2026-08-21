@@ -33,6 +33,7 @@ import logging
 import re
 
 from . import tifimage
+from typing import ClassVar
 
 _logger = logging.getLogger(__name__)
 
@@ -53,7 +54,7 @@ class PilatusImage(tifimage.TifImage):
 
     DESCRIPTION = "Pilatus file format based on Tiff"
 
-    DEFAULT_EXTENSIONS = ["tif", "tiff"]
+    DEFAULT_EXTENSIONS: ClassVar[list] = ["tif", "tiff"]
 
     _keyvalue_spliter = re.compile(r"\s*[,:=\s]\s*")
     """It allow to split the first white space, colon, comma, or equal

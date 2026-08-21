@@ -48,6 +48,7 @@ import numpy
 
 from .fabioimage import FabioImage
 from .fabioutils import OrderedDict
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
@@ -186,7 +187,7 @@ class RaxisImage(FabioImage):
 
     DESCRIPTION = "Rigaku RAXIS file format"
 
-    DEFAULT_EXTENSIONS = ["img"]
+    DEFAULT_EXTENSIONS: ClassVar[list] = ["img"]
 
     def __init__(self, *arg, **kwargs):
         """

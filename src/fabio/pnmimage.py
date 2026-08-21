@@ -53,6 +53,7 @@ import logging
 import numpy
 
 from .fabioimage import FabioImage
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 SUBFORMATS = (b"P1", b"P2", b"P3", b"P4", b"P5", b"P6", b"P7")
@@ -63,7 +64,7 @@ P7HEADERITEMS = (b"WIDTH", b"HEIGHT", b"DEPTH", b"MAXVAL", b"TUPLTYPE", b"ENDHDR
 class PnmImage(FabioImage):
     DESCRIPTION = "PNM file format"
 
-    DEFAULT_EXTENSIONS = ["pnm", "pgm", "pbm"]
+    DEFAULT_EXTENSIONS: ClassVar[list] = ["pnm", "pgm", "pbm"]
 
     def __init__(self, *arg, **kwargs):
         FabioImage.__init__(self, *arg, **kwargs)

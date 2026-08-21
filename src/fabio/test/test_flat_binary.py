@@ -38,12 +38,13 @@ import unittest
 import fabio
 
 from .utilstest import UtilsTest
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
 
 class TestFlatBinary(unittest.TestCase):
-    filenames = [
+    filenames: ClassVar[list] = [
         os.path.join(UtilsTest.tempdir, i)
         for i in (
             "not.a.file",

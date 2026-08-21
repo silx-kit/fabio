@@ -43,6 +43,7 @@ import numpy
 
 from .fabioimage import FabioImage
 from .fabioutils import ENDIANNESS
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
@@ -85,7 +86,7 @@ class Dm3Image(FabioImage):
 
     DESCRIPTION = "Digital Micrograph DM3 file format"
 
-    DEFAULT_EXTENSIONS = ["dm3"]
+    DEFAULT_EXTENSIONS: ClassVar[list] = ["dm3"]
 
     def __init__(self, *args, **kwargs):
         FabioImage.__init__(self, *args, **kwargs)

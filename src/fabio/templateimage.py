@@ -79,6 +79,7 @@ import logging
 import numpy
 
 from .fabioimage import FabioImage
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
@@ -91,7 +92,7 @@ class TemplateImage(FabioImage):
 
     DESCRIPTION = "Name of the file format"
 
-    DEFAULT_EXTENSIONS = []
+    DEFAULT_EXTENSIONS: ClassVar[list] = []
 
     def __init__(self, *arg, **kwargs):
         """

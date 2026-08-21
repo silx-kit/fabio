@@ -45,6 +45,7 @@ import numpy
 
 from . import fabioimage
 from .fabioutils import next_filename, previous_filename
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
@@ -52,7 +53,7 @@ logger = logging.getLogger(__name__)
 class PixiImage(fabioimage.FabioImage):
     DESCRIPTION = "Pixi file format"
 
-    DEFAULT_EXTENSIONS = []
+    DEFAULT_EXTENSIONS: ClassVar[list] = []
 
     _need_a_seek_to_read = True
 

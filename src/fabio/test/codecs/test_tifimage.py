@@ -37,13 +37,14 @@ import fabio
 from fabio import tifimage
 
 from ..utilstest import UtilsTest
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
 
 class TestTif(unittest.TestCase):
     # filename dim1 dim2 min max mean stddev
-    TESTIMAGES = [
+    TESTIMAGES: ClassVar[list] = [
         ("Feb09-bright-00.300s_WAXS.bz2", 1042, 1042, 0, 65535, 8546.6414, 1500.4198),
         ("Feb09-bright-00.300s_WAXS.gz", 1042, 1042, 0, 65535, 8546.6414, 1500.4198),
         ("Feb09-bright-00.300s_WAXS", 1042, 1042, 0, 65535, 8546.6414, 1500.4198),

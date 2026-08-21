@@ -47,6 +47,7 @@ import numpy
 
 from .fabioimage import FabioImage
 from .fabioutils import next_filename, previous_filename
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
@@ -60,7 +61,7 @@ class MrcImage(FabioImage):
         "Medical Research Council file format for 3D electron density and 2D images"
     )
 
-    DEFAULT_EXTENSIONS = ["mrc", "map", "fei"]
+    DEFAULT_EXTENSIONS: ClassVar[list] = ["mrc", "map", "fei"]
 
     KEYS = (
         "NX",
@@ -95,7 +96,7 @@ class MrcImage(FabioImage):
         "NLABL",
     )
 
-    _MODE_TO_DTYPE = {
+    _MODE_TO_DTYPE: ClassVar[dict] = {
         0: numpy.int8,
         1: numpy.int16,
         2: numpy.float32,

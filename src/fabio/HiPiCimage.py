@@ -44,6 +44,7 @@ import logging
 import numpy
 
 from .fabioimage import FabioImage
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
@@ -53,7 +54,7 @@ class HipicImage(FabioImage):
 
     DESCRIPTION = "HiPic file format from Hamamatsu CCD cameras"
 
-    DEFAULT_EXTENSIONS = ["img"]
+    DEFAULT_EXTENSIONS: ClassVar[list] = ["img"]
 
     def _readheader(self, infile):
         """

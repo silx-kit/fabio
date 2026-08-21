@@ -49,6 +49,7 @@ except ImportError:
     h5py = None
 from .fabioimage import FabioImage
 from .fabioutils import NotGoodReader
+from typing import ClassVar
 
 try:
     from .ext import dense as cython_densify
@@ -127,7 +128,7 @@ class SparseImage(FabioImage):
 
     DESCRIPTION = "spasify-Bragg"
 
-    DEFAULT_EXTENSIONS = ["h5", "hdf5", "nxs"]
+    DEFAULT_EXTENSIONS: ClassVar[list] = ["h5", "hdf5", "nxs"]
 
     NOISY = False
 

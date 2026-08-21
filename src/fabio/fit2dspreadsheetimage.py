@@ -36,6 +36,7 @@ import logging
 import numpy
 
 from .fabioimage import FabioImage
+from typing import ClassVar
 
 _logger = logging.getLogger(__name__)
 
@@ -47,7 +48,7 @@ class Fit2dSpreadsheetImage(FabioImage):
 
     DESCRIPTION = "Fit2d spreadsheet ascii file format"
 
-    DEFAULT_EXTENSIONS = ["spr"]
+    DEFAULT_EXTENSIONS: ClassVar[list] = ["spr"]
 
     def _readheader(self, infile):
         """

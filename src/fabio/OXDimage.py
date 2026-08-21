@@ -56,6 +56,7 @@ from numpy import deg2rad, rad2deg
 from .compression import compTY1, decTY1
 from .fabioimage import FabioImage
 from .fabioutils import to_str
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
@@ -97,7 +98,7 @@ class OxdImage(FabioImage):
 
     DESCRIPTION = "Oxford Diffraction Sapphire 3 file format"
 
-    DEFAULT_EXTENSIONS = ["img"]
+    DEFAULT_EXTENSIONS: ClassVar[list] = ["img"]
 
     def _readheader(self, infile):
         infile.seek(0)

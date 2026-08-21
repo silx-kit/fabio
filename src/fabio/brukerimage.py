@@ -58,6 +58,7 @@ import numpy
 
 from .fabioimage import FabioImage
 from .fabioutils import StringTypes, pad
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
@@ -75,13 +76,13 @@ class BrukerImage(FabioImage):
     DESCRIPTION = "File format used by Bruker detectors (version 86)"
 
     # There is no extension. It is used as frame counter
-    DEFAULT_EXTENSIONS = []
+    DEFAULT_EXTENSIONS: ClassVar[list] = []
 
-    bpp_to_numpy = {1: numpy.uint8, 2: numpy.uint16, 4: numpy.uint32}
+    bpp_to_numpy: ClassVar[dict] = {1: numpy.uint8, 2: numpy.uint16, 4: numpy.uint32}
 
     # needed if you feel like writing - see ImageD11/scripts/edf2bruker.py
     SPACER = "\x1a\x04"  # this is CTRL-Z CTRL-D
-    HEADERS_KEYS = [
+    HEADERS_KEYS: ClassVar[list] = [
         "FORMAT",  # Frame format. Always “86” or "100" for Bruker-format frames.
         "VERSION",  # Header version #, such as: 1 to 17 (6 is obsolete).
         "HDRBLKS",  # Header size in 512-byte blocks, such as 10 or 15. Determines where the image block begins.

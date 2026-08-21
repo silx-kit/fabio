@@ -44,6 +44,7 @@ import struct
 import numpy
 
 from .fabioimage import FabioImage
+from typing import ClassVar
 
 
 class Fit2dMaskImage(FabioImage):
@@ -51,7 +52,7 @@ class Fit2dMaskImage(FabioImage):
 
     DESCRIPTION = "Fit2d mask file format"
 
-    DEFAULT_EXTENSIONS = ["msk"]
+    DEFAULT_EXTENSIONS: ClassVar[list] = ["msk"]
 
     def _readheader(self, infile):
         """
