@@ -345,7 +345,7 @@ class Converter:
 def main():
     args = parse_args()
     if args == EXIT_ARGUMENT_FAILURE:
-        raise RuntimeError("Error parsing CLI arguments")
+        return EXIT_ARGUMENT_FAILURE
     try:
         c = Converter(args)
         c.decompress()
