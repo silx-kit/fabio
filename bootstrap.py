@@ -16,8 +16,8 @@ import logging
 import os
 import subprocess
 import sys
-
 import tomllib as tomli
+
 logging.basicConfig()
 logger = logging.getLogger("bootstrap")
 
