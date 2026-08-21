@@ -30,15 +30,12 @@ It provides the matplotlib :class:`FigureCanvasQTAgg` class corresponding
 to the used backend.
 """
 
-from __future__ import annotations
-
 __authors__ = ["T. Vincent"]
 __license__ = "MIT"
 __date__ = "12/03/2026"
 
 
 import io
-
 import matplotlib
 import numpy
 from qtpy import API as BINDING
@@ -48,7 +45,7 @@ from qtpy.QtGui import QFont
 if BINDING in ("pyside6", "pyqt6"):
     matplotlib.use("QtAgg", force=False)
     from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg  # noqa
-    from matplotlib.backends.backend_qtagg import NavigationToolbar2QT
+    from matplotlib.backends.backend_qtagg import NavigationToolbar2QT  # noqa
 elif BINDING =="pyqt5":
     matplotlib.use("Qt5Agg", force=False)
     from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg  # noqa

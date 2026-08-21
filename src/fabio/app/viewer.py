@@ -38,7 +38,7 @@ __version__ = "1.1"
 __author__ = "Gaël Goret, Jérôme Kieffer"
 __copyright__ = "2015-2026 ESRF"
 __licence__ = "MIT"
-__date__ = "12/03/2026"
+__date__ = "20/08/2026"
 
 
 import sys
