@@ -51,25 +51,25 @@ from qtpy import QtWidgets as qt
 from qtpy import QtCore as qtc
 from qtpy.QtGui import QIcon
 from qtpy.QtWidgets import (
-    QSizePolicy,
-    QFileDialog,
-    QMessageBox,
-    QAction,
-    QComboBox,
-    QPlainTextEdit,
-    QLabel,
-    QSplitter,
-    QTabWidget,
-    QWidget,
-    QProgressBar,
-    QGroupBox,
-    QVBoxLayout,
-    QHBoxLayout,
-    QPushButton,
-    QListWidget,
-    QCheckBox,
-    QButtonGroup
-)
+        QSizePolicy,
+        QFileDialog,
+        QMessageBox,
+        QAction,
+        QComboBox,
+        QPlainTextEdit,
+        QLabel,
+        QSplitter,
+        QTabWidget,
+        QWidget,
+        QProgressBar,
+        QGroupBox,
+        QVBoxLayout,
+        QHBoxLayout,
+        QPushButton,
+        QListWidget,
+        QCheckBox,
+        QButtonGroup
+    )
 # Matplotlib imports (unchanged)
 from matplotlib.figure import Figure
 from .matplotlib import FigureCanvasQTAgg
@@ -137,7 +137,7 @@ class AppForm(qt.QMainWindow):
 
         :param d: dict containing headers
         :return: formatted string
-	"""
+        """
         keys = sorted(d.keys())
         return " \n".join([f"{k}: {d[k]}" for k in keys]) + " \n"
 

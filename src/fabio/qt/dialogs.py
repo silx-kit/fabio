@@ -38,12 +38,13 @@ Portable diffraction images viewer/converter
 import numpy
 from qtpy import QtWidgets as qt
 from qtpy.QtWidgets import (
-    QMessageBox,
-    QLabel,
-    QDialog,
-    QDialogButtonBox,
-    QGroupBox,
-)
+        QMessageBox,
+        QLabel,
+        QDialog,
+        QDialogButtonBox,
+        QGroupBox,
+    )
+
 
 numpy.seterr(divide="ignore")
 output_format = [

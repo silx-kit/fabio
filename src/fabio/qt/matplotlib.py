@@ -1,6 +1,6 @@
 # /*##########################################################################
 #
-# Copyright (c) 2016-2024 European Synchrotron Radiation Facility
+# Copyright (c) 2016-2026 European Synchrotron Radiation Facility
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -30,12 +30,10 @@ It provides the matplotlib :class:`FigureCanvasQTAgg` class corresponding
 to the used backend.
 """
 
-from __future__ import annotations
-
 
 __authors__ = ["T. Vincent"]
 __license__ = "MIT"
-__date__ = "12/03/2026"
+__date__ = "20/08/2026"
 
 
 import io
@@ -44,6 +42,7 @@ import numpy
 
 from qtpy import API as BINDING
 from qtpy.QtGui import QFont
+
 
 # This must be performed before any import from matplotlib
 if BINDING in ("pyside6", "pyqt6"):
