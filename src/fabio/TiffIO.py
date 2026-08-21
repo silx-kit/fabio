@@ -903,7 +903,7 @@ class TiffIO:
             description = info
         else:
             description = ""
-            for key in info.keys():
+            for key in info:
                 description += f"{key}={info[key]}\n"
 
         # get the image file directory

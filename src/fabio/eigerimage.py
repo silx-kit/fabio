@@ -134,7 +134,7 @@ class EigerImage(FabioImage):
                 data = entry["data"]
                 if isinstance(data, h5py.Group):
                     "Newer format /entry/data/data_000001"
-                    datasets = [i for i in data.keys() if i.startswith("data")]
+                    datasets = [i for i in data if i.startswith("data")]
                     datasets.sort()
                     try:
                         for i in datasets:
@@ -146,7 +146,7 @@ class EigerImage(FabioImage):
                     lstds = [data]
             else:
                 "elder format entry/data_01"
-                datasets = [i for i in entry.keys() if i.startswith("data")]
+                datasets = [i for i in entry if i.startswith("data")]
                 datasets.sort()
                 try:
                     for i in datasets:

@@ -235,7 +235,7 @@ class LoggingValidator(logging.Handler):
             # Re-send record logs through logger as they where masked
             # to help debug
             message = ""
-            for level in count_by_level.keys():
+            for level in count_by_level:
                 if message != "":
                     message += ", "
                 count = count_by_level[level]

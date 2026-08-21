@@ -85,8 +85,6 @@ logger = logging.getLogger("run_tests")
 logger.setLevel(logging.WARNING)
 
 logger.info("Python %s %s", sys.version, tuple.__itemsize__ * 8)
-if sys.version_info.major < 3:
-    logger.error("FabIO no more support Python2")
 
 try:
     import resource

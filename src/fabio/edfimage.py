@@ -121,28 +121,24 @@ NUMPY_EDF_DTYPE = {
     "float128": "QuadrupleValue",
 }
 
-MINIMUM_KEYS = set(
-    [
-        "HEADERID",
-        "IMAGE",  # Image numbers are used for sorting and must be different
-        "BYTEORDER",
-        "DATATYPE",
-        "DIM_1",
-        "DIM_2",
-        "SIZE",
-    ]
-)  # Size is thought to be essential for writing at least
+MINIMUM_KEYS = {
+    "HEADERID",
+    "IMAGE",  # Image numbers are used for sorting and must be different
+    "BYTEORDER",
+    "DATATYPE",
+    "DIM_1",
+    "DIM_2",
+    "SIZE",
+}  # Size is thought to be essential for writing at least
 
-MINIMUM_KEYS2 = set(
-    [
-        "EDF_DATABLOCKID",  # Replaces HeaderID
-        "EDF_BINARYSIZE",  # Replaces Size
-        "BYTEORDER",
-        "DATATYPE",
-        "DIM_1",
-        "DIM_2",
-    ]
-)
+MINIMUM_KEYS2 = {
+    "EDF_DATABLOCKID",  # Replaces HeaderID
+    "EDF_BINARYSIZE",  # Replaces Size
+    "BYTEORDER",
+    "DATATYPE",
+    "DIM_1",
+    "DIM_2",
+}
 
 DEFAULT_VALUES = {}
 # I do not define default values as they will be calculated at write time
@@ -511,7 +507,7 @@ class EdfFrame(fabioimage.FabioFrame):
         :param str filename: Name of the EDF file
         :rtype: bool
         """
-        capsKeys = set([k.upper() for k in self.header.keys()])
+        capsKeys = {k.upper() for k in self.header}
 
         # Try first alternative set (for EDF1, EDF2, EDF3, ...)
         missing = list(MINIMUM_KEYS2 - capsKeys)
@@ -563,7 +559,7 @@ class EdfFrame(fabioimage.FabioFrame):
                                     e
                                 ):
                                     return numpy.zeros(shape)
-                            raise e
+                            raise
 
             else:
                 # Read binary data from an external file
@@ -970,7 +966,7 @@ class EdfImage(fabioimage.FabioImage):
                     raise MalformedHeaderError(
                         "Incomplete GZ block for header frame %i", frame_id
                     )
-            raise e
+            raise
 
         if len(block) == 0:
             # end of file
@@ -1301,9 +1297,9 @@ class EdfImage(fabioimage.FabioImage):
                     self.nframes,
                 )
             self.resetvals()
-        except Exception as e:
+        except Exception:
             self._file.close()
-            raise e
+            raise
         return self
 
     @deprecation.deprecated

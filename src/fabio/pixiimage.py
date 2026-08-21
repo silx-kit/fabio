@@ -101,7 +101,7 @@ class PixiImage(fabioimage.FabioImage):
             raise IndexError(f"Requested frame id:{int(num)} out of bound")
 
         newheader = {}
-        for k in self.header.keys():
+        for k in self.header:
             newheader[k] = self.header[k]
         with self._open(self.filename, "rb") as infile:
             data = self._readdata(infile, num)
@@ -139,7 +139,7 @@ class PixiImage(fabioimage.FabioImage):
             raise Exception("Requested frame number is out of range")
         # Do a deep copy of the header to make a new one
         newheader = {}
-        for k in self.header.keys():
+        for k in self.header:
             newheader[k] = self.header[k]
         frame = PixiImage(header=newheader)
         frame._nframes = self.nframes

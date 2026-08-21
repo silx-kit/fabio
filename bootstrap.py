@@ -17,10 +17,7 @@ import os
 import subprocess
 import sys
 
-if sys.version_info[:2] < (3, 11):
-    import tomli
-else:
-    import tomllib as tomli
+import tomllib as tomli
 logging.basicConfig()
 logger = logging.getLogger("bootstrap")
 

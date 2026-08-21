@@ -352,7 +352,7 @@ class CbfImage(FabioImage):
             if key.startswith("_"):
                 if key not in self.cif or self.cif[key] != self.header[key]:
                     self.cif[key] = self.header[key]
-            elif key.startswith("X-Binary-") or key.startswith("Content-") or key.startswith("conversions") or key.startswith("filename"):
+            elif key.startswith(("X-Binary-", "Content-", "conversions", "filename")):
                 pass
             elif key in self.header:
                 nonCifHeaders.append(f"{key} {self.header[key]}")

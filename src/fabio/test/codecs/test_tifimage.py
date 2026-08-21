@@ -87,25 +87,23 @@ class TestTif(unittest.TestCase):
             obj.read(UtilsTest.getimage(name))
 
             # The key order is not the same depending on Python2 or 3
-            expected_keys = set(
-                [
-                    "info",
-                    "photometricInterpretation",
-                    "rowsPerStrip",
-                    "nColumns",
-                    "compression",
-                    "sampleFormat",
-                    "imageDescription",
-                    "nRows",
-                    "colormap",
-                    "nBits",
-                    "date",
-                    "software",
-                    "compression_type",
-                    "stripOffsets",
-                    "stripByteCounts",
-                ]
-            )
+            expected_keys = {
+                "info",
+                "photometricInterpretation",
+                "rowsPerStrip",
+                "nColumns",
+                "compression",
+                "sampleFormat",
+                "imageDescription",
+                "nRows",
+                "colormap",
+                "nBits",
+                "date",
+                "software",
+                "compression_type",
+                "stripOffsets",
+                "stripByteCounts",
+            }
             self.assertEqual(set(obj.header.keys()), expected_keys)
 
     def test_frame(self):

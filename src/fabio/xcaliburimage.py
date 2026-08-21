@@ -567,7 +567,7 @@ class RunDescription:
     cfolder: str = "n/a"
     inumofsweeps: int = 0
     dunknown: float = 0.0
-    pssweep: list = tuple()
+    pssweep: list = ()
     SIZE = 528
 
     @classmethod
@@ -653,29 +653,29 @@ class CcdCharacteristiscs:
     ifip60yorigin: int = 0
 
     inumofcornermasks: int = 0
-    iacornermaskx: list = tuple()
-    iacornermasky: list = tuple()
+    iacornermaskx: list = ()
+    iacornermasky: list = ()
     inumofglowingcornermasks: int = 0
-    iaglowingcornermaskx: list = tuple()
-    iaglowingcornermasky: list = tuple()
+    iaglowingcornermaskx: list = ()
+    iaglowingcornermasky: list = ()
 
     ibadpolygons: int = 0
-    pschipbadpolygon: list = tuple()
+    pschipbadpolygon: list = ()
 
     ibadpoints: int = 0
-    pschipbadpoint: list = tuple()
+    pschipbadpoint: list = ()
 
     ibadcolumns: int = 0
-    pschipbadcolumn: list = tuple()
+    pschipbadcolumn: list = ()
     ibadcolumns1x1: int = 0
-    pschipbadcolumn1x1: list = tuple()
+    pschipbadcolumn1x1: list = ()
     ibadcolumns2x2: int = 0
-    pschipbadcolumn2x2: list = tuple()
+    pschipbadcolumn2x2: list = ()
     ibadcolumns4x4: int = 0
-    pschipbadcolumn4x4: list = tuple()
+    pschipbadcolumn4x4: list = ()
 
     ibadrows: int = 0
-    pschipbadrow: list = tuple()
+    pschipbadrow: list = ()
 
     iscintillatorid: int = 0
     # iisscintillatorid: int =0
@@ -684,11 +684,11 @@ class CcdCharacteristiscs:
     chipmachinefunction: ChipMachineFunction = None
 
     ibadrows1x1: int = 0
-    pschipbadrow1x1: list = tuple()
+    pschipbadrow1x1: list = ()
     ibadrows2x2: int = 0
-    pschipbadrow2x2: list = tuple()
+    pschipbadrow2x2: list = ()
     ibadrows4x4: int = 0
-    pschipbadrow4x4: list = tuple()
+    pschipbadrow4x4: list = ()
 
     def _clip_string(self):
         """Clip all strings to 256 chars"""

@@ -72,7 +72,7 @@ class MpaImage(FabioImage):
                     tmp_hdr["None"][key] = value
                 else:
                     tmp_hdr[header_prefix][key] = value
-            elif line.startswith("[DATA") or line.startswith("[CDAT"):
+            elif line.startswith(("[DATA", "[CDAT")):
                 break
             else:
                 header_prefix = line.strip().strip("[]")
@@ -99,9 +99,9 @@ class MpaImage(FabioImage):
         self._readheader(infile)
 
         if (
-            "ADC1_range" not in self.header.keys()
-            or "ADC2_range" not in self.header.keys()
-            or "mpafmt" not in self.header.keys()
+            "ADC1_range" not in self.header
+            or "ADC2_range" not in self.header
+            or "mpafmt" not in self.header
         ):
             logger.error("Error in opening %s: badly formatted mpa header.", fname)
             raise OSError(f"Error in opening {fname}: badly formatted mpa header.")

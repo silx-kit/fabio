@@ -266,7 +266,7 @@ def make_format(c_def_string):
                 times = eval(num)
             except Exception as error:
                 logger.error("%s Please decode %s", error, decl)
-                raise error
+                raise
         else:
             times = 1
         try:

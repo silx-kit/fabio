@@ -931,8 +931,8 @@ class AppForm(qt.QMainWindow):
 
     def on_pick(self, event):
         if event.inaxes and self.data.any():
-            x = int(round(event.xdata))
-            y = int(round(event.ydata))
+            x = round(event.xdata)
+            y = round(event.ydata)
             if x < self.data.shape[1] and y < self.data.shape[0]:
                 i = self.data[y, x]
                 self.pix_coords_label.setText(

@@ -73,7 +73,7 @@ class TestMrc(unittest.TestCase):
                     obj = openimage(filename)
                 except Exception as err:
                     logger.error("unable to read: %s", filename)
-                    raise err
+                    raise
                 self.assertAlmostEqual(mini, obj.getmin(), 4, f"{filename} getmin")
                 self.assertAlmostEqual(maxi, obj.getmax(), 4, f"{filename} getmax")
                 self.assertAlmostEqual(mean, obj.getmean(), 4, f"{filename} getmean")

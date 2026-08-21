@@ -37,7 +37,7 @@ from ..version import hexversion as ref_hexversion
 
 depreclog = logging.getLogger("fabio.DEPRECATION")
 
-deprecache = set([])
+deprecache = set()
 
 _CACHE_VERSIONS = {}
 _PATTERN = re.compile(r"(\d+)\.(\d+)\.(\d+)(\w+)?$")

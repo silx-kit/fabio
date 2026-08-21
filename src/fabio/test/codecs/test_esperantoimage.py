@@ -101,32 +101,30 @@ class TestEsperanto(unittest.TestCase):
             obj = fabio.esperantoimage.EsperantoImage()
             obj.read(UtilsTest.getimage(name))
 
-            expected_keys = set(
-                [
-                    "IMAGE",
-                    "SPECIAL_CCD_1",
-                    "SPECIAL_CCD_2",
-                    "SPECIAL_CCD_3",
-                    "SPECIAL_CCD_4",
-                    "SPECIAL_CCD_5",
-                    "TIME",
-                    "MONITOR",
-                    "PIXELSIZE",
-                    "TIMESTAMP",
-                    "GRIDPATTERN",
-                    "STARTANGLESINDEG",
-                    "ENDANGLESINDEG",
-                    "GONIOMODEL_1",
-                    "GONIOMODEL_2",
-                    "WAVELENGTH",
-                    "MONOCHROMATOR",
-                    "ABSTORUN",
-                    "HISTORY",
-                    "ESPERANTO FORMAT",
-                ]
-            )
+            expected_keys = {
+                "IMAGE",
+                "SPECIAL_CCD_1",
+                "SPECIAL_CCD_2",
+                "SPECIAL_CCD_3",
+                "SPECIAL_CCD_4",
+                "SPECIAL_CCD_5",
+                "TIME",
+                "MONITOR",
+                "PIXELSIZE",
+                "TIMESTAMP",
+                "GRIDPATTERN",
+                "STARTANGLESINDEG",
+                "ENDANGLESINDEG",
+                "GONIOMODEL_1",
+                "GONIOMODEL_2",
+                "WAVELENGTH",
+                "MONOCHROMATOR",
+                "ABSTORUN",
+                "HISTORY",
+                "ESPERANTO FORMAT",
+            }
 
-            upper_keys = set(i for i in obj.header.keys() if i.isupper())
+            upper_keys = {i for i in obj.header if i.isupper()}
             self.assertEqual(upper_keys, expected_keys)
 
             # Test write uncompressed:

@@ -319,7 +319,7 @@ class OxdImage(FabioImage):
             if key not in self.header:
                 self.header[key] = DEFAULT_HEADERS[key]
 
-        if "NX" not in self.header.keys() or "NY" not in self.header.keys():
+        if "NX" not in self.header or "NY" not in self.header:
             dim2, dim1 = self.shape
             self.header["NX"] = dim1
             self.header["NY"] = dim2

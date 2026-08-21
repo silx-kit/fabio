@@ -76,7 +76,7 @@ class TestCcdCharacteristiscs(unittest.TestCase):
             obt = CcdCharacteristiscs.loads(ref.dumps())
             for key in CcdCharacteristiscs.__dataclass_fields__:
                 for what in (ref, obt):
-                    if what.__getattribute__(key) == tuple():
+                    if what.__getattribute__(key) == ():
                         what.__setattr__(key, [])
             self.assertEqual(ref, obt, f"{afile} matches ")
 

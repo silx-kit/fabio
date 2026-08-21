@@ -91,7 +91,7 @@ def pad(mystr, pattern=" ", size=80):
         return mystr.ljust(padded_size, pattern)
     else:
         return (
-            mystr + pattern * int(ceil(float(padded_size - len(mystr)) / len(pattern)))
+            mystr + pattern * ceil((padded_size - len(mystr)) / len(pattern))
         )[:padded_size]
 
 
@@ -107,7 +107,7 @@ def getnum(name):
         return None
 
 
-COMPRESSED_EXTENSIONS = set(["gz", "bz2"])
+COMPRESSED_EXTENSIONS = {"gz", "bz2"}
 """Set of compressed file extensions provided by Fabio"""
 
 
@@ -464,7 +464,7 @@ class File(FileIO):
                 os.unlink(name)
             except Exception as err:
                 logger.error("Unable to remove %s: %s", name, err)
-                raise (err)
+                raise
 
     def getSize(self):
         if self.__size is None:
@@ -767,7 +767,7 @@ class ENDIANNESS(StrEnum):
         return res
 
 
-AVAILABLE_COMPRESSED_EXTENSIONS = set([])
+AVAILABLE_COMPRESSED_EXTENSIONS = set()
 """Set of available compressed file extensions. Do not contains extensions for
 uninstalled optional dependencies."""
 if GzipFile != UnknownCompressedFile:

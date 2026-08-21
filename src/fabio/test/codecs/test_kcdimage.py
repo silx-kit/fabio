@@ -70,7 +70,7 @@ class TestKcd(unittest.TestCase):
                 obj = openimage(self.fn[self.kcdfilename] + ext)
             except Exception as err:
                 logger.error("unable to read: %s", self.fn[self.kcdfilename] + ext)
-                raise err
+                raise
             self.assertAlmostEqual(mini, obj.getmin(), 4, "getmin" + ext)
             self.assertAlmostEqual(maxi, obj.getmax(), 4, "getmax" + ext)
             self.assertAlmostEqual(mean, obj.getmean(), 4, "getmean" + ext)

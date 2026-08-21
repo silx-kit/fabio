@@ -77,7 +77,7 @@ class TestFabioConvert(unittest.TestCase):
         self.__oldPath = os.getcwd()
         self.__testPath = self.create_test_env()
         os.chdir(self.__testPath)
-        env = dict((str(k), str(v)) for k, v in os.environ.items())
+        env = {str(k): str(v) for k, v in os.environ.items()}
         env["PYTHONPATH"] = os.pathsep.join(sys.path)
         self.__env = env
         self.__script = fabio.app.convert.__file__

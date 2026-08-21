@@ -354,7 +354,7 @@ class GeImage(FabioImage):
             raise IndexError("Requested frame number is out of range")
         # Do a deep copy of the header to make a new one
         newheader = {}
-        for k in self.header.keys():
+        for k in self.header:
             newheader[k] = self.header[k]
         frame = GeImage(header=newheader)
         # ??? isn't this a single frame by contruction?

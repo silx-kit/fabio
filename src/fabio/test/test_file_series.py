@@ -356,9 +356,7 @@ class TestFileSeries(unittest.TestCase):
 
     def test_filename_generator(self):
         def generator():
-            filenames = self.get_anyframe_files()
-            for filename in filenames:
-                yield filename
+            yield from self.get_anyframe_files()
 
         serie = FileSeries(filenames=generator())
         self.assertEqual(serie.nframes, 10)
