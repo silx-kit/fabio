@@ -220,8 +220,8 @@ class EsperantoImage(FabioImage):
             or height % 4 != 0
         ):
             logger.warning(
-                "The dimensions of the image is (%i, %i) but they should only be between 256 and 4096 and a multiple of 4. This might cause compatibility issues."
-            width, height
+                "The dimensions of the image is (%i, %i) but they should only be between 256 and 4096 and a multiple of 4. This might cause compatibility issues.",
+                width, height
             )
 
         self.shape = (height, width)
