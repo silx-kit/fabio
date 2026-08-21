@@ -441,7 +441,7 @@ class CIF(dict):
         own_fd = False
         if isinstance(_strFilename, (bytes, str)):
             if os.path.isfile(_strFilename):
-                infile = open(_strFilename, "rb")
+                infile = open(_strFilename, "rb")  # noqa: SIM115
                 own_fd = True
             else:
                 raise RuntimeError(

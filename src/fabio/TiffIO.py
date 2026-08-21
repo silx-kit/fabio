@@ -131,7 +131,7 @@ class TiffIO:
             self._access = None
         else:
             # the b is needed for windows and python 3
-            fd = open(filename, mode)
+            fd = open(filename, mode)  # noqa: SIM115
             self._access = mode
 
         self._initInternalVariables(fd)
@@ -196,9 +196,9 @@ class TiffIO:
         if self._access is None:
             # we do not own the file
             # open in read mode
-            newFile = open(fileName, "rb")
+            newFile = open(fileName, "rb")  # noqa: SIM115
         else:
-            newFile = open(fileName, self._access)
+            newFile = open(fileName, self._access)  # noqa: SIM115
         self.fd = newFile
 
     def __makeSureFileIsClosed(self):
@@ -854,7 +854,7 @@ class TiffIO:
             fd = None
             if os.path.exists(name):
                 os.remove(name)
-            fd = open(name, mode="wb+")
+            fd = open(name, mode="wb+")  # noqa: SIM115
             self._initEmptyFile(fd)
         self.fd = fd
 

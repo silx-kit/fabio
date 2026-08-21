@@ -159,7 +159,7 @@ class Nexus:
             pre_existing = False
 
         if self.mode == "r":
-            self.file_handle = open(self.filename, mode=self.mode + "b")
+            self.file_handle = open(self.filename, mode=self.mode + "b")  # noqa: SIM115
             self.h5 = h5py.File(self.file_handle, mode=self.mode)
         else:
             self.file_handle = None

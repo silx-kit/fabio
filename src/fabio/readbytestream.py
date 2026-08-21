@@ -97,7 +97,7 @@ def readbytestream(
         infile = fil
         opened = False
     else:
-        infile = open(fil, "rb")
+        infile = open(fil, "rb")  # noqa: SIM115
         opened = True
 
     infile.seek(offset)
