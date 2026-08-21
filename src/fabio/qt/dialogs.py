@@ -36,21 +36,14 @@ Portable diffraction images viewer/converter
 # Imports (QtPy, FabIO, NumPy, Matplotlib, …)
 # ----------------------------------------------------------------------
 import numpy
-import os
-try:
-    from qtpy import QtWidgets as qt
-    from qtpy.QtWidgets import (
+from qtpy import QtWidgets as qt
+from qtpy.QtWidgets import (
         QMessageBox,
         QLabel,
         QDialog,
         QDialogButtonBox,
         QGroupBox,
     )
-except ImportError as err:
-    if os.environ.get("WITH_QT_TEST") == "False":
-        print("QtPy is not available but it does not matter as `WITH_QT_TEST=False`")
-    else:
-        raise err
 
 
 numpy.seterr(divide="ignore")
