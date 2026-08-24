@@ -4,7 +4,7 @@ meson-python
 ninja
 numpy
 cython>3.1
-lxml>=6.1.1
+lxml>=6.1.2
 h5py
 hdf5plugin
 sphinx
