@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
 #             https://github.com/silx-kit/fabio
@@ -33,12 +32,14 @@
 28/11/2014
 """
 
-import unittest
-import os
-import numpy
 import logging
-from ...tifimage import tifimage
+import os
+import unittest
+
+import numpy
+
 from ...marccdimage import marccdimage
+from ...tifimage import tifimage
 from ..utilstest import UtilsTest
 
 logger = logging.getLogger(__name__)
@@ -74,9 +75,9 @@ class TestNormalTiffOK(unittest.TestCase):
 
         obj = openimage(self.image)
         if obj.data.astype(int).tobytes() != self.imdata.astype(int).tobytes():
-            logger.info("%s %s" % (type(self.imdata), self.imdata.dtype))
-            logger.info("%s %s" % (type(obj.data), obj.data.dtype))
-            logger.info("%s %s" % (obj.data - self.imdata))
+            logger.info("%s %s", type(self.imdata), self.imdata.dtype)
+            logger.info("%s %s", type(obj.data), obj.data.dtype)
+            logger.info("delta %s", (obj.data - self.imdata))
         self.assertEqual(
             obj.data.astype(int).tobytes(), self.imdata.astype(int).tobytes()
         )

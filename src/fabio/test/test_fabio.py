@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -32,11 +31,13 @@ Test the main fabio API.
 Basically everything supposed to be provided by `import fabio`
 """
 
-import unittest
-import logging
 import io
-from .utilstest import UtilsTest
+import logging
+import unittest
+
 import fabio
+
+from .utilstest import UtilsTest
 
 logger = logging.getLogger(__name__)
 
@@ -52,7 +53,7 @@ class TestFabio(unittest.TestCase):
     def test_open_bytesio(self):
         filename = UtilsTest.getimage("multiframes.edf.bz2")
         filename = filename.replace(".bz2", "")
-        with io.open(filename, "rb") as f:
+        with open(filename, "rb") as f:
             data = f.read()
             mem = io.BytesIO(data)
             with fabio.open(mem) as image:
@@ -62,7 +63,7 @@ class TestFabio(unittest.TestCase):
     def test_open_fabio_bytesio(self):
         filename = UtilsTest.getimage("multiframes.edf.bz2")
         filename = filename.replace(".bz2", "")
-        with io.open(filename, "rb") as f:
+        with open(filename, "rb") as f:
             data = f.read()
             mem = fabio.fabioutils.BytesIO(data)
             with fabio.open(mem) as image:

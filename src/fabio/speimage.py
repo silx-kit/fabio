@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -35,12 +34,15 @@ __license__ = "MIT"
 __copyright__ = "Clemens Prescher"
 __date__ = "27/10/2025"
 
-import logging
 import datetime
+import logging
 from xml.dom.minidom import parseString
+
 import numpy as np
 from numpy.polynomial.polynomial import polyval
+
 from .fabioimage import FabioImage
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
@@ -51,11 +53,11 @@ class SpeImage(FabioImage):
     Put some documentation here
     """
 
-    DATA_TYPES = {0: np.float32, 1: np.int32, 2: np.int16, 3: np.uint16}
+    DATA_TYPES: ClassVar[dict] = {0: np.float32, 1: np.int32, 2: np.int16, 3: np.uint16}
 
     DESCRIPTION = "Princeton instrument SPE file format"
 
-    DEFAULT_EXTENSIONS = ["spe"]
+    DEFAULT_EXTENSIONS: ClassVar[list] = ["spe"]
 
     def _readheader(self, infile):
         """
@@ -316,7 +318,7 @@ class SpeImage(FabioImage):
             frame = 0
         dtype = self.DATA_TYPES.get(self.header["data_type"])
         if dtype is None:
-            raise RuntimeError("Unsupported data type: %s" % self.header["data_type"])
+            raise RuntimeError(f"Unsupported data type: {self.header['data_type']}")
         number_size = np.dtype(dtype).itemsize
         frame_size = self.header["x_dim"] * self.header["y_dim"] * number_size
         return self._read_frame(infile, 4100 + frame * frame_size)

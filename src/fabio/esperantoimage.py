@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -28,14 +27,17 @@
 __authors__ = ["Florian Plaswig", "Jérôme Kieffer"]
 __license__ = "MIT"
 __copyright__ = "2019-2020 ESRF"
-__date__ = "27/10/2025"
+__date__ = "21/08/2026"
 
 import io
-from collections import OrderedDict
 import logging
+from collections import OrderedDict
+
 import numpy
-from .fabioimage import FabioImage
+
 from .compression import agi_bitfield
+from .fabioimage import FabioImage
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
@@ -44,7 +46,7 @@ class EsperantoImage(FabioImage):
     """FabIO image class for Esperanto image files"""
 
     DESCRIPTION = "CrysAlis Pro Esperanto file format"
-    DEFAULT_EXTENSIONS = ["eseperanto", "esper"]
+    DEFAULT_EXTENSIONS: ClassVar[list] = ["eseperanto", "esper"]
     HEADER_SEPARATOR = "\x0d\x0a"
     HEADER_END = b"\x0d\x1a"
     HEADER_LINES = 25
@@ -52,7 +54,7 @@ class EsperantoImage(FabioImage):
     VALID_FORMATS = ("AGI_BITFIELD", "4BYTE_LONG")
     DUMMY = 0  # Value to fill empty regions with when padding
 
-    HEADER_KEYS = OrderedDict(
+    HEADER_KEYS: ClassVar[OrderedDict] = OrderedDict(
         [
             ("IMAGE", "lnx lny lbx lby spixelformat"),
             (
@@ -164,7 +166,7 @@ class EsperantoImage(FabioImage):
         try:
             self.HEADER_LINES = int(words[5])
         except Exception as err:
-            raise RuntimeError("Unable to determine header size: %s" % err)
+            raise RuntimeError(f"Unable to determine header size: {err}")
         assert self.HEADER_WIDTH == int(words[8]), "Line length match"
         self.header["ESPERANTO FORMAT"] = " ".join(words[2:])
         self.header["format"] = int(words[2])
@@ -174,8 +176,7 @@ class EsperantoImage(FabioImage):
             line = infile.read(self.HEADER_WIDTH).decode("ascii")
             if not line[-2] == self.HEADER_SEPARATOR[0]:
                 raise RuntimeError(
-                    "Unable to read esperanto header: Invalid format of line %d."
-                    % (line_num + 1)
+                    f"Unable to read esperanto header: Invalid format of line {line_num + 1}."
                 )
             words = line.split()
             if not words:
@@ -186,8 +187,9 @@ class EsperantoImage(FabioImage):
             self.header[key] = " ".join(words[1:])
             if key not in self.HEADER_KEYS:
                 logger.warning(
-                    "Unable to read esperanto header: Invalid Key %s in line %d."
-                    % (key, line_num)
+                    "Unable to read esperanto header: Invalid Key %s in line %d.",
+                    key,
+                    line_num,
                 )
             else:  # try to interpret
                 if key in ("HISTORY", "TIMESTAMP"):
@@ -219,7 +221,8 @@ class EsperantoImage(FabioImage):
             or height % 4 != 0
         ):
             logger.warning(
-                "The dimensions of the image is (%i, %i) but they should only be between 256 and 4096 and a multiple of 4. This might cause compatibility issues."
+                "The dimensions of the image is (%i, %i) but they should only be between 256 and 4096 and a multiple of 4. This might cause compatibility issues.",
+                width, height
             )
 
         self.shape = (height, width)
@@ -248,19 +251,18 @@ class EsperantoImage(FabioImage):
                     )
                     self.data = numpy.reshape(data, self.shape)
                 except Exception as err:
-                    raise RuntimeError("Exception while reading pixel data %s." % err)
+                    raise RuntimeError(f"Exception while reading pixel data {err}.")
             elif self.format == "AGI_BITFIELD":
                 raw_data = infile.read()
                 try:
                     self.data = agi_bitfield.decompress(raw_data, self.shape)
                 except Exception as err:
                     raise RuntimeError(
-                        "Exception while decompressing pixel data %s." % err
+                        f"Exception while decompressing pixel data {err}."
                     )
             else:
                 raise RuntimeError(
-                    "Format not supported %s. Valid formats are %s"
-                    % (self.format, self.VALID_FORMATS)
+                    f"Format not supported {self.format}. Valid formats are {self.VALID_FORMATS}"
                 )
 
         return self
@@ -286,8 +288,8 @@ class EsperantoImage(FabioImage):
             )
         else:
             self.header["ESPERANTO FORMAT"] = (
-                "%s CONSISTING OF   %s LINES OF   %s BYTES EACH"
-                % (self.header["format"], self.HEADER_LINES, self.HEADER_WIDTH)
+                f"{self.header['format']} CONSISTING OF   {self.HEADER_LINES} LINES OF"
+                f"   {self.HEADER_WIDTH} BYTES EACH"
             )
         self.header["lny"], self.header["lnx"] = self.data.shape
         self.header["spixelformat"] = self.format
@@ -300,9 +302,9 @@ class EsperantoImage(FabioImage):
             updated = ""
             for lower_key in value.split():
                 if lower_key[0] in "ldib":
-                    updated += "%s " % self.header.get(lower_key, 0)
+                    updated += f"{self.header.get(lower_key, 0)} "
                 else:
-                    updated += '"%s" ' % self.header.get(lower_key, "")
+                    updated += f'"{self.header.get(lower_key, "")}" '
             self.header[key] = updated.strip()
 
     def write(self, fname):
@@ -337,7 +339,7 @@ class EsperantoImage(FabioImage):
                 else:
                     outfile.write(agi_bitfield.compress(self.data))
             else:
-                raise RuntimeError("Format not supported %s." % self.format)
+                raise RuntimeError(f"Format not supported {self.format}.")
 
 
 # This is for compatibility with old code:

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
 #             https://github.com/silx-kit/fabio
@@ -34,11 +33,13 @@ __license__ = "MIT"
 __copyright__ = "2020 ESRF"
 __date__ = "23/06/2026"
 
-import unittest
-import numpy
 import logging
-from ..sparseimage import densify, cython_densify
-from ..ext.dense import distribution_uniform_mtc, distribution_normal_mtc
+import unittest
+
+import numpy
+
+from ..ext.dense import distribution_normal_mtc, distribution_uniform_mtc
+from ..sparseimage import cython_densify, densify
 
 logger = logging.getLogger(__name__)
 

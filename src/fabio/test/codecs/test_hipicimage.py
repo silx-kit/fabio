@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
 #             https://github.com/silx-kit/fabio
@@ -34,11 +33,13 @@ Image provided by Henning O. Sørensen
 __date__ = "27/10/2025"
 __author__ = "Jérôme Kieffer"
 
-import unittest
-import os
 import logging
+import os
+import unittest
+
 import fabio
 from fabio.HiPiCimage import HipicImage
+
 from ..utilstest import UtilsTest
 
 logger = logging.getLogger(__name__)
@@ -94,7 +95,7 @@ class TestHiPiCImage(unittest.TestCase):
                 self.assertAlmostEqual(maxi, obj.getmax(), 2, "getmax")
                 got_mean = obj.getmean()
                 self.assertAlmostEqual(
-                    mean, got_mean, 2, "getmean exp %s != got %s" % (mean, got_mean)
+                    mean, got_mean, 2, f"getmean exp {mean} != got {got_mean}"
                 )
                 self.assertAlmostEqual(stddev, obj.getstddev(), 2, "getstddev")
                 self.assertEqual(shape, obj.shape)

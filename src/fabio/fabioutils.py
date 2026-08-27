@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -28,7 +27,6 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 #  OTHER DEALINGS IN THE SOFTWARE.
 
-#
 """General purpose utilities functions for fabio"""
 
 __author__ = "Jérôme Kieffer"
@@ -39,16 +37,17 @@ __date__ = "17/06/2026"
 __status__ = "stable"
 __docformat__ = "restructuredtext"
 
-import re
-import os
-import logging
-import sys
 import json
-from collections import OrderedDict as _OrderedDict
-import traceback
-from math import ceil
+import logging
+import os
+import re
+import sys
 import threading
+import traceback
+from collections import OrderedDict as _OrderedDict
 from enum import StrEnum
+from math import ceil
+
 from .compression import bz2, gzip
 
 try:
@@ -58,7 +57,9 @@ except ImportError:
         import pathlib2 as pathlib
     except ImportError:
         pathlib = None
-from io import FileIO, BytesIO as _BytesIO
+from io import BytesIO as _BytesIO
+from io import FileIO
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 StringTypes = (str, bytes)
@@ -91,7 +92,7 @@ def pad(mystr, pattern=" ", size=80):
         return mystr.ljust(padded_size, pattern)
     else:
         return (
-            mystr + pattern * int(ceil(float(padded_size - len(mystr)) / len(pattern)))
+            mystr + pattern * ceil((padded_size - len(mystr)) / len(pattern))
         )[:padded_size]
 
 
@@ -107,11 +108,11 @@ def getnum(name):
         return None
 
 
-COMPRESSED_EXTENSIONS = set(["gz", "bz2"])
+COMPRESSED_EXTENSIONS = {"gz", "bz2"}
 """Set of compressed file extensions provided by Fabio"""
 
 
-class FilenameObject(object):
+class FilenameObject:
     """
     The 'meaning' of a filename ...
     """
@@ -213,8 +214,7 @@ class FilenameObject(object):
             typ = []
             for codec in codec_classes:
                 name = codec.codec_name()
-                if name.endswith("image"):
-                    name = name[:-5]
+                name = name.removesuffix("image")
                 typ.append(name)
             extn = "." + parts[-1] + extn
             try:
@@ -223,7 +223,7 @@ class FilenameObject(object):
                 ndigit = len(numstring)
             except Exception as err:
                 # There is no number - hence make num be None, not 0
-                logger.debug("l242: %s" % err)
+                logger.debug("l242: %s", err)
                 num = None
                 stem = "".join(parts[:-1])
         else:
@@ -243,14 +243,14 @@ class FilenameObject(object):
                     typ = ["bruker"]
                     stem = ".".join(parts[:-1]) + "."
                 except Exception as err:
-                    logger.debug("l262: %s" % err)
+                    logger.debug("l262: %s", err)
                     typ = None
                     extn = "." + parts[-1] + extn
                     numstring = ""
                     try:
                         stem, numstring, postnum = numstem(".".join(parts[:-1]))
                     except Exception as err:
-                        logger.debug("l269: %s" % err)
+                        logger.debug("l269: %s", err)
                         raise
                     if numstring.isdigit():
                         num = int(numstring)
@@ -280,7 +280,7 @@ def numstem(name):
         # return [ r[::-1] for r in res[::-1]]
         if len(res[0]) == len(res[1]) == 0:  # Hack for file without number
             return [res[2], "", ""]
-        return [r for r in res]
+        return list(res)
     except AttributeError:  # no digits found
         return [name, "", ""]
 
@@ -366,7 +366,7 @@ def toAscii(name, excluded=None):
             if i in ascii:
                 ascii.remove(i)
             else:
-                logger.error("toAscii: %s not in ascii table" % i)
+                logger.error("toAscii: %s not in ascii table", i)
         dictAscii[excluded] = ascii
     else:
         ascii = dictAscii[excluded]
@@ -407,7 +407,7 @@ class BytesIO(_BytesIO):
 
     def getSize(self):
         if self.__size is None:
-            logger.debug("Measuring size of %s" % self.name)
+            logger.debug("Measuring size of %s", self.name)
             with self.lock:
                 pos = self.tell()
                 self.seek(0, os.SEEK_END)
@@ -464,12 +464,12 @@ class File(FileIO):
             try:
                 os.unlink(name)
             except Exception as err:
-                logger.error("Unable to remove %s: %s" % (name, err))
-                raise (err)
+                logger.error("Unable to remove %s: %s", name, err)
+                raise
 
     def getSize(self):
         if self.__size is None:
-            logger.debug("Measuring size of %s" % self.name)
+            logger.debug("Measuring size of %s", self.name)
             with self.lock:
                 pos = self.tell()
                 self.seek(0, os.SEEK_END)
@@ -597,8 +597,11 @@ else:
                         end_pos = len(gzip.GzipFile.read(self)) + pos
                         self.seek(pos)
                         logger.debug(
-                            "Measuring size of %s: %s @ %s == %s"
-                            % (self.name, end_pos, pos, pos)
+                            "Measuring size of %s: %s @ %s == %s",
+                            self.name,
+                            end_pos,
+                            pos,
+                            pos,
                         )
                         self.__size = end_pos
             return self.__size
@@ -648,7 +651,7 @@ else:
 
         def getSize(self):
             if self.__size is None:
-                logger.debug("Measuring size of %s" % self.name)
+                logger.debug("Measuring size of %s", self.name)
                 with self.lock:
                     pos = self.tell()
                     _ = self.read()
@@ -674,7 +677,6 @@ else:
 class NotGoodReader(RuntimeError):
     """The reader used is probably not the good one"""
 
-    pass
 
 
 class DebugSemaphore(threading.Semaphore):
@@ -683,7 +685,7 @@ class DebugSemaphore(threading.Semaphore):
     """
 
     write_lock = threading.Semaphore()
-    blocked = []
+    blocked: ClassVar[list] = []
 
     def __init__(self, *arg, **kwarg):
         threading.Semaphore.__init__(self, *arg, **kwarg)
@@ -694,7 +696,7 @@ class DebugSemaphore(threading.Semaphore):
                 self.blocked.append(id(self))
                 sys.stderr.write(
                     os.linesep.join(
-                        ["Blocking sem %s" % id(self)]
+                        [f"Blocking sem {id(self)}"]
                         + traceback.format_stack()[:-1]
                         + [""]
                     )
@@ -707,7 +709,7 @@ class DebugSemaphore(threading.Semaphore):
             uid = id(self)
             if uid in self.blocked:
                 self.blocked.remove(uid)
-                sys.stderr.write("Released sem %s %s" % (uid, os.linesep))
+                sys.stderr.write(f"Released sem {uid} {os.linesep}")
         threading.Semaphore.release(self, *arg, **kwarg)
 
     def __enter__(self):
@@ -766,7 +768,7 @@ class ENDIANNESS(StrEnum):
         return res
 
 
-AVAILABLE_COMPRESSED_EXTENSIONS = set([])
+AVAILABLE_COMPRESSED_EXTENSIONS = set()
 """Set of available compressed file extensions. Do not contains extensions for
 uninstalled optional dependencies."""
 if GzipFile != UnknownCompressedFile:

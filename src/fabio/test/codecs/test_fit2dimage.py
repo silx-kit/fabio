@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: FabIO X-ray image reader
 #
@@ -32,11 +31,14 @@ __license__ = "MIT"
 __copyright__ = "2016-2020 European Synchrotron Radiation Facility"
 __date__ = "27/10/2025"
 
-import unittest
-import numpy
 import logging
+import unittest
+
+import numpy
+
 import fabio
 from fabio.fit2dimage import fit2dimage
+
 from ..utilstest import UtilsTest
 
 logger = logging.getLogger(__name__)

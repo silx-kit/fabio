@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -37,10 +36,13 @@ __date__ = "27/10/2025"
 
 import logging
 import os
+
 import numpy
+
+from . import nexus
 from .fabioimage import FabioImage
 from .fabioutils import NotGoodReader
-from . import nexus
+from typing import ClassVar
 
 try:
     import h5py
@@ -63,7 +65,7 @@ class LimaImage(FabioImage):
 
     DESCRIPTION = "HDF5 file produces by LImA"
 
-    DEFAULT_EXTENSIONS = ["h5", "hdf5"]
+    DEFAULT_EXTENSIONS: ClassVar[list] = ["h5", "hdf5"]
 
     def __init__(self, data=None, header=None):
         """
@@ -117,12 +119,9 @@ class LimaImage(FabioImage):
 
     def __repr__(self):
         if self.h5 is not None:
-            return "LImA-HDF5 dataset with %i frames from %s" % (
-                self.nframes,
-                self.h5.filename,
-            )
+            return f"LImA-HDF5 dataset with {self.nframes} frames from {self.h5.filename}"
         else:
-            return "%s object at %s" % (self.__class__.__name__, hex(id(self)))
+            return f"{self.__class__.__name__} object at {hex(id(self))}"
 
     def _readheader(self, infile):
         """
@@ -200,7 +199,7 @@ class LimaImage(FabioImage):
                 new_img._nframes = self.nframes
                 new_img.currentframe = num
             else:
-                raise IOError(f"getframe({num}) out of range [0, {self.nframes}[")
+                raise OSError(f"getframe({num}) out of range [0, {self.nframes}[")
         else:
             new_img = FabioImage.getframe(self, num)
         return new_img

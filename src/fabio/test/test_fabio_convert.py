@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
 #             https://github.com/silx-kit/fabio
@@ -12,15 +11,18 @@
 Test for fabio-convert
 """
 
-import numpy
+import logging
 import os.path
 import shutil
-import sys
 import subprocess
+import sys
 import time
 import unittest
-import logging
+
+import numpy
+
 import fabio.app.convert
+
 from .utilstest import UtilsTest
 
 _logger = logging.getLogger(__name__)
@@ -75,7 +77,7 @@ class TestFabioConvert(unittest.TestCase):
         self.__oldPath = os.getcwd()
         self.__testPath = self.create_test_env()
         os.chdir(self.__testPath)
-        env = dict((str(k), str(v)) for k, v in os.environ.items())
+        env = {str(k): str(v) for k, v in os.environ.items()}
         env["PYTHONPATH"] = os.pathsep.join(sys.path)
         self.__env = env
         self.__script = fabio.app.convert.__file__

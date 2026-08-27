@@ -1,5 +1,4 @@
 #!/usr/bin/python
-# coding: utf-8
 #
 #    Copyright (C) European Synchrotron Radiation Facility, Grenoble, France
 #
@@ -28,16 +27,19 @@ __date__ = "27/10/2025"
 __license__ = "MIT"
 __copyright__ = "2016-2020 European Synchrotron Radiation Facility, Grenoble, France"
 
+import os
 import sys
 import timeit
-import os
+
 from ..test import utilstest
 
 # To use use the locally build version of PyFAI, use ../bootstrap.py
 try:
-    from .. import open as fabio_open, version, date
+    from .. import date, version
+    from .. import open as fabio_open
 except ImportError:
-    from fabio import open as fabio_open, version, date
+    from fabio import date, version
+    from fabio import open as fabio_open
 
 datasets = [
     "mb_LP_1_001.img",
@@ -85,8 +87,8 @@ def run_benchmark(number=10, repeat=3):
             [i / (0.001 * number) for i in timer.repeat(repeat=repeat, number=number)]
         )
         print(
-            "%13s %25s %.3f Mb \t %.3f Mpix \t  %.3f ms \t %.3f ms/Mpix"
-            % (fimg.__class__.__name__, img, file_size, img_size, tmin, tmin / img_size)
+            f"{fimg.__class__.__name__:>13} {img:>25} {file_size:.3f} Mb \t "
+            f"{img_size:.3f} Mpix \t  {tmin:.3f} ms \t {tmin / img_size:.3f} ms/Mpix"
         )
 
 

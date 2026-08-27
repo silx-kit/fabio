@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -44,22 +43,24 @@ __license__ = "MIT"
 __copyright__ = "ESRF"
 __date__ = "17/06/2026"
 
-import os
 import logging
+import os
 import sys
 import tempfile
 import weakref
+
 import numpy
-from . import fabioutils, converters
-from .fabioutils import OrderedDict, ENDIANNESS
+
+from . import converters, fabioutils
 from .compression import COMPRESSORS
-from .utils import pilutils
-from .utils import deprecation
+from .fabioutils import ENDIANNESS, OrderedDict
+from .utils import deprecation, pilutils
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
 
-class _FabioArray(object):
+class _FabioArray:
     """ "Abstract class providing array API used by :class:`FabioImage` and
     :class:`FabioFrame`."""
 
@@ -189,16 +190,14 @@ class _FabioArray(object):
 
     def getmax(self):
         """Find max value in self.data, caching for the future"""
-        if self.maxval is None:
-            if self.data is not None:
-                self.maxval = self.data.max()
+        if self.maxval is None and self.data is not None:
+            self.maxval = self.data.max()
         return self.maxval
 
     def getmin(self):
         """Find min value in self.data, caching for the future"""
-        if self.minval is None:
-            if self.data is not None:
-                self.minval = self.data.min()
+        if self.minval is None and self.data is not None:
+            self.minval = self.data.min()
         return self.minval
 
     def make_slice(self, coords):
@@ -219,7 +218,7 @@ class _FabioArray(object):
             # a matrix is given as row,col
             # also the (for whichever reason) the image is flipped upside
             # down wrt to the matrix hence these tranformations
-            dim2, dim1 = self.data.shape
+            dim2, _dim1 = self.data.shape
             # FIXME: This code is just not working dim2 is used in place of dim1
             fixme = (dim2 - coords[3] - 1, coords[0], dim2 - coords[1] - 1, coords[2])
         return (
@@ -319,7 +318,7 @@ class FabioFrame(_FabioArray):
     """Identify a frame"""
 
     def __init__(self, data=None, header=None):
-        super(FabioFrame, self).__init__()
+        super().__init__()
         self.data = data
         self._header = header
         self._shape = None
@@ -455,7 +454,7 @@ class FabioImage(_FabioArray):
     _need_a_seek_to_read = False
     _need_a_real_file = False
 
-    RESERVED_HEADER_KEYS = []
+    RESERVED_HEADER_KEYS: ClassVar[list] = []
     # List of header keys which are reserved by the file format
 
     @classmethod
@@ -482,7 +481,7 @@ class FabioImage(_FabioArray):
         :param data: numpy array of values
         :param header: dict or ordereddict with metadata
         """
-        super(FabioImage, self).__init__()
+        super().__init__()
         self._classname = None
         self._shape = None
         self._dtype = None
@@ -531,8 +530,7 @@ class FabioImage(_FabioArray):
         else:
             if not (0 <= num < self.nframes):
                 raise IndexError(
-                    "Frame number out of range (requested %d, but found %d)"
-                    % (num, self.nframes)
+                    f"Frame number out of range (requested {int(num)}, but found {self.nframes})"
                 )
 
             # Try to use the old getframe API to avoid to implement many
@@ -662,7 +660,7 @@ class FabioImage(_FabioArray):
         from .openimage import openimage
 
         if self.filename is None:
-            raise IOError()
+            raise OSError()
         return openimage(fabioutils.previous_filename(self.filename))
 
     def next(self):
@@ -673,7 +671,7 @@ class FabioImage(_FabioArray):
         from .openimage import openimage
 
         if self.filename is None:
-            raise IOError()
+            raise OSError()
         return openimage(fabioutils.next_filename(self.filename))
 
     def getheader(self):
@@ -743,12 +741,11 @@ class FabioImage(_FabioArray):
         """
         To be overwritten - write the file
         """
-        if isinstance(fname, fabioutils.PathTypes):
-            if not isinstance(fname, fabioutils.StringTypes):
-                fname = str(fname)
+        if isinstance(fname, fabioutils.PathTypes) and not isinstance(fname, fabioutils.StringTypes):
+            fname = str(fname)
         module = sys.modules[self.__class__.__module__]
         raise NotImplementedError(
-            "Writing %s format is not implemented" % module.__name__
+            f"Writing {module.__name__} format is not implemented"
         )
 
     def save(self, fname):
@@ -760,9 +757,8 @@ class FabioImage(_FabioArray):
         Call the _readheader function...
         """
         # Override the needs asserting that all headers can be read via python modules
-        if isinstance(filename, fabioutils.PathTypes):
-            if not isinstance(filename, fabioutils.StringTypes):
-                filename = str(filename)
+        if isinstance(filename, fabioutils.PathTypes) and not isinstance(filename, fabioutils.StringTypes):
+            filename = str(filename)
         save_state = self._need_a_real_file, self._need_a_seek_to_read
         self._need_a_real_file, self._need_a_seek_to_read = False, False
         fin = self._open(filename)
@@ -800,9 +796,8 @@ class FabioImage(_FabioArray):
         Method reading Region of Interest.
         This implementation is the trivial one, just doing read and crop
         """
-        if isinstance(filename, fabioutils.PathTypes):
-            if not isinstance(filename, fabioutils.StringTypes):
-                filename = str(filename)
+        if isinstance(filename, fabioutils.PathTypes) and not isinstance(filename, fabioutils.StringTypes):
+            filename = str(filename)
         self.read(filename, frame)
         if len(coords) == 4:
             self.slice = self.make_slice(coords)
@@ -833,12 +828,12 @@ class FabioImage(_FabioArray):
             else:
                 self.filename = "stream"
                 try:
-                    setattr(fname, "name", self.filename)
+                    fname.name = self.filename
                 except AttributeError:
                     # cStringIO
                     logger.warning(
-                        "Unable to set filename attribute to stream (cStringIO?) of type %s"
-                        % type(fname)
+                        "Unable to set filename attribute to stream (cStringIO?) of type %s",
+                        type(fname),
                     )
             return fname
 
@@ -846,7 +841,7 @@ class FabioImage(_FabioArray):
             if not isinstance(fname, fabioutils.StringTypes):
                 fname = str(fname)
         else:
-            raise TypeError("Unsupported type of fname (found %s)" % type(fname))
+            raise TypeError(f"Unsupported type of fname (found {type(fname)})")
 
         fileObject = None
         self.filename = fname
@@ -910,8 +905,7 @@ class FabioImage(_FabioArray):
         other = None
         if type(dest) in fabioutils.StringTypes:
             dest = dest.lower()
-            if dest.endswith("image"):
-                dest = dest[:-5]
+            dest = dest.removesuffix("image")
             codec_name = dest + "image"
             from . import fabioformats
 
@@ -931,7 +925,7 @@ class FabioImage(_FabioArray):
         elif ("__new__" in dir(dest)) and isinstance(dest(), FabioImage):
             other = dest()
         else:
-            logger.error("Unrecognized destination format: %s " % dest)
+            logger.error("Unrecognized destination format: %s ", dest)
             return self
         other.data = converters.convert_data(self.classname, other.classname, self.data)
         other.header = converters.convert_header(
@@ -945,7 +939,7 @@ class FabioImage(_FabioArray):
             yield current_image
             try:
                 current_image = current_image.next()
-            except (IOError, IndexError):
+            except (OSError, IndexError):
                 break
 
 

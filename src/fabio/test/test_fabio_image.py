@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
 #             https://github.com/silx-kit/fabio
@@ -32,13 +31,15 @@ testsuite by Jerome Kieffer (Jerome.Kieffer@esrf.eu)
 28/11/2014
 """
 
-import unittest
-import os
-import numpy
 import copy
 import logging
-from ..fabioimage import FabioImage
+import os
+import unittest
+
+import numpy
+
 from .. import fabioutils
+from ..fabioimage import FabioImage
 from ..utils import pilutils
 from .utilstest import UtilsTest
 
@@ -215,13 +216,7 @@ class TestPilImage(unittest.TestCase):
                 pim = img.toPIL16()
                 for i in [0, 5, 6, shape[1] - 1]:
                     for j in [0, 5, 7, shape[0] - 1]:
-                        errstr = str(typ) + " %d %d %f %f t=%s" % (
-                            i,
-                            j,
-                            testdata[j, i],
-                            pim.getpixel((i, j)),
-                            typ,
-                        )
+                        errstr = str(typ) + f" {i} {j} {testdata[j, i]:f} {pim.getpixel((i, j)):f} t={typ}"
 
                         er1 = img.data[j, i] - pim.getpixel((i, j))
                         er2 = img.data[j, i] + pim.getpixel((i, j))

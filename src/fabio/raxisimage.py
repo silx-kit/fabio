@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -42,11 +41,14 @@ __copyright__ = "Brian R. Pauw"
 __date__ = "17/06/2026"
 
 import logging
-import struct
 import os
+import struct
+
 import numpy
+
 from .fabioimage import FabioImage
 from .fabioutils import OrderedDict
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
@@ -185,7 +187,7 @@ class RaxisImage(FabioImage):
 
     DESCRIPTION = "Rigaku RAXIS file format"
 
-    DEFAULT_EXTENSIONS = ["img"]
+    DEFAULT_EXTENSIONS: ClassVar[list] = ["img"]
 
     def __init__(self, *arg, **kwargs):
         """
@@ -298,13 +300,14 @@ class RaxisImage(FabioImage):
                     infile.seek(
                         -size + offset + 1, os.SEEK_END
                     )  # seek from EOF backwards
-            except IOError as error:
+            except OSError as error:
                 logger.warning(
-                    "expected datablock too large, please check bytecode settings: %s, IOError: %s"
-                    % (self._dtype.type, error)
+                    "expected datablock too large, please check bytecode settings: %s, IOError: %s",
+                    self._dtype.type,
+                    error,
                 )
             except Exception as error:
-                logger.error("Uncommon error encountered when reading file: %s" % error)
+                logger.error("Uncommon error encountered when reading file: %s", error)
         rawData = infile.read(size)
         data = numpy.frombuffer(rawData, self.get_stype(self._dtype, self.endianness)).copy().reshape(shape)
         di = (data >> 15) != 0  # greater than 2^15
@@ -312,7 +315,7 @@ class RaxisImage(FabioImage):
             # find indices for which we need to do the correction (for which
             # the 16th bit is set):
 
-            logger.debug("Correct for PM: %s" % di.sum())
+            logger.debug("Correct for PM: %s", di.sum())
             data = data << 1 >> 1  # reset bit #15 to zero
             self._dtype = numpy.dtype(numpy.uint32)
             data = data.astype(self._dtype)

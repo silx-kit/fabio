@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -38,13 +37,14 @@ Authors: Henning O. Sorensen & Erik Knudsen
 
 """
 
-import numpy
+import logging
 import re
 
-import logging
+import numpy
 
 from .fabioimage import FabioImage
 from .fabioutils import ENDIANNESS
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
@@ -77,7 +77,7 @@ class DtrekImage(FabioImage):
 
     DESCRIPTION = "D*trek format (Rigaku specification 1.1)"
 
-    DEFAULT_EXTENSIONS = ["img"]
+    DEFAULT_EXTENSIONS: ClassVar[list] = ["img"]
 
     _keyvalue_pattern = None
 
@@ -93,7 +93,7 @@ class DtrekImage(FabioImage):
                 self._readheader(infile)
             except Exception:
                 logger.debug("Backtrace", exc_info=True)
-                raise IOError("Error processing d*TREK header")
+                raise OSError("Error processing d*TREK header")
 
             # FIXME: It would be good to read only the expected data
             binary = infile.read()
@@ -112,12 +112,12 @@ class DtrekImage(FabioImage):
             numpy_type = numpy.uint16
         else:
             if data_type not in _DATA_TYPES:
-                raise IOError(
+                raise OSError(
                     "Data_type key contains an invalid/unsupported value: %s", data_type
                 )
             numpy_type = _DATA_TYPES[data_type]
             if type is None:
-                raise IOError("Data_type %s is not supported by fabio", data_type)
+                raise OSError("Data_type %s is not supported by fabio", data_type)
 
         # Stored in case data reading fails
         self._dtype = numpy.dtype(numpy_type)
@@ -131,7 +131,7 @@ class DtrekImage(FabioImage):
 
         shape = []
         for i in range(dim):
-            value = int(self.header["SIZE%d" % (i + 1)])
+            value = int(self.header[f"SIZE{i + 1}"])
             shape.insert(0, value)
         self._shape = shape
 
@@ -144,9 +144,9 @@ class DtrekImage(FabioImage):
             try:
                 data = data.reshape(self._shape)
             except ValueError:
-                raise IOError(
+                raise OSError(
                     "Size spec in d*TREK header does not match "
-                    + "size of image data field %s != %s" % (self._shape, data.size)
+                    + f"size of image data field {self._shape} != {data.size}"
                 )
         self.data = data
         self._shape = None
@@ -245,7 +245,7 @@ class DtrekImage(FabioImage):
             self.header["Data_type"] = dtrek_data_type
             self.header["DIM"] = str(len(data.shape))
             for i, size in enumerate(reversed(data.shape)):
-                self.header["SIZE%d" % (i + 1)] = str(size)
+                self.header[f"SIZE{i + 1}"] = str(size)
             self.header["BYTE_ORDER"] = "little_endian" if byte_order==ENDIANNESS.LITTLE else "big_endian"
         else:
             # No data
@@ -259,7 +259,7 @@ class DtrekImage(FabioImage):
         for key in self.header:
             if key == "HEADER_BYTES":
                 continue
-            line = "%s= %s;\n" % (key, self.header[key])
+            line = f"{key}= {self.header[key]};\n"
             out += line.encode("utf-8")
 
         # FIXME: This code do not take into account the size of "HEADER_BYTES"

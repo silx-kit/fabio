@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -36,10 +35,10 @@ __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __date__ = "24/07/2017"
 __status__ = "stable"
 
-import os
 import getpass
-import tempfile
 import logging
+import os
+import tempfile
 
 logger = logging.getLogger(__name__)
 
@@ -50,13 +49,13 @@ testimages = None
 if "FABIO_TESTIMAGES" in os.environ:
     testimages = os.environ.get("FABIO_TESTIMAGES")
     if not os.path.exists(testimages):
-        logger.warning("testimage directory %s does not exist" % testimages)
+        logger.warning("testimage directory %s does not exist", testimages)
 elif os.path.isdir(SHARED_TESTIMAGES):
     testimages = SHARED_TESTIMAGES
 else:
     # create a temporary folder
     testimages = os.path.join(
-        tempfile.gettempdir(), "fabio_testimages_%s" % (getpass.getuser())
+        tempfile.gettempdir(), f"fabio_testimages_{getpass.getuser()}"
     )
 
 if not os.path.exists(testimages):

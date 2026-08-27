@@ -1,4 +1,3 @@
-# coding: utf-8
 # /*##########################################################################
 #
 # Copyright (c) 2016-2017 European Synchrotron Radiation Facility
@@ -64,13 +63,13 @@ else:
         def subTest(self, msg=None, **params):
             """Use as unittest.TestCase.subTest method in Python >= 3.4."""
             # Format arguments as: '[msg] (key=value, ...)'
-            param_str = ", ".join(["%s=%s" % (k, v) for k, v in params.items()])
-            self._subtest_msg = "[%s] (%s)" % (msg or "", param_str)
+            param_str = ", ".join([f"{k}={v}" for k, v in params.items()])
+            self._subtest_msg = f"[{msg or ''}] ({param_str})"
             yield
             self._subtest_msg = None
 
         def shortDescription(self):
-            short_desc = super(ParametricTestCase, self).shortDescription()
+            short_desc = super().shortDescription()
             if self._subtest_msg is not None:
                 # Append subTest message to shortDescription
                 short_desc = " ".join(
@@ -128,7 +127,7 @@ class LoggingCounter(logging.Handler):
             logger = logging.getLogger(logger)
         self.logger = logger
         self.records = []
-        super(LoggingCounter, self).__init__()
+        super().__init__()
 
     def __enter__(self):
         """Context (i.e., with) support"""
@@ -203,7 +202,7 @@ class TestLogging(LoggingCounter):
         debug=None,
         notset=None,
     ):
-        super(TestLogging, self).__init__(logger)
+        super().__init__(logger)
         self.count_by_level = {
             logging.CRITICAL: critical,
             logging.ERROR: error,
@@ -226,8 +225,7 @@ class TestLogging(LoggingCounter):
                 for record in self.records:
                     self.logger.handle(record)
                 raise RuntimeError(
-                    "Expected %d %s logging messages, got %d"
-                    % (expected_count, logging.getLevelName(level), count)
+                    f"Expected {expected_count} {logging.getLevelName(level)} logging messages, got {count}"
                 )
 
     def emit(self, record):
@@ -290,7 +288,7 @@ def test_logging(
 
 
 # Simulate missing library context
-class EnsureImportError(object):
+class EnsureImportError:
     """This context manager allows to simulate the unavailability
     of a library, even if it is actually available. It ensures that
     an ImportError is raised if the code inside the context tries to

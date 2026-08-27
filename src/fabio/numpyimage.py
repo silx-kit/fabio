@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: FabIO X-ray image reader
 #
@@ -33,8 +32,11 @@ __copyright__ = "ESRF"
 __date__ = "15/06/2026"
 
 import logging
+
 import numpy
+
 from . import fabioimage
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
@@ -105,7 +107,7 @@ class NumpyImage(fabioimage.FabioImage):
 
     DESCRIPTION = "Numpy array file format"
 
-    DEFAULT_EXTENSIONS = ["npy"]
+    DEFAULT_EXTENSIONS: ClassVar[list] = ["npy"]
 
     def __init__(self, data=None, header=None):
         """
@@ -114,7 +116,7 @@ class NumpyImage(fabioimage.FabioImage):
         fabioimage.FabioImage.__init__(self, data, header)
         self.dataset = self.data
         self.slice_dataset()
-        self.filename = "Numpy_array_%x" % id(self.dataset)
+        self.filename = f"Numpy_array_{id(self.dataset):x}"
 
     def slice_dataset(self, frame=None):
         if self.dataset is None:
@@ -182,7 +184,7 @@ class NumpyImage(fabioimage.FabioImage):
                 frame._set_file_container(self, num)
             else:
                 raise IndexError(
-                    "getframe %s out of range [%s %s[" % (num, 0, self.nframes)
+                    f"getframe {num} out of range [{0} {self.nframes}["
                 )
         else:
             frame = fabioimage.FabioImage._get_frame(self, num)
@@ -200,7 +202,7 @@ class NumpyImage(fabioimage.FabioImage):
                 frame.currentframe = num
             else:
                 raise IndexError(
-                    "getframe %s out of range [%s %s[" % (num, 0, self.nframes)
+                    f"getframe {num} out of range [{0} {self.nframes}["
                 )
         else:
             frame = fabioimage.FabioImage.getframe(self, num)

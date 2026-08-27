@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
+import logging
 import os
 import sys
-import logging
-import bootstrap
+
 from sphinx.cmd.build import main
+
+import bootstrap
+
 logger = logging.getLogger(__name__)
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_NAME = bootstrap.get_project_name(PROJECT_DIR)

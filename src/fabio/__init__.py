@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -35,27 +34,31 @@ __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __date__ = "13/03/2026"
 __status__ = "stable"
 
-import sys
 import logging
-from .version import __date__ as date, version, version_info, hexversion, strictversion  # noqa
+import sys
+
 from . import fabioformats as _fabioformats
-from . import fabioimage  # noqa
-from . import openimage  # noqa
+from . import (
+    fabioimage,
+    openimage,  # noqa
+)
+from .compression import COMPRESSORS  # noqa
 from .fabioutils import (
-    jump_filename,  # noqa
-    FilenameObject,  # noqa
-    previous_filename,  # noqa
-    next_filename,  # noqa
+    FilenameObject,
+    construct_filename,  # noqa
     deconstruct_filename,  # noqa
+    exists,  # noqa
     extract_filenumber,  # noqa
     getnum,  # noqa
-    construct_filename,  # noqa
-    exists,  # noqa
-)  # noqa
-from .compression import COMPRESSORS  # noqa
+    jump_filename,  # noqa
+    next_filename,  # noqa
+    previous_filename,  # noqa
+)
+from .openimage import open_series as open_series
+from .openimage import openheader as openheader
 from .openimage import openimage as open  # noqa
-from .openimage import open_series as open_series  # noqa
-from .openimage import openheader as openheader  # noqa
+from .version import __date__ as date  # noqa
+from .version import hexversion, strictversion, version, version_info  # noqa
 
 if "ps1" in dir(sys):
     # configure logging with interactive console

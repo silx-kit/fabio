@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: FabIO X-ray image reader
 #
@@ -48,6 +47,7 @@ except ImportError:
 from .fabioimage import FabioImage
 from .fabioutils import OrderedDict
 from .utils import pilutils
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
@@ -61,7 +61,7 @@ class Jpeg2KImage(FabioImage):
 
     DESCRIPTION = "JPEG 2000 format"
 
-    DEFAULT_EXTENSIONS = ["jp2", "jpx", "j2k", "jpf", "jpg2"]
+    DEFAULT_EXTENSIONS: ClassVar[list] = ["jp2", "jpx", "j2k", "jpf", "jpg2"]
 
     _need_a_seek_to_read = True
 
@@ -101,7 +101,7 @@ class Jpeg2KImage(FabioImage):
             # inject a shape  to avoid calling the read function
             image = glymur.Jp2k(filename=filename, shape=(1, 1))
         else:
-            raise IOError("Glymur version %s is not supported" % glymur.__version__)
+            raise OSError(f"Glymur version {glymur.__version__} is not supported")
 
         # Move to the end of the file to know the size
         infile.seek(0, 2)
@@ -121,7 +121,7 @@ class Jpeg2KImage(FabioImage):
             image._validate()
         except Exception:
             logger.debug("Backtrace", exc_info=True)
-            raise IOError("File %s is not a valid format" % filename)
+            raise OSError(f"File {filename} is not a valid format")
 
         # Now the image can be used normally
         return image
@@ -145,16 +145,16 @@ class Jpeg2KImage(FabioImage):
                 self.lib = name
                 break
 
-            except IOError as e:
+            except OSError as e:
                 self.data = None
                 self.header = OrderedDict()
                 logger.debug(
-                    "Error while using %s library: %s" % (name, e), exc_info=True
+                    "Error while using %s library: %s", name, e, exc_info=True
                 )
 
         if self.data is None:
             infile.seek(0)
-            raise IOError("No decoder available for the file %s." % filename)
+            raise OSError(f"No decoder available for the file {filename}.")
         self.resetvals()
         return self
 

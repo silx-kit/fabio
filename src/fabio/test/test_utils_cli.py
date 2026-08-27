@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: Azimuthal integration
 #             https://github.com/silx-kit/pyFAI
@@ -32,13 +31,15 @@ __date__ = "19/06/2026"
 __status__ = "development"
 __docformat__ = "restructuredtext"
 
-import unittest
 import logging
+import unittest
 from pathlib import Path
-from .utilstest import UtilsTest
-from ..utils.testutils import  LoggingCounter
-from ..utils.cli import ProgressBar, expand_args
+
 from .. import eigerimage
+from ..utils.cli import ProgressBar, expand_args
+from ..utils.testutils import LoggingCounter
+from .utilstest import UtilsTest
+
 logger = logging.getLogger(__name__)
 
 

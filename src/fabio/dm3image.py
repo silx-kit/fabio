@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -39,9 +38,12 @@ Authors: Henning O. Sorensen & Erik Knudsen
 """
 
 import logging
+
 import numpy
+
 from .fabioimage import FabioImage
 from .fabioutils import ENDIANNESS
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
@@ -84,7 +86,7 @@ class Dm3Image(FabioImage):
 
     DESCRIPTION = "Digital Micrograph DM3 file format"
 
-    DEFAULT_EXTENSIONS = ["dm3"]
+    DEFAULT_EXTENSIONS: ClassVar[list] = ["dm3"]
 
     def __init__(self, *args, **kwargs):
         FabioImage.__init__(self, *args, **kwargs)
@@ -107,8 +109,8 @@ class Dm3Image(FabioImage):
             raise RuntimeError("Wrong file type")
         self.bytes_in_file = self.readbytes(4, BE_uint32)[0]
         byte_order = self.readbytes(4, BE_uint32)[0]  # 0 = big, 1= little
-        logger.debug("read dm3 file - file format %s" % file_format)
-        logger.debug("Bytes in file: %s" % self.bytes_in_file)
+        logger.debug("read dm3 file - file format %s", file_format)
+        logger.debug("Bytes in file: %s", self.bytes_in_file)
         logger.debug("Byte order: %s  - 0 = bigEndian , 1 = littleEndian", self.byte_order)
 
         if byte_order == 0:
@@ -142,7 +144,7 @@ class Dm3Image(FabioImage):
         try:
             dim1_binning, dim2_binning = map(int, binning_raw.split())
         except AttributeError:
-            dim1_binning, dim2_binning = map(lambda x: x * int(binning_raw) * x, (1, 1))
+            dim1_binning = dim2_binning = int(binning_raw)
         self._shape = dim2_raw // dim2_binning, dim1_raw // dim1_binning
         if "Data" in self.header:
             self.data = self.header["Data"].reshape(self._shape)
@@ -183,7 +185,7 @@ class Dm3Image(FabioImage):
                 key = tag_label.decode("latin-1")
             except Exception:
                 key = tag_label.decode("latin-1", "replace")
-                logger.warning("Non-valid latin-1 key renamed into '%s'" % key)
+                logger.warning("Non-valid latin-1 key renamed into '%s'", key)
             value = self.read_tag_type()
             if isinstance(value, bytes):
                 value = value.decode()
@@ -200,7 +202,7 @@ class Dm3Image(FabioImage):
     def read_tag_type(self):
         read = self.infile.read(4)
         if read != b"%%%%":
-            raise IOError(f"Inconsistent file reading {read}")
+            raise OSError(f"Inconsistent file reading {read}")
         self.tag_data_type = self.readbytes(4, BE_uint32)[0]
         logger.debug(
             "data is of type: %s - 1 = simple, 2 = string, 3 = array, >3 structs.",

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
 #             https://github.com/silx-kit/fabio
@@ -28,14 +27,17 @@
 
 """Test Eiger images"""
 
-import unittest
-import os
 import logging
+import os
+import unittest
+
 import numpy
-from fabio.openimage import openimage
+
 from fabio.eigerimage import EigerImage, h5py
-from ..utilstest import UtilsTest
+from fabio.openimage import openimage
+
 from ..test_frames import _CommonTestFrames
+from ..utilstest import UtilsTest
 
 logger = logging.getLogger(__name__)
 
@@ -68,13 +70,13 @@ class TestEiger(_CommonTestFrames):
     def setUpClass(cls):
         cls.fn3 = os.path.join(UtilsTest.tempdir, "eiger3d.h5")
         make_hdf5(cls.fn3, (50, 99, 101))
-        super(TestEiger, cls).setUpClass()
+        super().setUpClass()
 
     @classmethod
     def getMeta(cls):
         filename = cls.fn3
 
-        class Meta(object):
+        class Meta:
             pass
 
         meta = Meta()
@@ -85,7 +87,7 @@ class TestEiger(_CommonTestFrames):
 
     @classmethod
     def tearDownClass(cls):
-        super(TestEiger, cls).tearDownClass()
+        super().tearDownClass()
         if os.path.exists(cls.fn3):
             os.unlink(cls.fn3)
 
@@ -94,14 +96,14 @@ class TestEiger(_CommonTestFrames):
         e = EigerImage()
         e.read(self.fn3)
         self.assertEqual(e.shape, (99, 101))
-        self.assertEqual(e.nframes, 50, "nframe: got %s!=50" % e.nframes)
+        self.assertEqual(e.nframes, 50, f"nframe: got {e.nframes}!=50")
         self.assertEqual(e.bpp, 4, "bpp OK")
 
     def test_open(self):
         """check we can read images from Eiger"""
         e = openimage(self.fn3)
         self.assertEqual(e.shape, (99, 101))
-        self.assertEqual(e.nframes, 50, "nframe: got %s!=50" % e.nframes)
+        self.assertEqual(e.nframes, 50, f"nframe: got {e.nframes}!=50")
         self.assertEqual(e.bpp, 4, "bpp OK")
 
     def test_write(self):

@@ -3,3 +3,4 @@ sandbox/* export-ignore
 #ci/* export-ignore
 package/* export-ignore
 build-deb.sh export-ignore
+*.py text eol=lf 

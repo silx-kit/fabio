@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
 #             https://github.com/silx-kit/fabio
@@ -32,10 +31,13 @@
 # builds on stuff from ImageD11.test.testpeaksearch
 """
 
-import unittest
-import numpy
 import logging
+import unittest
+
+import numpy
+
 import fabio.xsdimage
+
 from ..utilstest import UtilsTest
 
 logger = logging.getLogger(__name__)
@@ -68,7 +70,7 @@ class TestXSD(unittest.TestCase):
             self.assertAlmostEqual(mini, obj.getmin(), 2, "getmin")
             self.assertAlmostEqual(maxi, obj.getmax(), 2, "getmax")
             self.assertAlmostEqual(mean, obj.getmean(), 2, "getmean")
-            logger.info("%s %s %s" % (name, stddev, obj.getstddev()))
+            logger.info("%s %s %s", name, stddev, obj.getstddev())
             self.assertAlmostEqual(stddev, obj.getstddev(), 2, "getstddev")
             self.assertEqual(shape, obj.shape)
 

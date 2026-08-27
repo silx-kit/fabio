@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: FabIO X-ray image reader
 #
@@ -35,8 +34,11 @@ mpaimage can read ascii and binary .mpa (multiwire) files
 """
 
 import logging
+
 import numpy
+
 from .fabioimage import FabioImage, OrderedDict
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
@@ -48,7 +50,7 @@ class MpaImage(FabioImage):
 
     DESCRIPTION = "multiwire data files"
 
-    DEFAULT_EXTENSIONS = ["mpa"]
+    DEFAULT_EXTENSIONS: ClassVar[list] = ["mpa"]
 
     def _readheader(self, infile):
         """
@@ -71,7 +73,7 @@ class MpaImage(FabioImage):
                     tmp_hdr["None"][key] = value
                 else:
                     tmp_hdr[header_prefix][key] = value
-            elif line.startswith("[DATA") or line.startswith("[CDAT"):
+            elif line.startswith(("[DATA", "[CDAT")):
                 break
             else:
                 header_prefix = line.strip().strip("[]")
@@ -98,12 +100,12 @@ class MpaImage(FabioImage):
         self._readheader(infile)
 
         if (
-            "ADC1_range" not in self.header.keys()
-            or "ADC2_range" not in self.header.keys()
-            or "mpafmt" not in self.header.keys()
+            "ADC1_range" not in self.header
+            or "ADC2_range" not in self.header
+            or "mpafmt" not in self.header
         ):
             logger.error("Error in opening %s: badly formatted mpa header.", fname)
-            raise IOError("Error in opening %s: badly formatted mpa header." % fname)
+            raise OSError(f"Error in opening {fname}: badly formatted mpa header.")
 
         dim2 = int(self.header["ADC1_range"])
         dim1 = int(self.header["ADC2_range"])

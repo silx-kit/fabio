@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
 #             https://github.com/silx-kit/fabio
@@ -36,12 +35,15 @@ Jerome Kieffer, 04/12/2014
 __author__ = "Jérôme Kieffer"
 __date__ = "27/10/2025"
 
+import logging
 import os
 import unittest
+
 import numpy
-import logging
-from fabio.pnmimage import pnmimage
+
 from fabio.openimage import openimage
+from fabio.pnmimage import pnmimage
+
 from ..utilstest import UtilsTest
 
 logger = logging.getLogger(__name__)

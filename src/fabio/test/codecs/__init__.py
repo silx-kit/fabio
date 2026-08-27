@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -41,41 +40,43 @@ import unittest
 
 
 def suite():
-    from . import test_edfimage
-    from . import test_edfimage_expg
-    from . import test_cbfimage
-    from . import test_dtrekimage
-    from . import test_fit2dmaskimage
-    from . import test_fit2dspreadsheetimage
-    from . import test_geimage
-    from . import test_mar345image
-    from . import test_brukerimage
-    from . import test_bruker100image
-    from . import test_mccdimage
-    from . import test_oxdimage
-    from . import test_kcdimage
-    from . import test_tifimage
-    from . import test_xsdimage
-    from . import test_raxisimage
-    from . import test_pnmimage
-    from . import test_numpyimage
-    from . import test_pilatusimage
-    from . import test_eigerimage
-    from . import test_lambdaimage
-    from . import test_hdf5image
-    from . import test_fit2dimage
-    from . import test_speimage
-    from . import test_jpegimage
-    from . import test_jpeg2kimage
-    from . import test_mpaimage
-    from . import test_dm3image
-    from . import test_mrcimage
-    from . import test_pixiimage
-    from . import test_esperantoimage
-    from . import test_limaimage
-    from . import test_hipicimage
-    from . import test_binaryimage
-    from . import test_xcaliburimage
+    from . import (
+        test_binaryimage,
+        test_bruker100image,
+        test_brukerimage,
+        test_cbfimage,
+        test_dm3image,
+        test_dtrekimage,
+        test_edfimage,
+        test_edfimage_expg,
+        test_eigerimage,
+        test_esperantoimage,
+        test_fit2dimage,
+        test_fit2dmaskimage,
+        test_fit2dspreadsheetimage,
+        test_geimage,
+        test_hdf5image,
+        test_hipicimage,
+        test_jpeg2kimage,
+        test_jpegimage,
+        test_kcdimage,
+        test_lambdaimage,
+        test_limaimage,
+        test_mar345image,
+        test_mccdimage,
+        test_mpaimage,
+        test_mrcimage,
+        test_numpyimage,
+        test_oxdimage,
+        test_pilatusimage,
+        test_pixiimage,
+        test_pnmimage,
+        test_raxisimage,
+        test_speimage,
+        test_tifimage,
+        test_xcaliburimage,
+        test_xsdimage,
+    )
 
     testSuite = unittest.TestSuite()
     testSuite.addTest(test_edfimage.suite())

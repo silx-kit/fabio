@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -40,15 +39,18 @@ __licence__ = "MIT"
 __date__ = "27/10/2025"
 __status__ = "production"
 
-import logging
-import codecs
-import sys
-import os
-from ..utils.cli import expand_args
-from ..openimage import openimage as fabio_open
-from .. import cbfimage, limaimage, eigerimage, version as fabio_version
-import numpy
 import argparse
+import codecs
+import logging
+import os
+import sys
+
+import numpy
+
+from .. import cbfimage, eigerimage, limaimage
+from .. import version as fabio_version
+from ..openimage import openimage as fabio_open
+from ..utils.cli import expand_args
 
 logging.basicConfig()
 logger = logging.getLogger("eiger2cbf")
@@ -167,23 +169,19 @@ class ProgressBar:
             coef = (1.0 * value) / self.max_value
         percent = round(coef * 100)
         bar_position = int(coef * self.bar_width)
-        if bar_position > self.bar_width:
-            bar_position = self.bar_width
+        bar_position = min(bar_position, self.bar_width)
 
         # line to display
-        line = "\r%15s [%s%s] % 3d%%  %s" % (
-            self.title,
-            self.progress_char * bar_position,
-            " " * (self.bar_width - bar_position),
-            percent,
-            message,
+        line = (
+            f"\r{self.title:>15} "
+            f"[{self.progress_char * bar_position}{' ' * (self.bar_width - bar_position)}]"
+            f" {percent: 3d}%  {message}"
         )
 
         # trailing to mask the previous message
         line_size = len(line)
         clean_size = self.last_size - line_size
-        if clean_size < 0:
-            clean_size = 0
+        clean_size = max(clean_size, 0)
         self.last_size = line_size
 
         sys.stdout.write(line + " " * clean_size + "\r")
@@ -219,11 +217,9 @@ def select_pilatus_detecor(shape):
     }
     best = None
     for k in valid_detectors:
-        if k[0] >= shape[-2] and k[1] >= shape[-1]:
-            if best is None:
-                best = k
-            elif k[0] < best[0] or k[1] < best[1]:
-                best = k
+        if (k[0] >= shape[-2] and k[1] >= shape[-1]
+                and (best is None or k[0] < best[0] or k[1] < best[1])):
+            best = k
     return best
 
 
@@ -245,7 +241,7 @@ def convert_one(input_filename, options, start_at=0):
     input_exists = os.path.exists(input_filename)
 
     if options.verbose:
-        print("Converting file '%s'" % (input_filename))
+        print(f"Converting file '{input_filename}'")
 
     if not input_exists:
         logger.error(
@@ -284,9 +280,9 @@ def convert_one(input_filename, options, start_at=0):
                     if data_grp:
                         nxdetector = data_grp.parent
                         try:
-                            detector = "%s, S/N %s" % (
-                                nxdetector["detector_information/model"][()],
-                                nxdetector["detector_information/name"][()],
+                            detector = (
+                                f"{nxdetector['detector_information/model'][()]}, "
+                                f"S/N {nxdetector['detector_information/name'][()]}"
                             )
                             pilatus_headers["Detector"] = detector
                         except Exception as e:
@@ -326,9 +322,9 @@ def convert_one(input_filename, options, start_at=0):
                     "No detector definition in Eiger file, is this a master file ?"
                 )
             else:
-                detector = "%s, S/N %s" % (
-                    nxdetector["description"][()].decode(),
-                    nxdetector["detector_number"][()].decode(),
+                detector = (
+                    f"{nxdetector['description'][()].decode()}, "
+                    f"S/N {nxdetector['detector_number'][()].decode()}"
                 )
                 pilatus_headers["Detector"] = detector
                 pilatus_headers["Pixel_size"] = (
@@ -352,7 +348,7 @@ def convert_one(input_filename, options, start_at=0):
                     nxdetector["sensor_thickness"][()],
                 )
     else:
-        raise NotImplementedError("Unsupported format: %s" % source.__class__.__name__)
+        raise NotImplementedError(f"Unsupported format: {source.__class__.__name__}")
 
     # Parse option for Pilatus headers
     if options.energy:

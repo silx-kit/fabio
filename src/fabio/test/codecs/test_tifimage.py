@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
 #             https://github.com/silx-kit/fabio
@@ -28,20 +27,24 @@
 #
 """Tiff Unit tests"""
 
-import unittest
-import os
 import logging
+import os
+import unittest
+
 import numpy
+
 import fabio
 from fabio import tifimage
+
 from ..utilstest import UtilsTest
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
 
 class TestTif(unittest.TestCase):
     # filename dim1 dim2 min max mean stddev
-    TESTIMAGES = [
+    TESTIMAGES: ClassVar[list] = [
         ("Feb09-bright-00.300s_WAXS.bz2", 1042, 1042, 0, 65535, 8546.6414, 1500.4198),
         ("Feb09-bright-00.300s_WAXS.gz", 1042, 1042, 0, 65535, 8546.6414, 1500.4198),
         ("Feb09-bright-00.300s_WAXS", 1042, 1042, 0, 65535, 8546.6414, 1500.4198),
@@ -53,7 +56,7 @@ class TestTif(unittest.TestCase):
         """
         for params in self.TESTIMAGES:
             name = params[0]
-            logger.debug("Processing: %s" % name)
+            logger.debug("Processing: %s", name)
             dim1, dim2 = params[1:3]
             shape = dim2, dim1
             mini, maxi, mean, stddev = params[3:]
@@ -61,55 +64,53 @@ class TestTif(unittest.TestCase):
             obj.read(UtilsTest.getimage(name))
 
             self.assertAlmostEqual(
-                mini, obj.getmin(), 2, "getmin [%s,%s]" % (mini, obj.getmin())
+                mini, obj.getmin(), 2, f"getmin [{mini},{obj.getmin()}]"
             )
             self.assertAlmostEqual(
-                maxi, obj.getmax(), 2, "getmax [%s,%s]" % (maxi, obj.getmax())
+                maxi, obj.getmax(), 2, f"getmax [{maxi},{obj.getmax()}]"
             )
             self.assertAlmostEqual(
-                mean, obj.getmean(), 2, "getmean [%s,%s]" % (mean, obj.getmean())
+                mean, obj.getmean(), 2, f"getmean [{mean},{obj.getmean()}]"
             )
             self.assertAlmostEqual(
                 stddev,
                 obj.getstddev(),
                 2,
-                "getstddev [%s,%s]" % (stddev, obj.getstddev()),
+                f"getstddev [{stddev},{obj.getstddev()}]",
             )
             self.assertEqual(shape, obj.shape, "dim1")
 
     def test_header(self):
         for params in self.TESTIMAGES:
             name = params[0]
-            logger.debug("Processing: %s" % name)
+            logger.debug("Processing: %s", name)
             obj = fabio.tifimage.TifImage()
             obj.read(UtilsTest.getimage(name))
 
             # The key order is not the same depending on Python2 or 3
-            expected_keys = set(
-                [
-                    "info",
-                    "photometricInterpretation",
-                    "rowsPerStrip",
-                    "nColumns",
-                    "compression",
-                    "sampleFormat",
-                    "imageDescription",
-                    "nRows",
-                    "colormap",
-                    "nBits",
-                    "date",
-                    "software",
-                    "compression_type",
-                    "stripOffsets",
-                    "stripByteCounts",
-                ]
-            )
+            expected_keys = {
+                "info",
+                "photometricInterpretation",
+                "rowsPerStrip",
+                "nColumns",
+                "compression",
+                "sampleFormat",
+                "imageDescription",
+                "nRows",
+                "colormap",
+                "nBits",
+                "date",
+                "software",
+                "compression_type",
+                "stripOffsets",
+                "stripByteCounts",
+            }
             self.assertEqual(set(obj.header.keys()), expected_keys)
 
     def test_frame(self):
         for params in self.TESTIMAGES:
             name = params[0]
-            logger.debug("Processing: %s" % name)
+            logger.debug("Processing: %s", name)
             dim1, dim2 = params[1:3]
             obj = fabio.tifimage.TifImage()
             obj.read(UtilsTest.getimage(name))

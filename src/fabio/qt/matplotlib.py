@@ -1,6 +1,6 @@
 # /*##########################################################################
 #
-# Copyright (c) 2016-2026 European Synchrotron Radiation Facility
+# Copyright (c) 2016-2024 European Synchrotron Radiation Facility
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -30,19 +30,16 @@ It provides the matplotlib :class:`FigureCanvasQTAgg` class corresponding
 to the used backend.
 """
 
-
 __authors__ = ["T. Vincent"]
 __license__ = "MIT"
-__date__ = "20/08/2026"
+__date__ = "12/03/2026"
 
 
 import io
 import matplotlib
 import numpy
-
 from qtpy import API as BINDING
 from qtpy.QtGui import QFont
-
 
 # This must be performed before any import from matplotlib
 if BINDING in ("pyside6", "pyqt6"):
@@ -54,13 +51,13 @@ elif BINDING =="pyqt5":
     from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg  # noqa
     from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT  # noqa
 else:
-    raise ImportError("Unsupported Qt binding: %s" % BINDING)
+    raise ImportError(f"Unsupported Qt binding: {BINDING}")
 
 
+from matplotlib import figure, font_manager
 from matplotlib.font_manager import FontProperties
 from matplotlib.mathtext import MathTextParser
 from matplotlib.ticker import ScalarFormatter as _ScalarFormatter
-from matplotlib import figure, font_manager
 from packaging.version import Version
 
 _MATPLOTLIB_VERSION = Version(matplotlib.__version__)

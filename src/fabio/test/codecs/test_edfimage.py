@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
 #             https://github.com/silx-kit/fabio
@@ -33,17 +32,20 @@
 28/11/2014
 """
 
-import unittest
-import os
-import numpy
-import shutil
-import io
 import logging
+import os
+import shutil
+import unittest
+
+import numpy
+
 import fabio
+
 from ...edfimage import edfimage
-from ...fabioutils import GzipFile, BZ2File
-from ..utilstest import UtilsTest
+from ...fabioutils import BZ2File, GzipFile
 from ..testutils import LoggingValidator
+from ..utilstest import UtilsTest
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
@@ -53,20 +55,15 @@ class TestFlatEdfs(unittest.TestCase):
 
     def common_setup(self):
         self.BYTE_ORDER = "LowByteFirst" if numpy.little_endian else "HighByteFirst"
-        self.MYHEADER = (
-            "{\n%-1020s}\n"
-            % (
-                """Omega = 0.0 ;
+        header_body = f"""Omega = 0.0 ;
                         Dim_1 = 256 ;
                         Dim_2 = 256 ;
                         DataType = FloatValue ;
-                        ByteOrder = %s ;
+                        ByteOrder = {self.BYTE_ORDER} ;
                         Image = 1;
                         History-1 = something=something else;
                         \n\n"""
-                % self.BYTE_ORDER
-            )
-        ).encode("latin-1")
+        self.MYHEADER = ("{\n" + f"{header_body:<1020}" + "}\n").encode("latin-1")
         self.MYIMAGE = numpy.ones((256, 256), numpy.float32) * 10
         self.MYIMAGE[0, 0] = 0
         self.MYIMAGE[1, 1] = 20
@@ -80,11 +77,10 @@ class TestFlatEdfs(unittest.TestCase):
         self.common_setup()
         self.filename = os.path.join(UtilsTest.tempdir, "im0000.edf")
         if not os.path.isfile(self.filename):
-            outf = open(self.filename, "wb")
             assert len(self.MYHEADER) % 1024 == 0
-            outf.write(self.MYHEADER)
-            outf.write(self.MYIMAGE.tobytes())
-            outf.close()
+            with open(self.filename, "wb") as outf:
+                outf.write(self.MYHEADER)
+                outf.write(self.MYIMAGE.tobytes())
 
         obj = edfimage()
         obj.read(self.filename)
@@ -99,18 +95,18 @@ class TestFlatEdfs(unittest.TestCase):
     def test_read(self):
         """check readable"""
         self.assertEqual(
-            self.obj.shape, (256, 256), msg="File %s has wrong shape " % self.filename
+            self.obj.shape, (256, 256), msg=f"File {self.filename} has wrong shape "
         )
-        self.assertEqual(self.obj.bpp, 4, msg="bpp!=4 for file: %s" % self.filename)
+        self.assertEqual(self.obj.bpp, 4, msg=f"bpp!=4 for file: {self.filename}")
         self.assertEqual(
             self.obj.bytecode,
             numpy.float32,
-            msg="bytecode!=flot32 for file: %s" % self.filename,
+            msg=f"bytecode!=flot32 for file: {self.filename}",
         )
         self.assertEqual(
             self.obj.data.shape,
             (256, 256),
-            msg="shape!=(256,256) for file: %s" % self.filename,
+            msg=f"shape!=(256,256) for file: {self.filename}",
         )
 
     def test_getstats(self):
@@ -151,9 +147,8 @@ class TestBzipEdf(TestFlatEdfs):
         """set it up"""
         TestFlatEdfs.setUp(self)
         if not os.path.isfile(self.filename + ".bz2"):
-            with BZ2File(self.filename + ".bz2", "wb") as f:
-                with open(self.filename, "rb") as d:
-                    f.write(d.read())
+            with BZ2File(self.filename + ".bz2", "wb") as f, open(self.filename, "rb") as d:
+                f.write(d.read())
         self.filename += ".bz2"
 
 
@@ -164,9 +159,8 @@ class TestGzipEdf(TestFlatEdfs):
         """set it up"""
         TestFlatEdfs.setUp(self)
         if not os.path.isfile(self.filename + ".gz"):
-            with GzipFile(self.filename + ".gz", "wb") as f:
-                with open(self.filename, "rb") as d:
-                    f.write(d.read())
+            with GzipFile(self.filename + ".gz", "wb") as f, open(self.filename, "rb") as d:
+                f.write(d.read())
         self.filename += ".gz"
 
 
@@ -202,18 +196,18 @@ class TestEdfs(unittest.TestCase):
                 logger.error("Cannot read image %s", name)
                 raise
             self.assertAlmostEqual(
-                mini, obj.getmin(), 2, "testedfs: %s getmin()" % name
+                mini, obj.getmin(), 2, f"testedfs: {name} getmin()"
             )
-            self.assertAlmostEqual(maxi, obj.getmax(), 2, "testedfs: %s getmax" % name)
-            logger.info("%s Mean: exp=%s, obt=%s" % (name, mean, obj.getmean()))
+            self.assertAlmostEqual(maxi, obj.getmax(), 2, f"testedfs: {name} getmax")
+            logger.info("%s Mean: exp=%s, obt=%s", name, mean, obj.getmean())
             self.assertAlmostEqual(
-                mean, obj.getmean(), 2, "testedfs: %s getmean" % name
+                mean, obj.getmean(), 2, f"testedfs: {name} getmean"
             )
-            logger.info("%s StdDev:  exp=%s, obt=%s" % (name, stddev, obj.getstddev()))
+            logger.info("%s StdDev:  exp=%s, obt=%s", name, stddev, obj.getstddev())
             self.assertAlmostEqual(
-                stddev, obj.getstddev(), 2, "testedfs: %s getstddev" % name
+                stddev, obj.getstddev(), 2, f"testedfs: {name} getstddev"
             )
-            self.assertEqual(obj.shape, shape, "testedfs: %s shape" % name)
+            self.assertEqual(obj.shape, shape, f"testedfs: {name} shape")
         obj = None
 
     def test_rebin(self):
@@ -593,7 +587,7 @@ class TestBadFiles(unittest.TestCase):
     def create_resources(cls):
         filename = os.path.join(cls.tmp_directory, cls.filename_template % "base")
         cls.base_filename = filename
-        with io.open(filename, "wb") as fd:
+        with open(filename, "wb") as fd:
             cls.write_header(fd, 1)
             cls.header1 = fd.tell()
             cls.write_data(fd)
@@ -627,9 +621,8 @@ class TestBadFiles(unittest.TestCase):
 
     @classmethod
     def copy_base(cls, filename, size):
-        with io.open(cls.base_filename, "rb") as fd_base:
-            with io.open(filename, "wb") as fd_result:
-                fd_result.write(fd_base.read(size))
+        with open(cls.base_filename, "rb") as fd_base, open(filename, "wb") as fd_result:
+            fd_result.write(fd_base.read(size))
 
     @classmethod
     def open(cls, filename):
@@ -658,8 +651,8 @@ class TestBadFiles(unittest.TestCase):
         filename = os.path.join(
             self.tmp_directory, self.filename_template % str(self.id())
         )
-        f = io.open(filename, "wb")
-        f.close()
+        with open(filename, "wb"):
+            pass
 
         self.assertRaises(IOError, self.open, filename)
 
@@ -667,9 +660,8 @@ class TestBadFiles(unittest.TestCase):
         filename = os.path.join(
             self.tmp_directory, self.filename_template % str(self.id())
         )
-        f = io.open(filename, "wb")
-        f.write(b"\x10\x20\x30")
-        f.close()
+        with open(filename, "wb") as f:
+            f.write(b"\x10\x20\x30")
 
         self.assertRaises(IOError, self.open, filename)
 
@@ -784,7 +776,7 @@ class TestSphere2SaxsSamples(unittest.TestCase):
         unittest.TestCase.setUp(self)
         self.samples = UtilsTest.resources.getdir("sphere2saxs_output.tar.bz2")
 
-    SAMPLES = {
+    SAMPLES: ClassVar[dict] = {
         "multi.edf": (
             5,
             (200, 100),
@@ -846,10 +838,10 @@ class TestEdfIterator(unittest.TestCase):
             self.assertEqual(
                 numpy.abs(ref_frame.data - frame.data).max(),
                 0,
-                "Test frame %d data" % index,
+                f"Test frame {index} data",
             )
             self.assertEqual(
-                ref_frame.header, frame.header, "Test frame %d header" % index
+                ref_frame.header, frame.header, f"Test frame {index} header"
             )
 
         with self.assertRaises(StopIteration):

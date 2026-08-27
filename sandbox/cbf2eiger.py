@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #########################################
 # Command line converter a bunch of files from CBF to eiger
 # European Synchrotron Radiation Facility
@@ -14,18 +13,18 @@ __date__ = "06/04/2020"
 __licence__ = "MIT"
 
 import logging
+
 logging.basicConfig()
 
+import argparse
 import os
+from queue import Queue
+from threading import Event, Thread
 
 import numpy
+
 import fabio
 from fabio import nexus
-
-import argparse
-from threading import Thread, Event
-
-from queue import Queue
 
 logger = logging.getLogger("to_eiger")
 

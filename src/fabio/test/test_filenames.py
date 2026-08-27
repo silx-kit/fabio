@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -34,12 +33,14 @@ testsuite by Jerome Kieffer (Jerome.Kieffer@esrf.eu)
 28/11/2014
 """
 
-import unittest
-import os
 import logging
+import os
 import tempfile
-import fabio
+import unittest
+
 import numpy
+
+import fabio
 
 logger = logging.getLogger(__name__)
 
@@ -128,7 +129,7 @@ class TestFilenameObjects(unittest.TestCase):
         self.nframes = 5
         self.tempdir = tempfile.mkdtemp()
         self.fnames = [
-            os.path.join(self.tempdir, "FNO%04d.edf" % iframe)
+            os.path.join(self.tempdir, f"FNO{iframe:04d}.edf")
             for iframe in range(self.nframes)
         ]
         data = numpy.zeros(self.datashape, numpy.uint16)

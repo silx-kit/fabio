@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -31,8 +30,9 @@ Test cases for the Next/Previous ...
 28/11/2014
 """
 
-import unittest
 import logging
+import unittest
+
 import fabio
 
 logger = logging.getLogger(__name__)

@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: FabIO X-ray image reader
 #
@@ -46,8 +45,10 @@ __date__ = "27/10/2025"
 import logging
 import os
 import posixpath
+
 from . import fabioimage
-from .fabioutils import previous_filename, next_filename
+from .fabioutils import next_filename, previous_filename
+from typing import ClassVar
 
 try:
     import h5py
@@ -64,7 +65,7 @@ class Hdf5Frame(fabioimage.FabioFrame):
         if not isinstance(hdf5image, Hdf5Image):
             raise TypeError("Expected class %s", Hdf5Image)
         data = hdf5image.dataset[frame_num, :, :]
-        super(Hdf5Frame, self).__init__(data=data, header=hdf5image.header)
+        super().__init__(data=data, header=hdf5image.header)
         self.hdf5 = hdf5image.hdf5
         self.dataset = hdf5image.dataset
         self.filename = hdf5image.filename
@@ -82,7 +83,7 @@ class Hdf5Image(fabioimage.FabioImage):
 
     DESCRIPTION = "Hierarchical Data Format HDF5 flat reader"
 
-    DEFAULT_EXTENSIONS = ["h5"]
+    DEFAULT_EXTENSIONS: ClassVar[list] = ["h5"]
 
     def __init__(self, *arg, **kwargs):
         """
@@ -106,8 +107,7 @@ class Hdf5Image(fabioimage.FabioImage):
         self.resetvals()
         if "::" not in fname:
             err = (
-                "the '::' separator is mandatory for HDF5 container, absent in %s"
-                % fname
+                f"the '::' separator is mandatory for HDF5 container, absent in {fname}"
             )
             logger.error(err)
             raise RuntimeError(err)
@@ -117,7 +117,7 @@ class Hdf5Image(fabioimage.FabioImage):
         if os.path.isfile(self.filename):
             self.hdf5 = h5py.File(self.filename, mode="r")
         else:
-            error = "No such file or directory: %s" % self.filename
+            error = f"No such file or directory: {self.filename}"
             logger.error(error)
             raise RuntimeError(error)
         try:
@@ -143,8 +143,7 @@ class Hdf5Image(fabioimage.FabioImage):
             self.data = self.dataset[:, :]
         else:
             err = (
-                "Only 2D and 3D datasets are supported by FabIO, here %sD"
-                % self.dataset.ndim
+                f"Only 2D and 3D datasets are supported by FabIO, here {self.dataset.ndim}D"
             )
             logger.error(err)
             raise RuntimeError(err)
@@ -160,8 +159,7 @@ class Hdf5Image(fabioimage.FabioImage):
         """
         if num < 0 or num >= self.nframes:
             raise IndexError(
-                "Requested frame number %i is out of range [0, %i[ "
-                % (num, self.nframes)
+                f"Requested frame number {int(num)} is out of range [0, {self.nframes}[ "
             )
         # Do a deep copy of the header to make a new one
         frame = Hdf5Frame(self, num)

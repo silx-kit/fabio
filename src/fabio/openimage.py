@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -40,16 +39,18 @@ modification for HDF5 by Jérôme Kieffer
 mods for APS GE by JVB
 """
 
-import os.path
 import logging
+import os.path
 import re
-from . import fabioutils
-from .compression import ExternalCompressors
-from .fabioutils import FilenameObject, BytesIO
-from .fabioimage import FabioImage
 
 # Make sure to load all formats
-from . import fabioformats  # noqa
+from . import (
+    fabioformats,
+    fabioutils,
+)
+from .compression import ExternalCompressors
+from .fabioimage import FabioImage
+from .fabioutils import BytesIO, FilenameObject
 
 logger = logging.getLogger(__name__)
 
@@ -205,9 +206,8 @@ def openimage(filename, frame=None):
     :param Union[int,None] frame: A specific frame inside this file.
     :rtype: FabioImage
     """
-    if isinstance(filename, fabioutils.PathTypes):
-        if not isinstance(filename, fabioutils.StringTypes):
-            filename = str(filename)
+    if isinstance(filename, fabioutils.PathTypes) and not isinstance(filename, fabioutils.StringTypes):
+        filename = str(filename)
 
     if isinstance(filename, FilenameObject):
         try:
@@ -225,16 +225,18 @@ def openimage(filename, frame=None):
             # multiframe file
             # logger.debug( "DEBUG: multiframe file, start # %d"%(
             #    filename.num)
-            logger.debug("Exception %s, trying name %s" % (ex, filename.stem))
+            logger.debug("Exception %s, trying name %s", ex, filename.stem)
             obj = _openimage(filename.stem)
-            logger.debug("Reading frame %s from %s" % (filename.num, filename.stem))
+            logger.debug("Reading frame %s from %s", filename.num, filename.stem)
             obj.read(filename.stem, frame=filename.num)
     else:
-        logger.debug("Attempting to open %s" % (filename))
+        logger.debug("Attempting to open %s", filename)
         obj = _openimage(filename)
         logger.debug(
-            "Attempting to read frame %s from %s with reader %s"
-            % (frame, filename, obj.classname)
+            "Attempting to read frame %s from %s with reader %s",
+            frame,
+            filename,
+            obj.classname,
         )
         obj = obj.read(obj.filename, frame)
     return obj
@@ -242,9 +244,8 @@ def openimage(filename, frame=None):
 
 def openheader(filename):
     """return only the header"""
-    if isinstance(filename, fabioutils.PathTypes):
-        if not isinstance(filename, fabioutils.StringTypes):
-            filename = str(filename)
+    if isinstance(filename, fabioutils.PathTypes) and not isinstance(filename, fabioutils.StringTypes):
+        filename = str(filename)
 
     obj = _openimage(filename)
     obj.readheader(obj.filename)
@@ -283,7 +284,7 @@ def _openimage(filename):
         imo = FabioImage()
         with imo._open(actual_filename) as f:
             magic_bytes = f.read(18)
-    except IOError:
+    except OSError:
         logger.debug("Backtrace", exc_info=True)
         raise
     else:
@@ -310,10 +311,10 @@ def _openimage(filename):
 
         except Exception:
             logger.debug("Backtrace", exc_info=True)
-            raise IOError(f"Fabio could not identify {filename}")
+            raise OSError(f"Fabio could not identify {filename}")
 
     if filetype is None:
-        raise IOError(f"Fabio could not identify {filename}")
+        raise OSError(f"Fabio could not identify {filename}")
 
     klass_name = "".join(filetype) + "image"
 
@@ -321,7 +322,7 @@ def _openimage(filename):
         obj = fabioformats.factory(klass_name)
     except (RuntimeError, Exception):
         logger.debug("Backtrace", exc_info=True)
-        raise IOError("Filename %s can't be read as format %s" % (filename, klass_name))
+        raise OSError(f"Filename {filename} can't be read as format {klass_name}")
 
     obj.filename = filename
     # skip the read for read header

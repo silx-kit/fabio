@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
 #             https://github.com/silx-kit/fabio
@@ -32,12 +31,15 @@
 28/11/2014
 """
 
-import unittest
-import os
-import numpy
 import logging
+import os
+import unittest
+
+import numpy
+
 import fabio
 from fabio.mar345image import mar345image
+
 from ..utilstest import UtilsTest
 
 logger = logging.getLogger(__name__)
@@ -78,26 +80,26 @@ class TestMar345(unittest.TestCase):
             obj.read(UtilsTest.getimage(name))
 
             self.assertAlmostEqual(
-                mini, obj.getmin(), 2, "getmin [%s,%s]" % (mini, obj.getmin())
+                mini, obj.getmin(), 2, f"getmin [{mini},{obj.getmin()}]"
             )
             self.assertAlmostEqual(
-                maxi, obj.getmax(), 2, "getmax [%s,%s]" % (maxi, obj.getmax())
+                maxi, obj.getmax(), 2, f"getmax [{maxi},{obj.getmax()}]"
             )
             self.assertAlmostEqual(
-                mean, obj.getmean(), 2, "getmean [%s,%s]" % (mean, obj.getmean())
+                mean, obj.getmean(), 2, f"getmean [{mean},{obj.getmean()}]"
             )
             self.assertAlmostEqual(
                 stddev,
                 obj.getstddev(),
                 2,
-                "getstddev [%s,%s]" % (stddev, obj.getstddev()),
+                f"getstddev [{stddev},{obj.getstddev()}]",
             )
             self.assertEqual(shape, obj.shape, "shape")
 
     def test_write(self):
         "Test writing with self consistency at the fabio level"
         for line in TESTIMAGES.split("\n"):
-            logger.debug("Processing file: %s" % line)
+            logger.debug("Processing file: %s", line)
             vals = line.split()
             name = vals[0]
             obj = mar345image()
@@ -115,12 +117,11 @@ class TestMar345(unittest.TestCase):
             for key in obj.header:
                 if key == "filename":
                     continue
-                self.assertTrue(key in other.header, "Key %s is in header" % key)
+                self.assertTrue(key in other.header, f"Key {key} is in header")
                 self.assertEqual(
                     obj.header[key],
                     other.header[key],
-                    "value are the same for key %s: [%s|%s]"
-                    % (key, obj.header[key], other.header[key]),
+                    f"value are the same for key {key}: [{obj.header[key]}|{other.header[key]}]",
                 )
 
             os.unlink(os.path.join(UtilsTest.tempdir, name))
@@ -128,7 +129,7 @@ class TestMar345(unittest.TestCase):
     def test_byteswap_write(self):
         "Test writing with self consistency at the fabio level"
         for line in TESTIMAGES.split("\n"):
-            logger.debug("Processing file: %s" % line)
+            logger.debug("Processing file: %s", line)
             vals = line.split()
             name = vals[0]
             obj = mar345image()
@@ -141,12 +142,11 @@ class TestMar345(unittest.TestCase):
             for key in obj.header:
                 if key == "filename":
                     continue
-                self.assertTrue(key in other.header, "Key %s is in header" % key)
+                self.assertTrue(key in other.header, f"Key {key} is in header")
                 self.assertEqual(
                     obj.header[key],
                     other.header[key],
-                    "value are the same for key %s: [%s|%s]"
-                    % (key, obj.header[key], other.header[key]),
+                    f"value are the same for key {key}: [{obj.header[key]}|{other.header[key]}]",
                 )
 
             os.unlink(os.path.join(UtilsTest.tempdir, name))
@@ -161,7 +161,7 @@ class TestMar345(unittest.TestCase):
             logger.debug("Testing for memory leak")
             for i in range(N):
                 _img = fabio.open(self.mar345)
-                print("reading #%s/%s" % (i, N))
+                print(f"reading #{i}/{N}")
 
     def test_aux(self):
         """test auxillary functions"""
@@ -196,28 +196,28 @@ class TestMar345(unittest.TestCase):
         delta = img_c_c - img
         ok = abs(delta).ravel()
         if ok.max() > 0:
-            logger.error("img_c_c: %s %s" % numpy.where(delta))
+            logger.error("img_c_c: %s %s", *numpy.where(delta))
         self.assertEqual(ok.max(), 0, "Compression CCP4 decompression CCP4")
 
         img_c_f = mar345_IO.uncompress_pck(cmp_ccp4, overflowPix=False, use_CCP4=False)
         delta = img_c_f - img
         ok = abs(delta).ravel()
         if ok.max() > 0:
-            logger.error("img_c_f: %s %s" % numpy.where(delta))
+            logger.error("img_c_f: %s %s", *numpy.where(delta))
         self.assertEqual(ok.max(), 0, "Compression CCP4 decompression Cython")
 
         img_f_c = mar345_IO.uncompress_pck(cmp_fab, overflowPix=False, use_CCP4=True)
         delta = img_f_c - img
         ok = abs(delta).ravel()
         if ok.max() > 0:
-            logger.error("img_f_c: %s %s" % numpy.where(delta))
+            logger.error("img_f_c: %s %s", *numpy.where(delta))
         self.assertEqual(ok.max(), 0, "Compression Cython decompression CCP4")
 
         img_f_f = mar345_IO.uncompress_pck(cmp_fab, overflowPix=False, use_CCP4=False)
         delta = img_f_f - img
         ok = abs(delta).ravel()
         if ok.max() > 0:
-            logger.error("img_f_f: %s %s" % numpy.where(delta))
+            logger.error("img_f_f: %s %s", *numpy.where(delta))
         self.assertEqual(ok.max(), 0, "Compression Cython decompression Cython")
 
 

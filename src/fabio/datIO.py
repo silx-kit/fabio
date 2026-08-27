@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -44,7 +43,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class fabiodata(object):
+class fabiodata:
     """
     A common class for dataIO in fable
     Contains a 2d numpy array for keeping data, and two lists (clabels and rlabels)
@@ -84,16 +83,16 @@ class columnfile(fabiodata):
         from .ext import cf_io
 
         try:
-            infile = open(fname, "rb")
+            infile = open(fname, "rb")  # noqa: SIM115
         except Exception:
             logger.debug("Backtrace", exc_info=True)
             raise Exception("columnfile: file" + str(fname) + "not found.")
-        try:
-            (self.data, self.clabels) = cf_io.read(infile)
-        except Exception:
-            logger.debug("Backtrace", exc_info=True)
-            raise Exception(
-                "columnfile: read error, file " + str(fname) + " possibly corrupt"
-            )
+        with infile:
+            try:
+                (self.data, self.clabels) = cf_io.read(infile)
+            except Exception:
+                logger.debug("Backtrace", exc_info=True)
+                raise Exception(
+                    "columnfile: read error, file " + str(fname) + " possibly corrupt"
+                )
         self.dims = self.data.shape
-        infile.close()

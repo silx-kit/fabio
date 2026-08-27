@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: FabIO X-ray image reader
 #
@@ -49,11 +48,13 @@ __date__ = "27/10/2025"
 
 import logging
 import posixpath
+
 import numpy
 
 from .fabioimage import FabioImage
 from .fabioutils import NotGoodReader
 from .nexus import Nexus
+from typing import ClassVar
 
 try:
     import h5py
@@ -73,7 +74,7 @@ class EigerImage(FabioImage):
 
     DESCRIPTION = "Eiger data files based on HDF5"
 
-    DEFAULT_EXTENSIONS = ["h5", "hdf5"]
+    DEFAULT_EXTENSIONS: ClassVar[list] = ["h5", "hdf5"]
 
     def __init__(self, data=None, header=None):
         """
@@ -97,12 +98,9 @@ class EigerImage(FabioImage):
 
     def __repr__(self):
         if self.h5 is not None:
-            return "Eiger dataset with %i frames from %s" % (
-                self.nframes,
-                self.h5.filename,
-            )
+            return f"Eiger dataset with {self.nframes} frames from {self.h5.filename}"
         else:
-            return "%s object at %s" % (self.__class__.__name__, hex(id(self)))
+            return f"{self.__class__.__name__} object at {hex(id(self))}"
 
     def _readheader(self, infile):
         """
@@ -137,7 +135,7 @@ class EigerImage(FabioImage):
                 data = entry["data"]
                 if isinstance(data, h5py.Group):
                     "Newer format /entry/data/data_000001"
-                    datasets = [i for i in data.keys() if i.startswith("data")]
+                    datasets = [i for i in data if i.startswith("data")]
                     datasets.sort()
                     try:
                         for i in datasets:
@@ -149,7 +147,7 @@ class EigerImage(FabioImage):
                     lstds = [data]
             else:
                 "elder format entry/data_01"
-                datasets = [i for i in entry.keys() if i.startswith("data")]
+                datasets = [i for i in entry if i.startswith("data")]
                 datasets.sort()
                 try:
                     for i in datasets:
@@ -241,7 +239,7 @@ class EigerImage(FabioImage):
                 new_img._nframes = self.nframes
                 new_img.currentframe = num
             else:
-                raise IOError(f"getframe {num} out of range [0 {self.nframes}[")
+                raise OSError(f"getframe {num} out of range [0 {self.nframes}[")
         else:
             new_img = FabioImage.getframe(self, num)
         return new_img

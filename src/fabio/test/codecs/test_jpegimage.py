@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
 #             https://github.com/silx-kit/fabio
@@ -30,11 +29,13 @@
 Test JPEG format
 """
 
-import unittest
+import logging
 import os
 import shutil
-import logging
+import unittest
+
 import fabio
+
 from ... import jpegimage
 from ..utilstest import UtilsTest
 
@@ -72,29 +73,28 @@ class TestJpegImage(unittest.TestCase):
         filename = os.path.join(TEST_DIRECTORY, "2.jpg")
         filename_source = UtilsTest.getimage("rand_uint8.jpg.bz2")[:-4]
 
-        with open(filename_source, "r+b") as fsource:
-            with open(filename, "w+b") as ftest:
-                ftest.write(fsource.read())
-                ftest.seek(1)
-                ftest.write(b".")
+        with open(filename_source, "r+b") as fsource, open(filename, "w+b") as ftest:
+            ftest.write(fsource.read())
+            ftest.seek(1)
+            ftest.write(b".")
 
         image_format = jpegimage.JpegImage()
         try:
             _image = image_format.read(filename)
             self.fail()
-        except IOError:
+        except OSError:
             pass
 
     def test_read_empty_file(self):
         filename = os.path.join(TEST_DIRECTORY, "3.jpg")
-        f = open(filename, "wb")
-        f.close()
+        with open(filename, "wb"):
+            pass
 
         image_format = jpegimage.JpegImage()
         try:
             _image = image_format.read(filename)
             self.fail()
-        except IOError:
+        except OSError:
             pass
 
     def test_read_missing_file(self):
@@ -104,7 +104,7 @@ class TestJpegImage(unittest.TestCase):
         try:
             _image = image_format.read(filename)
             self.fail()
-        except IOError:
+        except OSError:
             pass
 
 
@@ -138,7 +138,7 @@ class TestPilNotAvailable(unittest.TestCase):
             try:
                 _image = self.open_image()
                 self.fail()
-            except IOError:
+            except OSError:
                 pass
         finally:
             jpegimage.Image = old

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
 #             https://github.com/silx-kit/fabio
@@ -30,9 +29,11 @@
 Jerome Kieffer, 04/12/2014
 """
 
-import unittest
 import logging
+import unittest
+
 from fabio.openimage import openheader
+
 from .utilstest import UtilsTest
 
 logger = logging.getLogger(__name__)
@@ -49,9 +50,9 @@ class Test1(unittest.TestCase):
         for ext in ["", ".bz2", ".gz"]:
             name = self.name + ext
             obj = openheader(name)
-            logger.debug(" %s obj = %s" % (name, obj.header))
+            logger.debug(" %s obj = %s", name, obj.header)
             self.assertEqual(
-                obj.header["title"], "ESPIA FRELON Image", "Error on file %s" % name
+                obj.header["title"], "ESPIA FRELON Image", f"Error on file {name}"
             )
 
 

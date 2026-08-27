@@ -1,15 +1,17 @@
 #!/usr/bin/env python
 import sys
+
 import numpy
-print("Python %s bits" % (tuple.__itemsize__ * 8))
-print("       maxsize: %s\t maxunicode: %s" % (sys.maxsize, sys.maxunicode))
+
+print(f"Python {tuple.__itemsize__ * 8} bits")
+print(f"       maxsize: {sys.maxsize}\t maxunicode: {sys.maxunicode}")
 print(sys.version)
 try:
     from distutils.sysconfig import get_config_vars
-except:
+except ImportError:
     from sysconfig import get_config_vars
 print("Config "+" ".join(get_config_vars("CONFIG_ARGS")))
 print()
-print("Numpy %s" % numpy.version.version)
-print("      include %s" % numpy.get_include())
-print("      options %s" % numpy.get_printoptions())
+print(f"Numpy {numpy.version.version}")
+print(f"      include {numpy.get_include()}")
+print(f"      options {numpy.get_printoptions()}")

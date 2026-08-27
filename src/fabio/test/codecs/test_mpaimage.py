@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
 #             https://github.com/silx-kit/fabio
@@ -28,10 +27,13 @@
 #
 """Multiwire Unit tests"""
 
-import unittest
 import logging
+import unittest
+
 import fabio
+
 from ..utilstest import UtilsTest
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
@@ -41,7 +43,7 @@ class TestMpa(unittest.TestCase):
     Test classe for multiwire (mpa) images
     """
 
-    TESTIMAGES = [
+    TESTIMAGES: ClassVar[list] = [
         # filename dim1 dim2 min max mean stddev
         ("mpa_test.mpa", 1024, 1024, 0, 1295, 0.8590, 18.9393),
     ]
@@ -53,26 +55,26 @@ class TestMpa(unittest.TestCase):
         for imageData in self.TESTIMAGES:
             name, dim1, dim2, mini, maxi, mean, stddev = imageData
             shape = dim2, dim1
-            logger.debug("Processing: %s" % name)
+            logger.debug("Processing: %s", name)
             path = UtilsTest.getimage(name + ".bz2")[:-4]
 
             obj = fabio.mpaimage.MpaImage()
             obj.read(path)
 
             self.assertAlmostEqual(
-                mini, obj.getmin(), 2, "getmin [%s,%s]" % (mini, obj.getmin())
+                mini, obj.getmin(), 2, f"getmin [{mini},{obj.getmin()}]"
             )
             self.assertAlmostEqual(
-                maxi, obj.getmax(), 2, "getmax [%s,%s]" % (maxi, obj.getmax())
+                maxi, obj.getmax(), 2, f"getmax [{maxi},{obj.getmax()}]"
             )
             self.assertAlmostEqual(
-                mean, obj.getmean(), 2, "getmean [%s,%s]" % (mean, obj.getmean())
+                mean, obj.getmean(), 2, f"getmean [{mean},{obj.getmean()}]"
             )
             self.assertAlmostEqual(
                 stddev,
                 obj.getstddev(),
                 2,
-                "getstddev [%s,%s]" % (stddev, obj.getstddev()),
+                f"getstddev [{stddev},{obj.getstddev()}]",
             )
             self.assertEqual(shape, obj.shape)
 

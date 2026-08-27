@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
 #             https://github.com/silx-kit/fabio
@@ -28,19 +27,23 @@
 
 """Test Esperanto images"""
 
-import os
-import fabio.esperantoimage
-from ..utilstest import UtilsTest
-import unittest
 import logging
+import os
+import unittest
+
 import numpy
+
+import fabio.esperantoimage
+
+from ..utilstest import UtilsTest
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
 
 class TestEsperanto(unittest.TestCase):
     # filename dim1 dim2 min max mean stddev
-    TESTIMAGES = [
+    TESTIMAGES: ClassVar[list] = [
         (
             "sucrose_1s__1_1.esperanto.bz2",
             2048,
@@ -67,7 +70,7 @@ class TestEsperanto(unittest.TestCase):
         """
         for params in self.TESTIMAGES:
             name = params[0]
-            logger.debug("Processing: %s" % name)
+            logger.debug("Processing: %s", name)
             dim1, dim2 = params[1:3]
             shape = dim2, dim1
             mini, maxi, mean, stddev = params[3:]
@@ -75,19 +78,19 @@ class TestEsperanto(unittest.TestCase):
             obj.read(UtilsTest.getimage(name))
 
             self.assertAlmostEqual(
-                mini, obj.getmin(), 2, "getmin [%s,%s]" % (mini, obj.getmin())
+                mini, obj.getmin(), 2, f"getmin [{mini},{obj.getmin()}]"
             )
             self.assertAlmostEqual(
-                maxi, obj.getmax(), 2, "getmax [%s,%s]" % (maxi, obj.getmax())
+                maxi, obj.getmax(), 2, f"getmax [{maxi},{obj.getmax()}]"
             )
             self.assertAlmostEqual(
-                mean, obj.getmean(), 2, "getmean [%s,%s]" % (mean, obj.getmean())
+                mean, obj.getmean(), 2, f"getmean [{mean},{obj.getmean()}]"
             )
             self.assertAlmostEqual(
                 stddev,
                 obj.getstddev(),
                 2,
-                "getstddev [%s,%s]" % (stddev, obj.getstddev()),
+                f"getstddev [{stddev},{obj.getstddev()}]",
             )
 
             self.assertEqual(shape, obj.shape, "dim1")
@@ -95,36 +98,34 @@ class TestEsperanto(unittest.TestCase):
     def test_header(self):
         for params in self.TESTIMAGES:
             name = params[0]
-            logger.debug("Processing: %s" % name)
+            logger.debug("Processing: %s", name)
             obj = fabio.esperantoimage.EsperantoImage()
             obj.read(UtilsTest.getimage(name))
 
-            expected_keys = set(
-                [
-                    "IMAGE",
-                    "SPECIAL_CCD_1",
-                    "SPECIAL_CCD_2",
-                    "SPECIAL_CCD_3",
-                    "SPECIAL_CCD_4",
-                    "SPECIAL_CCD_5",
-                    "TIME",
-                    "MONITOR",
-                    "PIXELSIZE",
-                    "TIMESTAMP",
-                    "GRIDPATTERN",
-                    "STARTANGLESINDEG",
-                    "ENDANGLESINDEG",
-                    "GONIOMODEL_1",
-                    "GONIOMODEL_2",
-                    "WAVELENGTH",
-                    "MONOCHROMATOR",
-                    "ABSTORUN",
-                    "HISTORY",
-                    "ESPERANTO FORMAT",
-                ]
-            )
+            expected_keys = {
+                "IMAGE",
+                "SPECIAL_CCD_1",
+                "SPECIAL_CCD_2",
+                "SPECIAL_CCD_3",
+                "SPECIAL_CCD_4",
+                "SPECIAL_CCD_5",
+                "TIME",
+                "MONITOR",
+                "PIXELSIZE",
+                "TIMESTAMP",
+                "GRIDPATTERN",
+                "STARTANGLESINDEG",
+                "ENDANGLESINDEG",
+                "GONIOMODEL_1",
+                "GONIOMODEL_2",
+                "WAVELENGTH",
+                "MONOCHROMATOR",
+                "ABSTORUN",
+                "HISTORY",
+                "ESPERANTO FORMAT",
+            }
 
-            upper_keys = set(i for i in obj.header.keys() if i.isupper())
+            upper_keys = {i for i in obj.header if i.isupper()}
             self.assertEqual(upper_keys, expected_keys)
 
             # Test write uncompressed:
@@ -140,7 +141,7 @@ class TestEsperanto(unittest.TestCase):
                     self.assertEqual(
                         v,
                         new.header.get(k),
-                        "header differ on %s: %s vs %s" % (k, v, new.header.get(k)),
+                        f"header differ on {k}: {v} vs {new.header.get(k)}",
                     )
 
             # Test write compressed:
@@ -156,7 +157,7 @@ class TestEsperanto(unittest.TestCase):
                     self.assertEqual(
                         v,
                         new.header.get(k),
-                        "header differ on %s: %s vs %s" % (k, v, new.header.get(k)),
+                        f"header differ on {k}: {v} vs {new.header.get(k)}",
                     )
 
     def test_data(self):

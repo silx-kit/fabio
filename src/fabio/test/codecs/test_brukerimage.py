@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
 #             https://github.com/silx-kit/fabio
@@ -33,12 +32,14 @@
 19/01/2015
 """
 
-import unittest
-import os
-import numpy
 import logging
-from ...brukerimage import brukerimage
+import os
+import unittest
+
+import numpy
+
 from ... import fabioutils
+from ...brukerimage import brukerimage
 from ..utilstest import UtilsTest
 
 logger = logging.getLogger(__name__)
@@ -65,10 +66,10 @@ if not numpy.little_endian:
     MYIMAGE.byteswap(True)
 
 OVERFLOWS = [
-    ["%09d" % 4194304, ("%07d" % (127 * 256 + 127))],
-    ["%09d" % 4194304, ("%07d" % (127 * 256 + 128))],
-    ["%09d" % 4194304, ("%07d" % (128 * 256 + 127))],
-    ["%09d" % 4194304, ("%07d" % (128 * 256 + 128))],
+    [f"{4194304:09d}", f"{127 * 256 + 127:07d}"],
+    [f"{4194304:09d}", f"{127 * 256 + 128:07d}"],
+    [f"{4194304:09d}", f"{128 * 256 + 127:07d}"],
+    [f"{4194304:09d}", f"{128 * 256 + 128:07d}"],
 ]
 
 
@@ -82,7 +83,7 @@ class TestBruker(unittest.TestCase):
         with open(self.filename, "wb") as fout:
             wrb = 0
             for key, val in MYHEADER.items():
-                fout.write((("%-7s" % key) + ":" + ("%-72s" % val)).encode("ASCII"))
+                fout.write((f"{key:<7}" + ":" + f"{val:<72}").encode("ASCII"))
                 wrb = wrb + 80
             hdrblks = int(MYHEADER["HDRBLKS"])
             while wrb < hdrblks * 512:
@@ -92,8 +93,7 @@ class TestBruker(unittest.TestCase):
             fout.write(MYIMAGE.tobytes())
 
             noverfl = int(MYHEADER["NOVERFL"])
-            for ovf in OVERFLOWS:
-                fout.write((ovf[0] + ovf[1]).encode("ASCII"))
+            fout.writelines((ovf[0] + ovf[1]).encode("ASCII") for ovf in OVERFLOWS)
             fout.write(b"." * (512 - (16 * noverfl) % 512))
 
     def tearDown(self):
@@ -118,9 +118,8 @@ class TestBzipBruker(TestBruker):
         TestBruker.setUp(self)
         if os.path.isfile(self.filename + ".bz2"):
             os.unlink(self.filename + ".bz2")
-        with fabioutils.BZ2File(self.filename + ".bz2", "wb") as wf:
-            with open(self.filename, "rb") as rf:
-                wf.write(rf.read())
+        with fabioutils.BZ2File(self.filename + ".bz2", "wb") as wf, open(self.filename, "rb") as rf:
+            wf.write(rf.read())
         self.filename = self.filename + ".bz2"
 
 
@@ -132,9 +131,8 @@ class TestGzipBruker(TestBruker):
         TestBruker.setUp(self)
         if os.path.isfile(self.filename + ".gz"):
             os.unlink(self.filename + ".gz")
-        with fabioutils.GzipFile(self.filename + ".gz", "wb") as wf:
-            with open(self.filename, "rb") as rf:
-                wf.write(rf.read())
+        with fabioutils.GzipFile(self.filename + ".gz", "wb") as wf, open(self.filename, "rb") as rf:
+            wf.write(rf.read())
         self.filename = self.filename + ".gz"
 
 
@@ -154,7 +152,7 @@ class TestBrukerLinear(unittest.TestCase):
         new.read(self.filename)
         error = abs(new.data - self.data).max()
         self.assertTrue(
-            error < numpy.finfo(numpy.float32).eps, "Error is %s>1e-7" % error
+            error < numpy.finfo(numpy.float32).eps, f"Error is {error}>1e-7"
         )
 
     def tearDown(self):
@@ -218,15 +216,15 @@ class TestRealImg(unittest.TestCase):
                     continue
                 if key not in other.header:
                     logger.warning(
-                        "Key %s is missing in new header, was %s"
-                        % (key, ref.header[key])
+                        "Key %s is missing in new header, was %s",
+                        key,
+                        ref.header[key],
                     )
                 else:
                     self.assertEqual(
                         ref.header[key],
                         other.header[key],
-                        "value are the same for key %s: was %s now %s"
-                        % (key, ref.header[key], other.header[key]),
+                        f"value are the same for key {key}: was {ref.header[key]} now {other.header[key]}",
                     )
 
 

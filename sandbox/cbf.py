@@ -1,11 +1,14 @@
 # Demonstrator for Byte offset decompression in OpenCL
 
+import os
+import time
+
 import numpy
-import fabio
 import pyopencl
 import pyopencl.array
-import time
-import os
+
+import fabio
+
 # os.environ["PYOPENCL_CTX"] = "1:0"
 os.environ["PYOPENCL_COMPILER_OUTPUT"] = "1"
 
@@ -26,7 +29,7 @@ def decomp_vec(raw_n):
 
 def profile(evt, cmt=""):
     evt.wait()
-    print("%s Exec time: %.3fms" % (cmt, 1e-6 * (evt.profile.end - evt.profile.start)))
+    print(f"{cmt} Exec time: {1e-6 * (evt.profile.end - evt.profile.start):.3f}ms")
 
 
 ctx = pyopencl.create_some_context(interactive=True)
@@ -52,13 +55,14 @@ tmp3_d = pyopencl.array.zeros_like(data_d)
 lem_d = pyopencl.array.empty_like(data_d)
 zero_d = pyopencl.array.zeros(queue, shape=1, dtype="int32")
 
-src = open("sandbox/cbf.cl").read()
+with open("sandbox/cbf.cl") as _f:
+    src = _f.read()
 prg = pyopencl.Program(ctx, src).build()
 
 for i in range(11):
     WG = 1 << i
     print("#" * 80)
-    print("WG: %s" % WG)
+    print(f"WG: {WG}")
     la = pyopencl.LocalMemory(4 * WG)
     lb = pyopencl.LocalMemory(4 * WG)
     lc = pyopencl.LocalMemory(4 * WG)
@@ -88,16 +92,16 @@ for i in range(11):
     tmp_cumsum = wgsum_d.get()
     dest_size = tmp_cumsum[-1]
 
-    print("Start process: %s" % debug3_d)
-    print("End process: %s" % debug2_d)
-    print("Total Size: %s" % (dest_size))
-    print("After small cumsum=%s" % (tmp_cumsum))
-    print("Counters= %s" % (debug1_d))
+    print(f"Start process: {debug3_d}")
+    print(f"End process: {debug2_d}")
+    print(f"Total Size: {dest_size}")
+    print(f"After small cumsum={tmp_cumsum}")
+    print(f"Counters= {debug1_d}")
     target_d = pyopencl.array.zeros(queue, (dest_size,), dtype="int8")
 
     evt = prg.comp_byte_offset2(queue, (WG * WG,), (WG,),
                                 data_d.data, tmp2_d.data, wgsum_d.data, target_d.data,
                                 numpy.uint32(size), numpy.uint32(dest_size), numpy.uint32(chunk))
     profile(evt, "comp_byte_offset2")
-    print("Total time : %.3fms" % (1000 * (time.time() - t0)))
-    print("residual error: %s" % (numpy.where(raw_n - target_d.get())))
+    print(f"Total time : {1000 * (time.time() - t0):.3f}ms")
+    print(f"residual error: {numpy.where(raw_n - target_d.get())}")

@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -39,6 +38,7 @@ __status__ = "stable"
 __docformat__ = "restructuredtext"
 
 import logging
+
 from . import fabioimage
 from .fabioutils import OrderedDict
 
@@ -114,7 +114,7 @@ def register(codec_class):
     global _extension_cache
     if not issubclass(codec_class, fabioimage.FabioImage):
         raise AssertionError(
-            "Expected subclass of FabioImage class but found %s" % type(codec_class)
+            f"Expected subclass of FabioImage class but found {type(codec_class)}"
         )
     _registry[codec_class.codec_name()] = codec_class
     # clean u[p the cache
@@ -134,7 +134,7 @@ def register_default_formats():
         codec_class = getattr(module, class_name)
         if codec_class is None:
             raise RuntimeError(
-                "Class name '%s' from module '%s' not found" % (class_name, module_name)
+                f"Class name '{class_name}' from module '{module_name}' not found"
             )
         register(codec_class)
 
@@ -247,9 +247,8 @@ def factory(name):
         obj = _registry[name]()
     else:
         msg = (
-            "FileType %s is unknown !, "
-            "please check if the filename exists or select one from %s"
-            % (name, _registry.keys())
+            f"FileType {name} is unknown !, "
+            f"please check if the filename exists or select one from {_registry.keys()}"
         )
         _logger.debug(msg)
         raise RuntimeError(msg)

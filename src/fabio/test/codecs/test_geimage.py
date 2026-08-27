@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
 #             https://github.com/silx-kit/fabio
@@ -33,18 +32,21 @@
 28/11/2014
 """
 
-import unittest
-import os
 import logging
-from ..utilstest import UtilsTest
+import os
+import unittest
+
 from fabio.GEimage import GEimage
+
+from ..utilstest import UtilsTest
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
 
 class TestGE(unittest.TestCase):
     # filename dim1 dim2 min max mean stddev
-    TESTIMAGES = [
+    TESTIMAGES: ClassVar[list] = [
         (
             "GE_aSI_detector_image_1529.bz2",
             (2048, 2048),

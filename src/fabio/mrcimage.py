@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: FabIO X-ray image reader
 #
@@ -43,9 +42,12 @@ __copyright__ = "Jérôme Kieffer"
 __date__ = "27/10/2025"
 
 import logging
+
 import numpy
+
 from .fabioimage import FabioImage
-from .fabioutils import previous_filename, next_filename
+from .fabioutils import next_filename, previous_filename
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
@@ -59,7 +61,7 @@ class MrcImage(FabioImage):
         "Medical Research Council file format for 3D electron density and 2D images"
     )
 
-    DEFAULT_EXTENSIONS = ["mrc", "map", "fei"]
+    DEFAULT_EXTENSIONS: ClassVar[list] = ["mrc", "map", "fei"]
 
     KEYS = (
         "NX",
@@ -94,7 +96,7 @@ class MrcImage(FabioImage):
         "NLABL",
     )
 
-    _MODE_TO_DTYPE = {
+    _MODE_TO_DTYPE: ClassVar[dict] = {
         0: numpy.int8,
         1: numpy.int16,
         2: numpy.float32,
@@ -122,7 +124,7 @@ class MrcImage(FabioImage):
             logger.info("Expected 'MAP ', got %s", self.header["MAP"])
 
         for i in range(10):
-            label = "LABEL_%02i" % i
+            label = f"LABEL_{i:02d}"
             self.header[label] = infile.read(80).decode().strip()
 
         # Read extended header
@@ -135,7 +137,7 @@ class MrcImage(FabioImage):
         self._nframes = self.header["NZ"]
         mode = self.header["MODE"]
         if mode not in self._MODE_TO_DTYPE:
-            raise IOError("Mode %s unsupported" % mode)
+            raise OSError(f"Mode {mode} unsupported")
         dtype = numpy.dtype(self._MODE_TO_DTYPE[mode])
         self._dtype = dtype
         self.imagesize = dim1 * dim2 * dtype.itemsize
@@ -166,7 +168,7 @@ class MrcImage(FabioImage):
         return 1024 + self.header["NSYMBT"] + frame * self.imagesize
 
     def _makeframename(self):
-        self.filename = "%s$%04d" % (self.sequencefilename, self.currentframe)
+        self.filename = f"{self.sequencefilename}${self.currentframe:04d}"
 
     def _readframe(self, infile, img_num):
         """

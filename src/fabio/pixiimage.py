@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -39,11 +38,14 @@ __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __date__ = "27/10/2025"
 
-import numpy
-import os
 import logging
+import os
+
+import numpy
+
 from . import fabioimage
-from .fabioutils import previous_filename, next_filename
+from .fabioutils import next_filename, previous_filename
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
@@ -51,7 +53,7 @@ logger = logging.getLogger(__name__)
 class PixiImage(fabioimage.FabioImage):
     DESCRIPTION = "Pixi file format"
 
-    DEFAULT_EXTENSIONS = []
+    DEFAULT_EXTENSIONS: ClassVar[list] = []
 
     _need_a_seek_to_read = True
 
@@ -95,12 +97,12 @@ class PixiImage(fabioimage.FabioImage):
     def _get_frame(self, num):
         """Inherited function returning a FabioFrame"""
         if num < 0:
-            raise IndexError("Requested frame id:%d out of bound" % num)
+            raise IndexError(f"Requested frame id:{int(num)} out of bound")
         if num >= self.nframes:
-            raise IndexError("Requested frame id:%d out of bound" % num)
+            raise IndexError(f"Requested frame id:{int(num)} out of bound")
 
         newheader = {}
-        for k in self.header.keys():
+        for k in self.header:
             newheader[k] = self.header[k]
         with self._open(self.filename, "rb") as infile:
             data = self._readdata(infile, num)
@@ -112,7 +114,7 @@ class PixiImage(fabioimage.FabioImage):
     def _make_filename(self, img_num):
         self.currentframe = int(img_num)
         if self.nframes == 1:
-            self.filename = "%s$%04d" % (self.sequencefilename, self.currentframe)
+            self.filename = f"{self.sequencefilename}${self.currentframe:04d}"
 
     def _readdata(self, filepointer, img_num):
         if img_num >= self.nframes or img_num < 0:
@@ -138,7 +140,7 @@ class PixiImage(fabioimage.FabioImage):
             raise Exception("Requested frame number is out of range")
         # Do a deep copy of the header to make a new one
         newheader = {}
-        for k in self.header.keys():
+        for k in self.header:
             newheader[k] = self.header[k]
         frame = PixiImage(header=newheader)
         frame._nframes = self.nframes

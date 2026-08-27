@@ -1,4 +1,3 @@
-# coding: utf-8
 # /*##########################################################################
 #
 # Copyright (c) 2016-2026 European Synchrotron Radiation Facility
@@ -42,9 +41,10 @@ import tempfile
 import threading
 import time
 import unittest
-import urllib.request
 import urllib.error
+import urllib.request
 import zipfile
+
 import filelock
 
 try:
@@ -197,9 +197,8 @@ class ExternalResources:
 
             h = self.hash()
             try:
-                with self.lock:
-                    with open(fullfilename, mode="rb") as fd:
-                        h.update(fd.read())
+                with self.lock, open(fullfilename, mode="rb") as fd:
+                    h.update(fd.read())
             except filelock.Timeout:
                 logger.error(f"Unable to lock to read {filename} file")
 
@@ -295,9 +294,8 @@ class ExternalResources:
         dico = {i: dico[i] for i in file_list}  # reorder items
 
         try:
-            with self.lock:
-                with open(self.testdata, "w") as fp:
-                    json.dump(dico, fp, indent=4)
+            with self.lock, open(self.testdata, "w") as fp:
+                json.dump(dico, fp, indent=4)
         except filelock.Timeout:
             logger.error("Unable to lock JSON file")
         except OSError:
@@ -349,9 +347,9 @@ class ExternalResources:
         basefilename = os.path.basename(filename)
         fullfilename = os.path.abspath(os.path.join(self.data_home, basefilename))
 
-        if filename in self.all_data and os.path.isfile(fullfilename):
-            if self.all_data[filename] == self.get_hash(filename):
-                return fullfilename
+        if (filename in self.all_data and os.path.isfile(fullfilename)
+                and self.all_data[filename] == self.get_hash(filename)):
+            return fullfilename
 
         # Else we download them all and decompress/recompress.
         if basefilename.endswith(".bz2"):

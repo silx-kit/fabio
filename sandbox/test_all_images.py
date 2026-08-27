@@ -3,14 +3,15 @@
 Check we can read all the test images
 """
 
-import glob
-import os
-import time
-import fabio.openimage
-import gzip
 import bz2
+import glob
+import gzip
+import os
 import pstats
 import sys
+import time
+
+import fabio.openimage
 
 try:
     import cProfile
@@ -50,11 +51,13 @@ if __name__ == "__main__":
     for im in images:
         # Network/disk io time first
         start = time.perf_counter()
-        the_file = open(im, "rb").read()
+        with open(im, "rb") as f:
+            the_file = f.read()
         times[im] = [time.perf_counter() - start]
         start = time.perf_counter()
         # Network/disk should be cached
-        the_file = open(im, "rb").read()
+        with open(im, "rb") as f:
+            the_file = f.read()
         times[im].append(time.perf_counter() - start)
         start = time.perf_counter()
         try:
@@ -62,7 +65,7 @@ if __name__ == "__main__":
         except KeyboardInterrupt:
             raise
         except Exception:
-            print("Problem with image %s" % im)
+            print(f"Problem with image {im}")
             continue
         times[im].append(time.perf_counter() - start)
         nt = 3
@@ -89,15 +92,15 @@ if __name__ == "__main__":
         # Speed ratings in megabytes per second (for fabio)
         MB = len(the_file) / 1024.0 / 1024.0
         try:
-            print(("%.4f " * nt + " " * 7 * ns) % tuple(times[im]), "%8.3f" % (MB), im)
+            print(("%.4f " * nt + " " * 7 * ns) % tuple(times[im]), f"{MB:8.3f}", im)
         except Exception:
             print(times[im], MB, im)
             raise
     
         cProfile.run("fabio.openimage.openimage(im)", "stats")
         p = pstats.Stats("stats")
-        # Hack around python2.4
         s = sys.stdout
-        sys.stdout = open("profile.txt", "a")
-        p.strip_dirs().sort_stats(-1).print_stats()
+        with open("profile.txt", "a") as profile_file:
+            sys.stdout = profile_file
+            p.strip_dirs().sort_stats(-1).print_stats()
         sys.stdout = s

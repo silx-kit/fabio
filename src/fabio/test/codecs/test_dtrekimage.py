@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
 #             https://github.com/silx-kit/fabio
@@ -31,16 +30,19 @@
 Unit tests for the d*TREK format.
 """
 
-import unittest
-import os
 import logging
-import numpy
+import os
 import shutil
-from ..utilstest import UtilsTest
+import unittest
+
+import numpy
+
 import fabio
 from fabio.dtrekimage import DtrekImage
 from fabio.edfimage import EdfImage
 from fabio.utils import testutils
+
+from ..utilstest import UtilsTest
 
 logger = logging.getLogger(__name__)
 
@@ -104,15 +106,21 @@ class TestMatch(unittest.TestCase):
         im2.read(self.fn_adsc)
         diff = im1.data.astype("float32") - im2.data.astype("float32")
         logger.debug(
-            "type: %s %s shape %s %s "
-            % (im1.data.dtype, im2.data.dtype, im1.data.shape, im2.data.shape)
+            "type: %s %s shape %s %s ",
+            im1.data.dtype,
+            im2.data.dtype,
+            im1.data.shape,
+            im2.data.shape,
         )
         logger.debug(
-            "im1 min %s %s max %s %s "
-            % (im1.data.min(), im2.data.min(), im1.data.max(), im2.data.max())
+            "im1 min %s %s max %s %s ",
+            im1.data.min(),
+            im2.data.min(),
+            im1.data.max(),
+            im2.data.max(),
         )
         logger.debug(
-            "delta min %s max %s mean %s" % (diff.min(), diff.max(), diff.mean())
+            "delta min %s max %s mean %s", diff.min(), diff.max(), diff.mean()
         )
         self.assertEqual(abs(diff).max(), 0.0, "asdc data == edf data")
 
@@ -178,7 +186,7 @@ class TestDtrekImplementation(testutils.ParametricTestCase):
                 data = data.astype(input_type)
                 obj = DtrekImage(data=data, header=header)
                 filename = os.path.join(
-                    self.tmp_directory, "saved_%s.img" % hash(config)
+                    self.tmp_directory, f"saved_{hash(config)}.img"
                 )
                 obj.save(filename)
                 self.assertEqual(obj.data.dtype.type, input_type)
@@ -222,7 +230,7 @@ class TestRealSamples(testutils.ParametricTestCase):
                 self.assertAlmostEqual(maxi, obj.getmax(), 2, "getmax")
                 got_mean = obj.getmean()
                 self.assertAlmostEqual(
-                    mean, got_mean, 2, "getmean exp %s != got %s" % (mean, got_mean)
+                    mean, got_mean, 2, f"getmean exp {mean} != got {got_mean}"
                 )
                 self.assertAlmostEqual(stddev, obj.getstddev(), 2, "getstddev")
                 for key, value in keys.items():

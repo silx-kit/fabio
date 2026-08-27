@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
 #             https://github.com/silx-kit/fabio
@@ -39,11 +38,13 @@ Updated by Jerome Kieffer (jerome.kieffer@esrf.eu), 2011
 __date__ = "27/10/2025"
 __author__ = "jerome Kieffer"
 
-import unittest
-import os
 import logging
+import os
+import unittest
+
 import fabio
 from fabio.dm3image import Dm3Image
+
 from ..utilstest import UtilsTest
 
 logger = logging.getLogger(__name__)
@@ -91,7 +92,7 @@ class TestDm3Image(unittest.TestCase):
                 self.assertAlmostEqual(maxi, obj.getmax(), 2, "getmax")
                 got_mean = obj.getmean()
                 self.assertAlmostEqual(
-                    mean, got_mean, 2, "getmean exp %s != got %s" % (mean, got_mean)
+                    mean, got_mean, 2, f"getmean exp {mean} != got {got_mean}"
                 )
                 self.assertAlmostEqual(stddev, obj.getstddev(), 2, "getstddev")
                 self.assertEqual(shape, obj.shape)

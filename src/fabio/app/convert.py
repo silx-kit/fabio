@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -36,13 +35,14 @@ __licence__ = "MIT"
 __date__ = "27/10/2025"
 __status__ = "production"
 
+import argparse
 import logging
-import sys
 import os
+import sys
+
 import fabio
 from fabio import fabioformats, fabioutils
 from fabio.utils.cli import expand_args
-import argparse
 
 logging.basicConfig()
 logger = logging.getLogger("fabio-convert")
@@ -57,7 +57,7 @@ def get_default_extension_from_format(format_name):
     """
     class_ = fabioformats.get_class_by_name(format_name)
     if class_ is None:
-        raise RuntimeError("Format '%s' unsupported" % format_name)
+        raise RuntimeError(f"Format '{format_name}' unsupported")
 
     extensions = class_.DEFAULT_EXTENSIONS
     if len(extensions) == 0:
@@ -91,7 +91,7 @@ def is_user_want_to_overwrite_filename(filename):
     :rtype: bool
     """
     while True:
-        question = "Do you want to overwrite the file '%s' (y/n): " % filename
+        question = f"Do you want to overwrite the file '{filename}' (y/n): "
         answer = input(question).strip().lower()
         if answer in ["y", "yes", "n", "no"]:
             break
@@ -126,7 +126,7 @@ def convert_one(input_filename, output_filename, options):
     output_exists = os.path.exists(output_filename)
 
     if options.verbose:
-        print("Converting file '%s' to '%s'" % (input_filename, output_filename))
+        print(f"Converting file '{input_filename}' to '{output_filename}'")
 
     if not input_exists:
         logger.error(
@@ -159,7 +159,7 @@ def convert_one(input_filename, output_filename, options):
 
     if remove_file:
         if options.verbose:
-            print("Overwrite file %s" % output_filename)
+            print(f"Overwrite file {output_filename}")
         try:
             if not options.dry_run:
                 os.remove(output_filename)
@@ -174,7 +174,7 @@ def convert_one(input_filename, output_filename, options):
 
     if skip_conversion:
         if options.verbose:
-            print("Conversion to file %s skipped" % output_filename)
+            print(f"Conversion to file {output_filename} skipped")
         return True
 
     try:
@@ -261,12 +261,12 @@ def print_supported_formats():
     for class_ in classes:
         if len(class_.DEFAULT_EXTENSIONS) > 0:
             extensions = ", ".join(["*." + x for x in class_.DEFAULT_EXTENSIONS])
-            extensions = "(%s)" % extensions
+            extensions = f"({extensions})"
         else:
             extensions = ""
 
-        print("- %s %s" % (class_.codec_name(), extensions))
-        print("%s%s" % (indentation, class_.DESCRIPTION))
+        print(f"- {class_.codec_name()} {extensions}")
+        print(f"{indentation}{class_.DESCRIPTION}")
 
 
 def is_format_supported(format_name):
@@ -437,16 +437,14 @@ def main():
                 formats = ", ".join(formats)
                 raise argparse.ArgumentError(
                     None,
-                    "This file extension correspond to different file formats: '%s'. You have to specify it using -F."
-                    % formats,
+                    f"This file extension correspond to different file formats: '{formats}'. You have to specify it using -F.",
                 )
             args.format = filename.format[0] + "image"
 
         if not is_format_supported(args.format):
             raise argparse.ArgumentError(
                 None,
-                "Format '%s' is unknown. Use -l to list all available formats."
-                % args.format,
+                f"Format '{args.format}' is unknown. Use -l to list all available formats.",
             )
     except argparse.ArgumentError as e:
         logger.error(e.message)

@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -33,6 +32,7 @@ Authors: Jon Wright    Henning O. Sorensen & Erik Knudsen
 """
 
 import logging
+
 import numpy
 
 logger = logging.getLogger(__name__)
@@ -97,7 +97,7 @@ def readbytestream(
         infile = fil
         opened = False
     else:
-        infile = open(fil, "rb")
+        infile = open(fil, "rb")  # noqa: SIM115
         opened = True
 
     infile.seek(offset)

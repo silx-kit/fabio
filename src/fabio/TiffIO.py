@@ -29,11 +29,13 @@ __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __date__ = "17/06/2026"
 
-import sys
+import logging
 import os
 import struct
+import sys
+
 import numpy
-import logging
+
 from .fabioimage import FabioImage
 
 ALLOW_MULTIPLE_STRIPS = False
@@ -113,24 +115,23 @@ SAMPLE_FORMAT_COMPLEXIEEEFP = 6
 logger = logging.getLogger(__name__)
 
 
-class TiffIO(object):
+class TiffIO:
     def __init__(self, filename, mode=None, cache_length=20, mono_output=False):
         if mode is None:
             mode = "rb"
         if "b" not in mode:
             mode = mode + "b"
         if "a" in mode.lower():
-            raise IOError("Mode %s makes no sense on TIFF files. Consider 'rb+'" % mode)
-        if "w" in mode:
-            if "+" not in mode:
-                mode += "+"
+            raise OSError(f"Mode {mode} makes no sense on TIFF files. Consider 'rb+'")
+        if "w" in mode and "+" not in mode:
+            mode += "+"
 
         if hasattr(filename, "seek") and hasattr(filename, "read"):
             fd = filename
             self._access = None
         else:
             # the b is needed for windows and python 3
-            fd = open(filename, mode)
+            fd = open(filename, mode)  # noqa: SIM115
             self._access = mode
 
         self._initInternalVariables(fd)
@@ -162,11 +163,11 @@ class TiffIO(object):
                 fileOrder = "big"
                 self._structChar = ">"
             else:
-                raise IOError("File is not a Mar CCD file, nor a TIFF file")
+                raise OSError("File is not a Mar CCD file, nor a TIFF file")
             a = fd.read(2)
             fortyTwo = struct.unpack(self._structChar + "H", a)[0]
             if fortyTwo != 42:
-                raise IOError("Invalid TIFF version %d" % fortyTwo)
+                raise OSError(f"Invalid TIFF version {fortyTwo}")
             else:
                 logger.debug("VALID TIFF VERSION")
             if sys.byteorder != fileOrder:
@@ -195,9 +196,9 @@ class TiffIO(object):
         if self._access is None:
             # we do not own the file
             # open in read mode
-            newFile = open(fileName, "rb")
+            newFile = open(fileName, "rb")  # noqa: SIM115
         else:
-            newFile = open(fileName, self._access)
+            newFile = open(fileName, self._access)  # noqa: SIM115
         self.fd = newFile
 
     def __makeSureFileIsClosed(self):
@@ -292,7 +293,7 @@ class TiffIO(object):
                     valueOffsetList.append(valueOffset)
             elif (nValues < 5) and (fieldType == 2):
                 ftype, vfmt = FIELD_TYPE[fieldType]
-                vfmt = st + "%d%s" % (nValues, vfmt)
+                vfmt = st + f"{nValues}{vfmt}"
                 actualValue = struct.unpack(
                     vfmt, valueOffset[0 : struct.calcsize(vfmt)]
                 )[0]
@@ -319,11 +320,9 @@ class TiffIO(object):
         nValues = nValuesList[idx]
         output = []
         _ftype, vfmt = FIELD_TYPE[fieldTypeList[idx]]
-        vfmt = st + "%d%s" % (nValues, vfmt)
+        vfmt = st + f"{nValues}{vfmt}"
         requestedBytes = struct.calcsize(vfmt)
-        if nValues == 1:
-            output.append(valueOffsetList[idx])
-        elif requestedBytes < 5:
+        if nValues == 1 or requestedBytes < 5:
             output.append(valueOffsetList[idx])
         else:
             fd.seek(struct.unpack(st + "I", valueOffsetList[idx])[0])
@@ -456,7 +455,7 @@ class TiffIO(object):
             if type(imageDescription) in [type([1]), type((1,))]:
                 imageDescription = helpString.join(imageDescription)
         else:
-            imageDescription = "%d/%d" % (nImage + 1, len(self._IFD))
+            imageDescription = f"{nImage + 1}/{len(self._IFD)}"
 
         if TAG_MODEL in tagIDList:
             model = self._readIFDEntry(
@@ -571,9 +570,9 @@ class TiffIO(object):
             # information at writing time
             items = descriptionString.split("=")
             for i in range(int(len(items) / 2)):
-                key = "%s" % items[i * 2]
+                key = f"{items[i * 2]}"
                 # get rid of the \n at the end of the value
-                value = "%s" % items[i * 2 + 1][:-1]
+                value = f"{items[i * 2 + 1][:-1]}"
                 infoDict[key] = value
         info["info"] = infoDict
 
@@ -589,10 +588,7 @@ class TiffIO(object):
 
     def _readImage(self, nImage, **kw):
         logger.debug("Reading image %d", nImage)
-        if "close" in kw:
-            close = kw["close"]
-        else:
-            close = True
+        close = kw.get("close", True)
         rowMin = kw.get("rowMin", None)
         rowMax = kw.get("rowMax", None)
         if nImage in self._imageDataCacheIndex:
@@ -616,7 +612,7 @@ class TiffIO(object):
         compression_type = info["compression_type"]
         if compression:
             if compression_type != 32773:
-                raise IOError("Compressed TIFF images not supported except packbits")
+                raise OSError("Compressed TIFF images not supported except packbits")
             else:
                 # PackBits compression
                 logger.debug("Using PackBits compression")
@@ -657,10 +653,10 @@ class TiffIO(object):
             raise NotImplementedError(txt)
 
         if rowMin >= nRows:
-            raise IndexError("Image only has %d rows" % nRows)
+            raise IndexError(f"Image only has {nRows} rows")
 
         if rowMax >= nRows:
-            raise IndexError("Image only has %d rows" % nRows)
+            raise IndexError(f"Image only has {nRows} rows")
 
         if sampleFormat == SAMPLE_FORMAT_FLOAT:
             if nBits == 32:
@@ -668,7 +664,7 @@ class TiffIO(object):
             elif nBits == 64:
                 dtype = numpy.float64
             else:
-                raise ValueError("Unsupported number of bits for a float: %d" % nBits)
+                raise ValueError(f"Unsupported number of bits for a float: {nBits}")
         elif sampleFormat in [SAMPLE_FORMAT_UINT, SAMPLE_FORMAT_VOID]:
             if nBits in [8, (8, 8, 8), [8, 8, 8]]:
                 dtype = numpy.uint8
@@ -680,7 +676,7 @@ class TiffIO(object):
                 dtype = numpy.uint64
             else:
                 raise ValueError(
-                    "Unsupported number of bits for unsigned int: %s" % (nBits,)
+                    f"Unsupported number of bits for unsigned int: {nBits}"
                 )
         elif sampleFormat == SAMPLE_FORMAT_INT:
             if nBits in [8, (8, 8, 8), [8, 8, 8]]:
@@ -693,12 +689,11 @@ class TiffIO(object):
                 dtype = numpy.int64
             else:
                 raise ValueError(
-                    "Unsupported number of bits for signed int: %s" % (nBits,)
+                    f"Unsupported number of bits for signed int: {nBits}"
                 )
         else:
             raise ValueError(
-                "Unsupported combination. Bits = %s  Format = %d"
-                % (nBits, sampleFormat)
+                f"Unsupported combination. Bits = {nBits}  Format = {sampleFormat}"
             )
         if hasattr(nBits, "index"):
             image = numpy.zeros((nRows, nColumns, len(nBits)), dtype=dtype)
@@ -754,7 +749,7 @@ class TiffIO(object):
                 nBytes = stripByteCounts[i]
                 if compression_type == 32773:
                     try:
-                        bufferBytes = bytes()
+                        bufferBytes = b""
                     except Exception:
                         # python 2.5 ...
                         bufferBytes = ""
@@ -808,15 +803,13 @@ class TiffIO(object):
         if close:
             self.__makeSureFileIsClosed()
 
-        if len(image.shape) == 3:
-            # color image
-            if self._forceMonoOutput:
-                # color image, convert to monochrome
-                image = (
-                    image[:, :, 0] * 0.114
-                    + image[:, :, 1] * 0.587
-                    + image[:, :, 2] * 0.299
-                ).astype(numpy.float32)
+        if len(image.shape) == 3 and self._forceMonoOutput:
+            # color image, convert to monochrome
+            image = (
+                image[:, :, 0] * 0.114
+                + image[:, :, 1] * 0.587
+                + image[:, :, 2] * 0.299
+            ).astype(numpy.float32)
 
         if (rowMin == 0) and (rowMax == (nRows - 1)):
             self._imageDataCacheIndex.insert(0, nImage)
@@ -858,7 +851,7 @@ class TiffIO(object):
             fd = None
             if os.path.exists(name):
                 os.remove(name)
-            fd = open(name, mode="wb+")
+            fd = open(name, mode="wb+")  # noqa: SIM115
             self._initEmptyFile(fd)
         self.fd = fd
 
@@ -903,9 +896,9 @@ class TiffIO(object):
         if info is None:
             description = info
         else:
-            description = "%s" % ""
-            for key in info.keys():
-                description += "%s=%s\n" % (key, info[key])
+            description = ""
+            for key in info:
+                description += f"{key}={info[key]}\n"
 
         # get the image file directory
         outputIFD = self._getOutputIFD(
@@ -976,7 +969,7 @@ class TiffIO(object):
                 raw = description.encode("utf-8")
             else:
                 raw = bytes(description, "utf-8")
-            imageDescription = struct.pack("%ds" % len(raw), raw)
+            imageDescription = struct.pack(f"{len(raw)}s", raw)
             nDirectoryEntries += 1
 
         # software
@@ -986,7 +979,7 @@ class TiffIO(object):
                 software = software + " "
                 softwareLength = len(software)
             software = bytes(software, "utf-8")
-            softwarePackedString = struct.pack("%ds" % softwareLength, software)
+            softwarePackedString = struct.pack(f"{softwareLength}s", software)
             nDirectoryEntries += 1
         else:
             softwareLength = 0
@@ -994,7 +987,7 @@ class TiffIO(object):
         if date is not None:
             dateLength = len(date)
             date = bytes(date, "utf-8")
-            datePackedString = struct.pack("%ds" % dateLength, date)
+            datePackedString = struct.pack(f"{dateLength}s", date)
             dateLength = len(datePackedString)
             nDirectoryEntries += 1
         else:
@@ -1023,7 +1016,7 @@ class TiffIO(object):
             nDirectoryEntries += 1  # For SamplesPerPixel
         else:
             raise RuntimeError(
-                "Image with %d color channel(s) not supported" % nChannels
+                f"Image with {nChannels} color channel(s) not supported"
             )
 
         # image description
@@ -1113,7 +1106,7 @@ class TiffIO(object):
         elif dtype in [numpy.int8, numpy.int16, numpy.int32, numpy.int64]:
             sampleFormat = SAMPLE_FORMAT_INT
         else:
-            raise ValueError("Unsupported data type %s" % dtype)
+            raise ValueError(f"Unsupported data type {dtype}")
 
         info = {}
         info["nColumns"] = nColumns
@@ -1192,7 +1185,7 @@ class TiffIO(object):
                 )
             else:
                 # it has to have length 4
-                fmt = st + "HHI%ds" % descriptionLength
+                fmt = st + f"HHI{descriptionLength}s"
                 outputIFD += struct.pack(
                     fmt,
                     TAG_IMAGE_DESCRIPTION,
@@ -1267,7 +1260,7 @@ class TiffIO(object):
                 )
             else:
                 # it has to have length 4
-                fmt = st + "HHI%ds" % softwareLength
+                fmt = st + f"HHI{softwareLength}s"
                 outputIFD += struct.pack(
                     fmt,
                     TAG_SOFTWARE,
@@ -1305,9 +1298,8 @@ class TiffIO(object):
         if date is not None:
             outputIFD += datePackedString
 
-        if imageDescription is not None:
-            if descriptionLength > 4:
-                outputIFD += imageDescription
+        if imageDescription is not None and descriptionLength > 4:
+            outputIFD += imageDescription
 
         if stripOffsetsString is not None:
             outputIFD += stripOffsetsString

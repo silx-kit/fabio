@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
 #             https://github.com/silx-kit/fabio
@@ -31,12 +30,14 @@
 Unit tests for the Fit2D spread sheet image format.
 """
 
-import unittest
-import os
 import logging
-from ..utilstest import UtilsTest
+import os
+import unittest
+
 from fabio.fit2dspreadsheetimage import Fit2dSpreadsheetImage
 from fabio.utils import testutils
+
+from ..utilstest import UtilsTest
 
 logger = logging.getLogger(__name__)
 

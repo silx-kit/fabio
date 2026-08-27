@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -41,12 +40,13 @@ __license__ = "MIT"
 __date__ = "18/06/2026"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
-import sys
 import base64
 import hashlib
 import io
 import logging
 import subprocess
+import sys
+
 import numpy
 
 logger = logging.getLogger(__name__)
@@ -111,7 +111,7 @@ def endianness():
         return "BIG_ENDIAN"
 
 
-class ExternalCompressors(object):
+class ExternalCompressors:
     """Class to handle lazy discovery of external compression programs"""
 
     COMMANDS = ((".bz2", ["bzip2-dcf"]), (".gz", ["gzip", "-dcf"]))
@@ -157,8 +157,8 @@ def decGzip(stream):
             try:
                 fileobj = io.BytesIO(stream[:-i])
                 uncompessed = gzip.GzipFile(fileobj=fileobj).read()
-            except IOError:
-                logger.debug("trying with %s bytes less, doesn't work" % i)
+            except OSError:
+                logger.debug("trying with %s bytes less, doesn't work", i)
             else:
                 return uncompessed
 
@@ -167,7 +167,7 @@ def decGzip(stream):
     fileobj = io.BytesIO(stream)
     try:
         uncompessed = gzip.GzipFile(fileobj=fileobj).read()
-    except IOError:
+    except OSError:
         logger.warning(
             "Encounter the python-gzip bug with trailing garbage, trying subprocess gzip"
         )

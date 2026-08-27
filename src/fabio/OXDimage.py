@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -47,14 +46,17 @@ __license__ = "MIT"
 __copyright__ = "Jérôme Kieffer"
 __date__ = "17/06/2026"
 
-import time
 import logging
 import struct
+import time
+
 import numpy
-from numpy import rad2deg, deg2rad
+from numpy import deg2rad, rad2deg
+
+from .compression import compTY1, decTY1
 from .fabioimage import FabioImage
-from .compression import decTY1, compTY1
 from .fabioutils import to_str
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
@@ -96,7 +98,7 @@ class OxdImage(FabioImage):
 
     DESCRIPTION = "Oxford Diffraction Sapphire 3 file format"
 
-    DEFAULT_EXTENSIONS = ["img"]
+    DEFAULT_EXTENSIONS: ClassVar[list] = ["img"]
 
     def _readheader(self, infile):
         infile.seek(0)
@@ -265,8 +267,8 @@ class OxdImage(FabioImage):
                 dim2 = int(self.header["NY"])
                 self._shape = dim2, dim1
             except (ValueError, KeyError):
-                raise IOError(
-                    "Oxford  file %s is corrupted, cannot read it" % str(fname)
+                raise OSError(
+                    f"Oxford  file {str(fname)} is corrupted, cannot read it"
                 )
 
             if self.header["Compression"] == "TY1":
@@ -303,7 +305,7 @@ class OxdImage(FabioImage):
                 raw_data = numpy.frombuffer(infile.read(nbytes), self.get_stype(dtype, "little")).astype(dtype)
 
         logger.debug("OVER_SHORT2: %s", raw_data.dtype)
-        logger.debug("%s" % (raw_data < 0).sum())
+        logger.debug("%s", (raw_data < 0).sum())
         logger.debug("BYTECODE: %s", raw_data.dtype.type)
         self.data = raw_data.reshape((dim2, dim1))
         self._dtype = None
@@ -318,36 +320,27 @@ class OxdImage(FabioImage):
             if key not in self.header:
                 self.header[key] = DEFAULT_HEADERS[key]
 
-        if "NX" not in self.header.keys() or "NY" not in self.header.keys():
+        if "NX" not in self.header or "NY" not in self.header:
             dim2, dim1 = self.shape
             self.header["NX"] = dim1
             self.header["NY"] = dim2
         ascii_headers = [
             self.header["Header Version"],
-            "COMPRESSION=%s (%5.1f)"
-            % (self.header["Compression"], self.getCompressionRatio()),
-            "NX=%4i NY=%4i OI=%7i OL=%7i "
-            % (
-                self.header["NX"],
-                self.header["NY"],
-                self.header["OI"],
-                self.header["OL"],
-            ),
-            "NHEADER=%7i NG=%7i NS=%7i NK=%7i NS=%7i NH=%7i"
-            % (
-                self.header["Header Size In Bytes"],
-                self.header["General Section size in Byte"],
-                self.header["Special Section size in Byte"],
-                self.header["KM4 Section size in Byte"],
-                self.header["Statistic Section in Byte"],
-                self.header["History Section in Byte"],
-            ),
-            "NSUPPLEMENT=%7i" % (self.header["NSUPPLEMENT"]),
+            f"COMPRESSION={self.header['Compression']} ({self.getCompressionRatio():5.1f})",
+            f"NX={self.header['NX']:4d} NY={self.header['NY']:4d} "
+            f"OI={self.header['OI']:7d} OL={self.header['OL']:7d} ",
+            f"NHEADER={self.header['Header Size In Bytes']:7d} "
+            f"NG={self.header['General Section size in Byte']:7d} "
+            f"NS={self.header['Special Section size in Byte']:7d} "
+            f"NK={self.header['KM4 Section size in Byte']:7d} "
+            f"NS={self.header['Statistic Section in Byte']:7d} "
+            f"NH={self.header['History Section in Byte']:7d}",
+            f"NSUPPLEMENT={self.header['NSUPPLEMENT']:7d}",
         ]
         if "Time" in self.header:
-            ascii_headers.append("TIME=%s" % self.header["Time"])
+            ascii_headers.append(f"TIME={self.header['Time']}")
         else:
-            ascii_headers.append("TIME=%s" % time.ctime())
+            ascii_headers.append(f"TIME={time.ctime()}")
 
         header = (linesep.join(ascii_headers)).ljust(256).encode("ASCII")
 
@@ -623,7 +616,7 @@ class OxdImage(FabioImage):
 OXDimage = OxdImage
 
 
-class Section(object):
+class Section:
     """
     Small helper class for writing binary headers
     """

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
 #             https://github.com/silx-kit/fabio
@@ -32,10 +31,12 @@ Test for MRC file format imagess.
 
 """
 
-import unittest
-import os
 import logging
+import os
+import unittest
+
 import fabio
+
 from ...mrcimage import MrcImage
 from ...openimage import openimage
 from ..utilstest import UtilsTest
@@ -70,9 +71,9 @@ class TestMrc(unittest.TestCase):
                 filename = self.fn[vals[0]] + ext
                 try:
                     obj = openimage(filename)
-                except Exception as err:
+                except Exception:
                     logger.error("unable to read: %s", filename)
-                    raise err
+                    raise
                 self.assertAlmostEqual(mini, obj.getmin(), 4, f"{filename} getmin")
                 self.assertAlmostEqual(maxi, obj.getmax(), 4, f"{filename} getmax")
                 self.assertAlmostEqual(mean, obj.getmean(), 4, f"{filename} getmean")

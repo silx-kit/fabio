@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     sphinx.ext.mathjax
     ~~~~~~~~~~~~~~~~~~
@@ -12,7 +11,6 @@
 """
 
 from docutils import nodes
-
 from sphinx.application import ExtensionError
 from sphinx.ext.mathbase import setup_math as mathbase_setup
 
@@ -36,11 +34,10 @@ def html_visit_displaymath(self, node):
     parts = [prt for prt in node['latex'].split('\n\n') if prt.strip()]
     for i, part in enumerate(parts):
         part = self.encode(part)
-        if i == 0:
+        if i == 0 and node['number']:
             # necessary to e.g. set the id property correctly
-            if node['number']:
-                self.body.append('<span class="eqno">(%s)</span>' %
-                                 node['number'])
+            number = node['number']
+            self.body.append(f'<span class="eqno">({number})</span>')
         if '&' in part or '\\\\' in part:
             self.body.append(self.builder.config.mathjax_display[0] +
                              '\\begin{split}' + part + '\\end{split}' +

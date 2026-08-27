@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -63,12 +62,12 @@ __date__ = "15/06/2026"
 __status__ = "production"
 __docformat__ = "restructuredtext"
 __all__ = [
-    "date",
-    "version_info",
-    "strictversion",
-    "hexversion",
-    "debianversion",
     "calc_hexversion",
+    "date",
+    "debianversion",
+    "hexversion",
+    "strictversion",
+    "version_info",
 ]
 
 
@@ -94,14 +93,14 @@ class _VersionInfo(NamedTuple):
 version_info = _VersionInfo(MAJOR, MINOR, MICRO, RELEV, SERIAL)
 
 
-strictversion = version = debianversion = "%d.%d.%d" % version_info[:3]
+strictversion = version = debianversion = f"{version_info[0]}.{version_info[1]}.{version_info[2]}"
 if version_info.releaselevel != "final":
     _prerelease = PRERELEASE_NORMALIZED_NAME[version_info[3]]
     version += f"-{_prerelease}{version_info[-1]}"
     debianversion += (
-        "~adev%i" % version_info[-1]
+        f"~adev{version_info[-1]}"
         if RELEV == "dev"
-        else "~%s%i" % (_prerelease, version_info[-1])
+        else f"~{_prerelease}{version_info[-1]}"
     )
     strictversion += _prerelease + str(version_info[-1])
 

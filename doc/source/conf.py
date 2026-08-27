@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # FabIO documentation build configuration file, created by
 # sphinx-quickstart on Fri Mar 15 09:03:50 2013.
@@ -11,15 +10,15 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import sys
 import os
+import sys
 
 on_rtd = os.environ.get('READTHEDOCS') == 'True'
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 # sys.path.insert(0, os.path.abspath('.'))
-project = u'FabIO'
+project = 'FabIO'
 try:
     import fabio
     project_dir = os.path.abspath(os.path.join(__file__, "..", "..", ".."))
@@ -29,9 +28,9 @@ try:
         print("build_dir", build_dir)
         print("project_dir", project_dir)
     elif not build_dir.startswith(project_dir):
-        raise RuntimeError("%s looks to come from the system. Fix your PYTHONPATH and restart sphinx." % project)
+        raise RuntimeError(f"{project} looks to come from the system. Fix your PYTHONPATH and restart sphinx.")
 except ImportError:
-    raise RuntimeError("%s is not on the path. Fix your PYTHONPATH and restart sphinx." % project)
+    raise RuntimeError(f"{project} is not on the path. Fix your PYTHONPATH and restart sphinx.")
 
 
 # -- General configuration -----------------------------------------------------
@@ -43,7 +42,7 @@ except ImportError:
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 try:
     import sphinx.ext.mathjax
-except:
+except ImportError:
     print("Not using math extension for sphinx")
     sys.path.append(os.path.dirname(os.path.abspath(__file__)))
     import mathjax
@@ -71,10 +70,11 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-from fabio.version import strictversion, __date__ as fabio_date
+from fabio.version import __date__ as fabio_date
+from fabio.version import strictversion
 
 year = fabio_date.split("/")[-1]
-copyright = u'2006-%s, Henning Sorensen, Erik Knudsen, Jon Wright, Gael Goret, Brian Pauw and Jerome Kieffer' % (year)
+copyright = f'2006-{year}, Henning Sorensen, Erik Knudsen, Jon Wright, Gael Goret, Brian Pauw and Jerome Kieffer'
 
 
 
@@ -210,8 +210,8 @@ latex_elements = {'papersize': 'a4paper',
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'FabIO.tex', u'FabIO Documentation',
-   u'H. Sorensen, E. Knudsen, J. Wright, \\\\ G. Goret, B. Pauw, V. Valls and J. Kieffer', 'manual'),
+  ('index', 'FabIO.tex', 'FabIO Documentation',
+   'H. Sorensen, E. Knudsen, J. Wright, \\\\ G. Goret, B. Pauw, V. Valls and J. Kieffer', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -243,8 +243,8 @@ latex_logo = "img/viewer.png"
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'fabio', u'FabIO Documentation',
-     [u'Henning Sorensen, Erik Knudsen, Jon Wright, \\\\ Gael Goret, B. Pauw, V. Valls and Jerome Kieffer'], 1)
+    ('index', 'fabio', 'FabIO Documentation',
+     ['Henning Sorensen, Erik Knudsen, Jon Wright, \\\\ Gael Goret, B. Pauw, V. Valls and Jerome Kieffer'], 1)
 ]
 # Documents to append as an appendix to all manuals.
 # texinfo_appendices = []

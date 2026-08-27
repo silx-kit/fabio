@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -36,12 +35,15 @@ __copyright__ = "ESRF"
 __date__ = "27/10/2025"
 
 import logging
-import posixpath
 import os
+import posixpath
+
 import numpy
+
+from . import nexus
 from .fabioimage import FabioImage
 from .fabioutils import NotGoodReader
-from . import nexus
+from typing import ClassVar
 
 try:
     import h5py
@@ -63,7 +65,7 @@ class LambdaImage(FabioImage):
 
     DESCRIPTION = "HDF5 file produces by Lambda"
 
-    DEFAULT_EXTENSIONS = ["h5", "hdf5", "nxs"]
+    DEFAULT_EXTENSIONS: ClassVar[list] = ["h5", "hdf5", "nxs"]
     DETECTOR_GRP = "/entry/instrument/detector"
 
     def __init__(self, data=None, header=None):
@@ -118,12 +120,9 @@ class LambdaImage(FabioImage):
 
     def __repr__(self):
         if self.h5 is None:
-            return "%s object at %s" % (self.__class__.__name__, hex(id(self)))
+            return f"{self.__class__.__name__} object at {hex(id(self))}"
         else:
-            return "Lambda/nexus dataset with %i frames from %s" % (
-                self.nframes,
-                self.h5.filename,
-            )
+            return f"Lambda/nexus dataset with {self.nframes} frames from {self.h5.filename}"
 
     def _readheader(self, infile):
         """
@@ -199,7 +198,7 @@ class LambdaImage(FabioImage):
                 new_img._nframes = self.nframes
                 new_img.currentframe = num
             else:
-                raise IOError(f"getframe({num}) out of range [0, {self.nframes}[")
+                raise OSError(f"getframe({num}) out of range [0, {self.nframes}[")
         else:
             new_img = FabioImage.getframe(self, num)
         return new_img

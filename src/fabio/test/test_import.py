@@ -4,9 +4,9 @@
 Test import all submodules
 """
 
+import logging
 import os
 import unittest
-import logging
 
 logger = logging.getLogger(__name__)
 

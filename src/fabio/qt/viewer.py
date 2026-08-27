@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fast Azimuthal integration
 #             https://github.com/silx-kit/pyFAI
@@ -42,39 +41,41 @@ __licence__ = "MIT"
 
 import os
 import numpy
-import fabio
-from fabio.nexus import Nexus
+from matplotlib.figure import Figure
+from qtpy import QtCore as qtc
+
 # ----------------------------------------------------------------------
 # Qt imports via QtPy – this works with PyQt5, PySide2, PySide6, etc.
 # ----------------------------------------------------------------------
 from qtpy import QtWidgets as qt
-from qtpy import QtCore as qtc
 from qtpy.QtGui import QIcon
 from qtpy.QtWidgets import (
-        QSizePolicy,
-        QFileDialog,
-        QMessageBox,
-        QAction,
-        QComboBox,
-        QPlainTextEdit,
-        QLabel,
-        QSplitter,
-        QTabWidget,
-        QWidget,
-        QProgressBar,
-        QGroupBox,
-        QVBoxLayout,
-        QHBoxLayout,
-        QPushButton,
-        QListWidget,
-        QCheckBox,
-        QButtonGroup
-    )
-# Matplotlib imports (unchanged)
-from matplotlib.figure import Figure
-from .matplotlib import FigureCanvasQTAgg
-from .matplotlib import NavigationToolbar2QT
-from .dialogs import CounterFormatOptionDialog, DownSamplingDialog, BinDialog
+    QAction,
+    QButtonGroup,
+    QCheckBox,
+    QComboBox,
+    QFileDialog,
+    QGroupBox,
+    QHBoxLayout,
+    QLabel,
+    QListWidget,
+    QMessageBox,
+    QPlainTextEdit,
+    QProgressBar,
+    QPushButton,
+    QSizePolicy,
+    QSplitter,
+    QTabWidget,
+    QVBoxLayout,
+    QWidget,
+)
+
+import fabio
+from fabio.nexus import Nexus
+
+from .dialogs import BinDialog, CounterFormatOptionDialog, DownSamplingDialog
+from .matplotlib import FigureCanvasQTAgg, NavigationToolbar2QT
+
 # ----------------------------------------------------------------------
 # Global configuration
 # ----------------------------------------------------------------------
@@ -275,7 +276,6 @@ class AppForm(qt.QMainWindow):
             imgDict = {}
             base_name = os.path.basename(os.path.splitext(fname)[0])
             self.images_list.clear()
-            safeiid = 0
             for iid in range(total):
                 self.progressBar.setValue(int((iid + 1) / total * 100.0))
                 self.log.appendPlainText(
@@ -286,9 +286,8 @@ class AppForm(qt.QMainWindow):
                 self.header_series.append(
                     {"Info": "No header information available in hdf5 Archive"}
                 )
-                imgDict[f"{base_name}{iid}"] = safeiid
+                imgDict[f"{base_name}{iid}"] = iid
                 self.images_list.addItem(f"{base_name}{iid}")
-                safeiid += 1
         self.statusBar().clearMessage()
         self.progressBar.setValue(0)
         self.log.appendPlainText("Hdf5 Extraction: Complete")
@@ -927,8 +926,8 @@ class AppForm(qt.QMainWindow):
 
     def on_pick(self, event):
         if event.inaxes and self.data.any():
-            x = int(round(event.xdata))
-            y = int(round(event.ydata))
+            x = round(event.xdata)
+            y = round(event.ydata)
             if x < self.data.shape[1] and y < self.data.shape[0]:
                 i = self.data[y, x]
                 self.pix_coords_label.setText(

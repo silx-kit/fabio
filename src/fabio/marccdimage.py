@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -50,7 +49,9 @@ JPW : Use a parser in case of typos (sorry?)
 # special header
 import logging
 import struct
+
 from .tifimage import TifImage
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
@@ -266,7 +267,7 @@ def make_format(c_def_string):
                 times = eval(num)
             except Exception as error:
                 logger.error("%s Please decode %s", error, decl)
-                raise error
+                raise
         else:
             times = 1
         try:
@@ -311,7 +312,7 @@ class MarccdImage(TifImage):
 
     DESCRIPTION = "File format from MarCCD and MarMosaic images"
 
-    DEFAULT_EXTENSIONS = ["mccd"]
+    DEFAULT_EXTENSIONS: ClassVar[list] = ["mccd"]
 
     def _readheader(self, infile):
         """

@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -42,15 +41,18 @@ Authors:
 
 """
 
-import logging
-import sys
-import os.path
 import collections
+import logging
+import os.path
+import sys
+
 import fabio
+
+from .fabioimage import FabioImage
 from .fabioutils import FilenameObject, next_filename
 from .openimage import openimage
-from .fabioimage import FabioImage
 from .utils import deprecation
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
@@ -137,7 +139,7 @@ def new_file_series(first_object, nimages=0, step=1, traceback=False):
             # Skip bad images
             logger.warning("Got a problem here: next() failed %s", ex)
             if traceback:
-                logger.error("Backtrace", exc_info=True)
+                logger.exception("Backtrace")
             else:
                 logger.debug("Backtrace", exc_info=True)
             # Skip bad images
@@ -179,7 +181,7 @@ class file_series(list):
         :param list_of_strings: arg should be a list of strings which are filenames
 
         """
-        super(file_series, self).__init__(list_of_strings)
+        super().__init__(list_of_strings)
         # track current position in list
         self._current = 0
 
@@ -369,10 +371,10 @@ class numbered_file_series(file_series):
             fmt = "%s%i%s"
 
         strings = [fmt % (stem, i, extension) for i in range(first, last + 1, step)]
-        super(numbered_file_series, self).__init__(strings)
+        super().__init__(strings)
 
 
-class filename_series(object):
+class filename_series:
     """Iterator through a list of files indexed by a number.
 
     Supports `next`, `previous` and jump accessors.
@@ -536,7 +538,7 @@ class FileSeries(FabioImage):
         serie = FileSeries(filenames=filenames, fixed_frame_number=100)
     """
 
-    DEFAULT_EXTENSIONS = []
+    DEFAULT_EXTENSIONS: ClassVar[list] = []
 
     def __init__(
         self, filenames, single_frame=None, fixed_frames=None, fixed_frame_number=None
@@ -676,9 +678,9 @@ class FileSeries(FabioImage):
             if file_number < len(self.__filenames):
                 filename = self.__filenames[file_number]
             else:
-                raise IndexError("File number '%s' is not reachable" % file_number)
+                raise IndexError(f"File number '{file_number}' is not reachable")
         else:
-            raise IndexError("File number %s is not reachable" % file_number)
+            raise IndexError(f"File number {file_number} is not reachable")
         return filename
 
     def __get_file(self, file_number):
@@ -752,7 +754,7 @@ class FileSeries(FabioImage):
                 self.__current_file_description = description
                 return description
 
-        raise IndexError("Frame %s is out of range" % frame_number)
+        raise IndexError(f"Frame {frame_number} is out of range")
 
     def __get_file_description(self, frame_number):
         """Returns file description at the frame number.
@@ -772,7 +774,7 @@ class FileSeries(FabioImage):
         try:
             filename = self.__get_filename(file_number)
         except IndexError:
-            raise IndexError("Frame %s is out of range" % frame_number)
+            raise IndexError(f"Frame {frame_number} is out of range")
         first_frame = frame_number - (frame_number % self.__fixed_frame_number)
         nframes = self.__fixed_frame_number
         return _FileDescription(filename, file_number, first_frame, nframes)
@@ -784,7 +786,7 @@ class FileSeries(FabioImage):
         :rtype: FabioFrame
         """
         if num < 0:
-            raise IndexError("Frame %s is out of range" % num)
+            raise IndexError(f"Frame {num} is out of range")
         description = self.__get_file_description(num)
         fileimage = self.__get_file(description.file_number)
         local_frame = num - description.first_frame_number

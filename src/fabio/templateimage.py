@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -76,8 +75,11 @@ __copyright__ = "Institut"
 __date__ = "09/02/2023"
 
 import logging
+
 import numpy
+
 from .fabioimage import FabioImage
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
@@ -90,7 +92,7 @@ class TemplateImage(FabioImage):
 
     DESCRIPTION = "Name of the file format"
 
-    DEFAULT_EXTENSIONS = []
+    DEFAULT_EXTENSIONS: ClassVar[list] = []
 
     def __init__(self, *arg, **kwargs):
         """

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fast Azimuthal integration
 #             https://github.com/silx-kit/pyFAI
@@ -44,13 +43,16 @@ __date__ = "20/08/2026"
 
 import sys
 from argparse import ArgumentParser
+
 import numpy
-import fabio
 
 # ----------------------------------------------------------------------
 # Qt imports via QtPy – this works with PyQt5, PySide2, PySide6, etc.
 # ----------------------------------------------------------------------
 from qtpy.QtWidgets import QApplication, QStyleFactory
+
+import fabio
+
 from ..qt.viewer import AppForm
 
 # Matplotlib imports (unchanged)

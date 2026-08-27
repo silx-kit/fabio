@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
 #             https://github.com/silx-kit/fabio
@@ -29,12 +28,14 @@
 Test to check TiffIO
 """
 
-import unittest
-import os
 import logging
+import os
+import unittest
+
 import numpy
-from .utilstest import UtilsTest
+
 from ..TiffIO import TiffIO
+from .utilstest import UtilsTest
 
 logger = logging.getLogger(__name__)
 
@@ -51,12 +52,12 @@ class TestTiffIO(unittest.TestCase):
         tif = None
 
     def test_write(self):
-        filename = "%s.tiff" % self.id()
+        filename = f"{self.id()}.tiff"
         filename = os.path.join(UtilsTest.tempdir, filename)
         self.write(filename)
 
     def test_append(self):
-        filename = "%s.tiff" % self.id()
+        filename = f"{self.id()}.tiff"
         filename = os.path.join(UtilsTest.tempdir, filename)
         self.write(filename)
         # append
@@ -69,7 +70,7 @@ class TestTiffIO(unittest.TestCase):
         tif = None
 
     def test_read(self):
-        filename = "%s.tiff" % self.id()
+        filename = f"{self.id()}.tiff"
         filename = os.path.join(UtilsTest.tempdir, filename)
         self.write(filename)
 

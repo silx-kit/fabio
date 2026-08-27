@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
 #             https://github.com/silx-kit/fabio
@@ -28,20 +27,24 @@
 
 """Test lambda images"""
 
+import logging
 import os
+import unittest
+
 import numpy
+
 import fabio.lambdaimage
 from fabio.openimage import openimage
+
 from ..utilstest import UtilsTest
-import unittest
-import logging
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
 
 class TestLambda(unittest.TestCase):
     # filename dim1 dim2 min max mean stddev
-    TESTIMAGES = [
+    TESTIMAGES: ClassVar[list] = [
         ("l1_test02_00002_m01.nxs", 1554, 516, 0, 548, 0.00, 0.81024),  # WIP
         ("l1_test02_00002_m02.nxs", 1554, 516, 0, 0, 0.0, 0.0),  # WIP
         ("l1_test02_00002_m03.nxs", 1554, 516, 0, 45, 0.00, 0.0534),  # WIP
@@ -54,7 +57,7 @@ class TestLambda(unittest.TestCase):
         """
         for params in self.TESTIMAGES:
             name = params[0]
-            logger.debug("Processing: %s" % name)
+            logger.debug("Processing: %s", name)
             dim1, dim2 = params[1:3]
             shape = dim2, dim1
             mini, maxi, mean, stddev = params[3:]
@@ -63,19 +66,19 @@ class TestLambda(unittest.TestCase):
             obj.read(filename)
 
             self.assertAlmostEqual(
-                mini, obj.getmin(), 2, "getmin [%s,%s]" % (mini, obj.getmin())
+                mini, obj.getmin(), 2, f"getmin [{mini},{obj.getmin()}]"
             )
             self.assertAlmostEqual(
-                maxi, obj.getmax(), 2, "getmax [%s,%s]" % (maxi, obj.getmax())
+                maxi, obj.getmax(), 2, f"getmax [{maxi},{obj.getmax()}]"
             )
             self.assertAlmostEqual(
-                mean, obj.getmean(), 2, "getmean [%s,%s]" % (mean, obj.getmean())
+                mean, obj.getmean(), 2, f"getmean [{mean},{obj.getmean()}]"
             )
             self.assertAlmostEqual(
                 stddev,
                 obj.getstddev(),
                 2,
-                "getstddev [%s,%s]" % (stddev, obj.getstddev()),
+                f"getstddev [{stddev},{obj.getstddev()}]",
             )
 
             self.assertEqual(shape, obj.shape, "dim1")

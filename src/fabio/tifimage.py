@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: FabIO X-ray image reader
 #
@@ -47,12 +46,14 @@ __license__ = "MIT"
 __copyright__ = "ESRF, Grenoble & Risoe National Laboratory"
 __status__ = "stable"
 
-import time
 import logging
+import time
+
 import numpy
+
+from . import TiffIO, fabioimage
 from .utils import pilutils
-from . import fabioimage
-from . import TiffIO
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
@@ -73,7 +74,7 @@ class TiffFrame(fabioimage.FabioFrame):
     """Frame container for TIFF format"""
 
     def __init__(self, data, tiff_header):
-        super(TiffFrame, self).__init__(data, tiff_header)
+        super().__init__(data, tiff_header)
         # also expose the tiff header as 'tiff header' attribute
         self.tiff_header = tiff_header
 
@@ -86,7 +87,7 @@ class TifImage(fabioimage.FabioImage):
 
     DESCRIPTION = "Tagged image file format"
 
-    DEFAULT_EXTENSIONS = ["tif", "tiff"]
+    DEFAULT_EXTENSIONS: ClassVar[list] = ["tif", "tiff"]
 
     _need_a_seek_to_read = True
 
@@ -179,17 +180,16 @@ class TifImage(fabioimage.FabioImage):
                 logger.debug("Backtrace", exc_info=True)
                 infile.seek(0)
 
-        if self.lib is None:
-            if _USE_PIL and PIL is not None:
-                try:
-                    self._read_with_pil(infile)
-                except Exception as error:
-                    logger.error("Error in opening %s with PIL: %s", fname, error)
-                    logger.debug("Backtrace", exc_info=True)
-                    if infile.closed:
-                        infile = self._open(fname, "rb")
-                    else:
-                        infile.close()
+        if self.lib is None and _USE_PIL and PIL is not None:
+            try:
+                self._read_with_pil(infile)
+            except Exception as error:
+                logger.error("Error in opening %s with PIL: %s", fname, error)
+                logger.debug("Backtrace", exc_info=True)
+                if infile.closed:
+                    infile = self._open(fname, "rb")
+                else:
+                    infile.close()
 
         if self.lib is None:
             logger.error(
@@ -217,7 +217,7 @@ class TifImage(fabioimage.FabioImage):
         if self._tiffio is not None:
             self._tiffio.close()
             self._tiffio = None
-        super(TifImage, self).close()
+        super().close()
 
     def _get_frame(self, num):
         """Inherited function returning a FabioFrame"""

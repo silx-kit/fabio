@@ -1,4 +1,3 @@
-# coding: utf-8
 # /*##########################################################################
 #
 # Copyright (c) 2016-2024 European Synchrotron Radiation Facility
@@ -28,16 +27,17 @@ __authors__ = ["Jérôme Kieffer", "H. Payno", "P. Knobel"]
 __license__ = "MIT"
 __date__ = "15/03/2024"
 
-import logging
 import functools
-import traceback
+import logging
 import re
+import traceback
 
-from ..version import calc_hexversion, hexversion as ref_hexversion
+from ..version import calc_hexversion
+from ..version import hexversion as ref_hexversion
 
 depreclog = logging.getLogger("fabio.DEPRECATION")
 
-deprecache = set([])
+deprecache = set()
 
 _CACHE_VERSIONS = {}
 _PATTERN = re.compile(r"(\d+)\.(\d+)\.(\d+)(\w+)?$")
@@ -48,7 +48,7 @@ def hexversion_fromstring(string):
     if string is not None:
         result = _PATTERN.match(string)
         if result is None:
-            raise ValueError("'%s' is not a valid version" % string)
+            raise ValueError(f"'{string}' is not a valid version")
         result = result.groups()
         major, minor, micro = int(result[0]), int(result[1]), int(result[2])
         releaselevel = result[3]
@@ -142,12 +142,12 @@ def deprecated_warning(
 
     msg = "%s %s is deprecated"
     if since_version is not None:
-        msg += " since fabio version %s" % since_version
+        msg += f" since fabio version {since_version}"
     msg += "."
     if reason is not None:
-        msg += " Reason: %s." % reason
+        msg += f" Reason: {reason}."
     if replacement is not None:
-        msg += " Use '%s' instead." % replacement
+        msg += f" Use '{replacement}' instead."
     msg += "\n%s"
     limit = 2 + skip_backtrace_count
     backtrace = "".join(traceback.format_stack(limit=limit)[0])

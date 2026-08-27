@@ -1,4 +1,3 @@
-# coding: utf-8
 # /*##########################################################################
 #
 # Copyright (c) 2016-2021 European Synchrotron Radiation Facility
@@ -41,7 +40,6 @@ import logging
 import sys
 import unittest
 
-
 _logger = logging.getLogger(__name__)
 
 
@@ -65,13 +63,13 @@ else:
         def subTest(self, msg=None, **params):
             """Use as unittest.TestCase.subTest method in Python >= 3.4."""
             # Format arguments as: '[msg] (key=value, ...)'
-            param_str = ", ".join(["%s=%s" % (k, v) for k, v in params.items()])
-            self._subtest_msg = "[%s] (%s)" % (msg or "", param_str)
+            param_str = ", ".join([f"{k}={v}" for k, v in params.items()])
+            self._subtest_msg = f"[{msg or ''}] ({param_str})"
             yield
             self._subtest_msg = None
 
         def shortDescription(self):
-            short_desc = super(ParametricTestCase, self).shortDescription()
+            short_desc = super().shortDescription()
             if self._subtest_msg is not None:
                 # Append subTest message to shortDescription
                 short_desc = " ".join(
@@ -110,11 +108,11 @@ class LoggingRuntimeError(RuntimeError):
     """Raised when the `LoggingValidator` fails"""
 
     def __init__(self, msg, records):
-        super(LoggingRuntimeError, self).__init__(msg)
+        super().__init__(msg)
         self.records = records
 
     def __str__(self):
-        return super(LoggingRuntimeError, self).__str__() + " -> " + str(self.records)
+        return super().__str__() + " -> " + str(self.records)
 
 
 class LoggingValidator(logging.Handler):
@@ -178,7 +176,7 @@ class LoggingValidator(logging.Handler):
         )
         """Amount of any logging expected"""
 
-        super(LoggingValidator, self).__init__()
+        super().__init__()
 
     def __enter__(self):
         """Context (i.e., with) support"""
@@ -237,19 +235,15 @@ class LoggingValidator(logging.Handler):
             # Re-send record logs through logger as they where masked
             # to help debug
             message = ""
-            for level in count_by_level.keys():
+            for level in count_by_level:
                 if message != "":
                     message += ", "
                 count = count_by_level[level]
                 expected_count = expected_count_by_level[level]
-                message += "%d %s (got %d)" % (
-                    expected_count,
-                    logging.getLevelName(level),
-                    count,
-                )
+                message += f"{expected_count} {logging.getLevelName(level)} (got {count})"
 
             raise LoggingRuntimeError(
-                "Expected %s" % message, records=list(self.records)
+                f"Expected {message}", records=list(self.records)
             )
 
     def emit(self, record):
@@ -312,7 +306,7 @@ def validate_logging(
 
 
 # Simulate missing library context
-class EnsureImportError(object):
+class EnsureImportError:
     """This context manager allows to simulate the unavailability
     of a library, even if it is actually available. It ensures that
     an ImportError is raised if the code inside the context tries to

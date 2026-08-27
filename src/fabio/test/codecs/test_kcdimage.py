@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
 #             https://github.com/silx-kit/fabio
@@ -32,10 +31,12 @@ Test for Nonius Kappa CCD cameras.
 
 """
 
-import unittest
-import os
 import logging
+import os
+import unittest
+
 import fabio
+
 from ...kcdimage import kcdimage
 from ...openimage import openimage
 from ..utilstest import UtilsTest
@@ -67,9 +68,9 @@ class TestKcd(unittest.TestCase):
         for ext in ["", ".gz", ".bz2"]:
             try:
                 obj = openimage(self.fn[self.kcdfilename] + ext)
-            except Exception as err:
+            except Exception:
                 logger.error("unable to read: %s", self.fn[self.kcdfilename] + ext)
-                raise err
+                raise
             self.assertAlmostEqual(mini, obj.getmin(), 4, "getmin" + ext)
             self.assertAlmostEqual(maxi, obj.getmax(), 4, "getmax" + ext)
             self.assertAlmostEqual(mean, obj.getmean(), 4, "getmean" + ext)

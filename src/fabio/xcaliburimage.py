@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: CCD mask image reader/writer. Format used in CrysalisPro software
 #             https://github.com/silx-kit/fabio
@@ -37,13 +36,16 @@ __copyright__ = "2022 ESRF"
 __date__ = "27/10/2025"
 
 import logging
-import time
 import os
-import numpy
-from .fabioimage import FabioImage
+import struct
+import time
 from dataclasses import dataclass
 from enum import Enum
-import struct
+
+import numpy
+
+from .fabioimage import FabioImage
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
@@ -566,7 +568,7 @@ class RunDescription:
     cfolder: str = "n/a"
     inumofsweeps: int = 0
     dunknown: float = 0.0
-    pssweep: list = tuple()
+    pssweep: list = ()
     SIZE = 528
 
     @classmethod
@@ -652,29 +654,29 @@ class CcdCharacteristiscs:
     ifip60yorigin: int = 0
 
     inumofcornermasks: int = 0
-    iacornermaskx: list = tuple()
-    iacornermasky: list = tuple()
+    iacornermaskx: list = ()
+    iacornermasky: list = ()
     inumofglowingcornermasks: int = 0
-    iaglowingcornermaskx: list = tuple()
-    iaglowingcornermasky: list = tuple()
+    iaglowingcornermaskx: list = ()
+    iaglowingcornermasky: list = ()
 
     ibadpolygons: int = 0
-    pschipbadpolygon: list = tuple()
+    pschipbadpolygon: list = ()
 
     ibadpoints: int = 0
-    pschipbadpoint: list = tuple()
+    pschipbadpoint: list = ()
 
     ibadcolumns: int = 0
-    pschipbadcolumn: list = tuple()
+    pschipbadcolumn: list = ()
     ibadcolumns1x1: int = 0
-    pschipbadcolumn1x1: list = tuple()
+    pschipbadcolumn1x1: list = ()
     ibadcolumns2x2: int = 0
-    pschipbadcolumn2x2: list = tuple()
+    pschipbadcolumn2x2: list = ()
     ibadcolumns4x4: int = 0
-    pschipbadcolumn4x4: list = tuple()
+    pschipbadcolumn4x4: list = ()
 
     ibadrows: int = 0
-    pschipbadrow: list = tuple()
+    pschipbadrow: list = ()
 
     iscintillatorid: int = 0
     # iisscintillatorid: int =0
@@ -683,11 +685,11 @@ class CcdCharacteristiscs:
     chipmachinefunction: ChipMachineFunction = None
 
     ibadrows1x1: int = 0
-    pschipbadrow1x1: list = tuple()
+    pschipbadrow1x1: list = ()
     ibadrows2x2: int = 0
-    pschipbadrow2x2: list = tuple()
+    pschipbadrow2x2: list = ()
     ibadrows4x4: int = 0
-    pschipbadrow4x4: list = tuple()
+    pschipbadrow4x4: list = ()
 
     def _clip_string(self):
         """Clip all strings to 256 chars"""
@@ -1031,7 +1033,7 @@ class XcaliburImage(FabioImage):
 
     DESCRIPTION = "Xcalibur binary struct of masked pixels"
 
-    DEFAULT_EXTENSIONS = []
+    DEFAULT_EXTENSIONS: ClassVar[list] = []
 
     def __init__(self, *arg, **kwargs):
         """ """

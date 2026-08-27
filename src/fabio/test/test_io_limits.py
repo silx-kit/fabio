@@ -4,12 +4,14 @@
 Test IO size limits
 """
 
-import os
-import unittest
 import logging
-import numpy
-import tempfile
+import os
 import shutil
+import tempfile
+import unittest
+
+import numpy
+
 import fabio.edfimage
 import fabio.tifimage
 

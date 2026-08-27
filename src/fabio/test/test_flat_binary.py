@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -32,17 +31,20 @@ testsuite by Jerome Kieffer (Jerome.Kieffer@esrf.eu)
 28/11/2014
 """
 
-import unittest
-import os
 import logging
-from .utilstest import UtilsTest
+import os
+import unittest
+
 import fabio
+
+from .utilstest import UtilsTest
+from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
 
 class TestFlatBinary(unittest.TestCase):
-    filenames = [
+    filenames: ClassVar[list] = [
         os.path.join(UtilsTest.tempdir, i)
         for i in (
             "not.a.file",
@@ -74,7 +76,7 @@ class TestFlatBinary(unittest.TestCase):
                 if im.data.tobytes() == b"\x00" * (2048 * 2048 * 2 + 8192):
                     nfail += 1
                 else:
-                    logger.info("**** Passed: %s" % filename)
+                    logger.info("**** Passed: %s", filename)
 
         self.assertEqual(
             nfail, 0, f"{nfail} failures out of {len(self.filenames)}"
