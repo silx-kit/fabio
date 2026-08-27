@@ -43,6 +43,7 @@ from qtpy.QtWidgets import (
     QLabel,
     QMessageBox,
 )
+from qtpy.QtCore import QRect, Qt
 
 numpy.seterr(divide="ignore")
 output_format = [
@@ -72,13 +73,13 @@ class CounterFormatOptionDialog(QDialog):
         self.resize(350, 100)
         # ----- layout ----------------------------------------------------
         button_box = QDialogButtonBox(self)
-        button_box.setGeometry(qt.QRect(0, 60, 341, 32))
-        button_box.setOrientation(qt.Qt.Horizontal)
+        button_box.setGeometry(QRect(0, 60, 341, 32))
+        button_box.setOrientation(Qt.Horizontal)
         button_box.setStandardButtons(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
         label = QLabel("File counter format:", self)
-        label.setGeometry(qt.QRect(38, 23, 181, 16))
+        label.setGeometry(QRect(38, 23, 181, 16))
         self.lineEdit = qt.QLineEdit(self)
-        self.lineEdit.setGeometry(qt.QRect(175, 18, 113, 25))
+        self.lineEdit.setGeometry(QRect(175, 18, 113, 25))
         self.lineEdit.setText(counter_format)
         # ----- signals ---------------------------------------------------
         button_box.accepted.connect(self.accept)
@@ -109,24 +110,24 @@ class DownSamplingDialog(QDialog):
         self.resize(410, 250)
         # ----- layout ----------------------------------------------------
         button_box = QDialogButtonBox(self)
-        button_box.setGeometry(qt.QRect(45, 200, 341, 32))
-        button_box.setOrientation(qt.Qt.Horizontal)
+        button_box.setGeometry(QRect(45, 200, 341, 32))
+        button_box.setOrientation(Qt.Horizontal)
         button_box.setStandardButtons(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
         # Number of files to sum
         label_n = QLabel("Number of files to sum:", self)
-        label_n.setGeometry(qt.QRect(38, 63, 181, 16))
+        label_n.setGeometry(QRect(38, 63, 181, 16))
         self.lineEdit_n = qt.QLineEdit(self)
-        self.lineEdit_n.setGeometry(qt.QRect(220, 58, 113, 25))
+        self.lineEdit_n.setGeometry(QRect(220, 58, 113, 25))
         # Starting phi angle
         label_phi0 = QLabel("Starting φ angle (degrees):", self)
-        label_phi0.setGeometry(qt.QRect(90, 100, 191, 20))
+        label_phi0.setGeometry(QRect(90, 100, 191, 20))
         self.lineEdit_phi0 = qt.QLineEdit(self)
-        self.lineEdit_phi0.setGeometry(qt.QRect(300, 95, 113, 25))
+        self.lineEdit_phi0.setGeometry(QRect(300, 95, 113, 25))
         # Phi step
         label_step = QLabel("φ step (degrees):", self)
-        label_step.setGeometry(qt.QRect(151, 133, 101, 16))
+        label_step.setGeometry(QRect(151, 133, 101, 16))
         self.lineEdit_step = qt.QLineEdit(self)
-        self.lineEdit_step.setGeometry(qt.QRect(260, 130, 113, 25))
+        self.lineEdit_step.setGeometry(QRect(260, 130, 113, 25))
         # ----- signals ---------------------------------------------------
         button_box.accepted.connect(self.accept)
         button_box.rejected.connect(self.reject)
@@ -176,32 +177,32 @@ class BinDialog(QDialog):
         self.endian = None
         # ----- layout ----------------------------------------------------
         button_box = QDialogButtonBox(self)
-        button_box.setGeometry(qt.QRect(50, 230, 341, 32))
-        button_box.setOrientation(qt.Qt.Horizontal)
+        button_box.setGeometry(QRect(50, 230, 341, 32))
+        button_box.setOrientation(Qt.Horizontal)
         button_box.setStandardButtons(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
         group_box = QGroupBox("Binary data block required information:", self)
-        group_box.setGeometry(qt.QRect(10, 10, 370, 191))
+        group_box.setGeometry(QRect(10, 10, 370, 191))
         # Dimension 1
         label_dim1 = QLabel("Dimension 1:", group_box)
-        label_dim1.setGeometry(qt.QRect(67, 48, 91, 16))
+        label_dim1.setGeometry(QRect(67, 48, 91, 16))
         self.lineEdit_dim1 = qt.QLineEdit(group_box)
-        self.lineEdit_dim1.setGeometry(qt.QRect(185, 40, 91, 25))
+        self.lineEdit_dim1.setGeometry(QRect(185, 40, 91, 25))
         # Dimension 2
         label_dim2 = QLabel("Dimension 2:", group_box)
-        label_dim2.setGeometry(qt.QRect(66, 76, 91, 16))
+        label_dim2.setGeometry(QRect(66, 76, 91, 16))
         self.lineEdit_dim2 = qt.QLineEdit(group_box)
-        self.lineEdit_dim2.setGeometry(qt.QRect(185, 70, 91, 25))
+        self.lineEdit_dim2.setGeometry(QRect(185, 70, 91, 25))
         # Offset
         label_offset = QLabel("Offset:", group_box)
-        label_offset.setGeometry(qt.QRect(105, 106, 51, 16))
+        label_offset.setGeometry(QRect(105, 106, 51, 16))
         self.lineEdit_offset = qt.QLineEdit(group_box)
-        self.lineEdit_offset.setGeometry(qt.QRect(184, 100, 91, 25))
+        self.lineEdit_offset.setGeometry(QRect(184, 100, 91, 25))
         self.lineEdit_offset.setText("0")
         # Byte code
         label_bc = QLabel("Byte code:", group_box)
-        label_bc.setGeometry(qt.QRect(70, 130, 91, 16))
+        label_bc.setGeometry(QRect(70, 130, 91, 16))
         self.comboBox_bc = qt.QComboBox(group_box)
-        self.comboBox_bc.setGeometry(qt.QRect(173, 123, 91, 25))
+        self.comboBox_bc.setGeometry(QRect(173, 123, 91, 25))
         for bc in [
             "int8",
             "int16",
@@ -218,9 +219,9 @@ class BinDialog(QDialog):
         self.comboBox_bc.setCurrentIndex(2)  # default to int32
         # Endian
         label_endian = QLabel("Endian:", group_box)
-        label_endian.setGeometry(qt.QRect(98, 170, 61, 16))
+        label_endian.setGeometry(QRect(98, 170, 61, 16))
         self.comboBox_endian = qt.QComboBox(group_box)
-        self.comboBox_endian.setGeometry(qt.QRect(182, 166, 91, 25))
+        self.comboBox_endian.setGeometry(QRect(182, 166, 91, 25))
         self.comboBox_endian.addItem("Little‑endian")
         self.comboBox_endian.addItem("Big‑endian")
         # ----- signals ---------------------------------------------------
