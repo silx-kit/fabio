@@ -164,7 +164,12 @@ class EigerImage(FabioImage):
         else:
             self.currentframe = 0
 
-            self._data = self.dataset[0][self.currentframe, :, :]
+            if self.dataset[0].ndim == 3:
+                self._data = self.dataset[0][self.currentframe, :, :]
+            elif self.dataset[0].ndim == 2:
+                self._data = self.dataset[0][:, :]
+            else:
+                raise NotGoodReader(f"Unexpected dataset dimensionality: {self.dataset[0].ndim}")
             self._shape = None
             return self
 
@@ -217,9 +222,15 @@ class EigerImage(FabioImage):
                 if isinstance(self.dataset, list):
                     nfr = num
                     for ds in self.dataset:
-                        if ds is None or ds.ndim == 2:
+                        if ds is None:
                             if nfr == 0:
                                 data = None
+                            else:
+                                nfr -= 1
+                        elif ds.ndim == 2:
+                            if nfr == 0:
+                                data = ds[:, :]
+                                break
                             else:
                                 nfr -= 1
                         elif ds.ndim == 3:
