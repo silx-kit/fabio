@@ -15,7 +15,7 @@ FabIO reads/writes 2D X-ray detector images (~30 formats: EDF, CBF, TIFF, HDF5/E
 
 ## Architecture
 
-- **Meson is the source of truth for packaging.** Every Python file (including tests) must be listed in the `meson.build` of its directory, or it won't be installed/importable from the build. `run_tests.py` uses `bootstrap.build_project()` (meson setup/install into `build/`), so a missing entry shows up as an `ImportError` in tests.
+- **Meson is the source of truth for packaging.** Every Python file (including tests) must be listed in the `meson.build` of its directory, or it won't be installed/importable from the build. `run_tests.py` uses `bootstrap.build_project()` (meson setup/install into `build_py<XY>/`, e.g. `build_py313/` for Python 3.13: the build directory is per Python version), so a missing entry shows up as an `ImportError` in tests.
 - **Codec plugin model** (`src/fabio/`):
   - `fabioimage.py`: `FabioImage` base class (+ `FabioFrame`). Subclasses set `DESCRIPTION`, `DEFAULT_EXTENSIONS`, implement `read(fname, frame=None)` (and optionally `write`, `_readheader`, `_get_frame`/`nframes` for multi-frame formats). Transparent gz/bz2 handling goes through `fabioutils` file wrappers; `_need_a_seek_to_read` / `_need_a_real_file` class flags control it.
   - `fabioformats.py`: registry. `_default_codecs` lists `(module, class)` pairs — **order matters** for extension-based lookup. New formats must be added here. `templateimage.py` documents the full checklist for adding a format.

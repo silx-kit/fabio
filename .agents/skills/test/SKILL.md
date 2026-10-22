@@ -7,7 +7,7 @@ description: Build FabIO and run its test suite (all tests or a single module/cl
 
 From the repository root:
 
-- Full suite (first builds with meson into `./build`, then tests that build):
+- Full suite (first builds with meson into `./build_py<XY>`, e.g. `build_py313` for Python 3.13, then tests that build):
   `python run_tests.py`
 - A single module, class or method (dotted unittest names):
   `python run_tests.py fabio.test.codecs.test_edfimage`
