@@ -4,6 +4,7 @@ Bootstrap helps you to test scripts without installing them
 by patching your PYTHONPATH on the fly
 
 example: ./bootstrap.py ipython
+         ./bootstrap.py -c "import fabio; print(fabio.version)"
 """
 
 __authors__ = ["Frédéric-Emmanuel Picca", "Jérôme Kieffer"]
@@ -228,6 +229,15 @@ def main(argv):
         dest="module",
         help="run library module as a script (terminates option list)",
     )
+    group.add_argument(
+        "-c",
+        action="append",
+        dest="commands",
+        metavar="COMMAND",
+        help="execute the Python command(s) from the source checkout, like `python -c`. "
+        "Can be repeated: commands run in order and share the same namespace. "
+        "Extra arguments end up in sys.argv[1:]",
+    )
     # group.add_argument(
     #     "-j",
     #     "--jupyter",
@@ -236,7 +246,18 @@ def main(argv):
     # )
     options = parser.parse_args()
 
-    if options.script:
+    if options.commands:
+        logger.info("Running %d command(s) from source checkout", len(options.commands))
+        old = sys.argv
+        sys.argv = ["-c"] + options.script
+        namespace = {"__name__": "__main__"}
+        try:
+            for command in options.commands:
+                exec(compile(command, "<string>", "exec"), namespace)
+        finally:
+            sys.argv = old
+
+    elif options.script:
         logger.info("Executing %s from source checkout", options.script)
         script = options.script[0]
         argv = options.script[1:]
