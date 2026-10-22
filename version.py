@@ -76,7 +76,7 @@ RELEASE_LEVEL_VALUE = {"dev": 0, "alpha": 10, "beta": 11, "candidate": 12, "fina
 PRERELEASE_NORMALIZED_NAME = {"dev": "a", "alpha": "a", "beta": "b", "candidate": "rc"}
 
 MAJOR = 2026
-MINOR = 8
+MINOR = 10
 MICRO = 0
 RELEV = "dev"  # <16
 SERIAL = 0       # <16
@@ -109,7 +109,8 @@ if version_info.releaselevel != "final":
 dated_version = _DatedVersion(version=version, date=date)
 
 
-def calc_hexversion(major=0, minor=0, micro=0, releaselevel="dev", serial=0):
+
+def calc_hexversion(major=0, minor=0, micro=0, releaselevel="dev", serial=0, string=None):
     """Calculate the hexadecimal version number from the tuple version_info:
 
     :param major: integer
