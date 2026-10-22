@@ -127,6 +127,18 @@ class TestEiger(_CommonTestFrames):
         for i, g in enumerate(f):
             self.assertEqual(abs(g.data - ary[i]).max(), 0, f"frame {i} matches")
 
+    def test_read_2d(self):
+        """check we can read a 2D (single image, no frame axis) Eiger file"""
+        fn = UtilsTest.getimage("CC105-DH_0001.h5.bz2")[:-4]
+        e = EigerImage()
+        try:
+            e.read(fn)
+            self.assertEqual(e.shape, (3262, 3108))
+            self.assertEqual(e.nframes, 1)
+            self.assertIsNotNone(e.data)
+        finally:
+            e.close()
+
     def test_bug_479(self):
         fn = os.path.join(UtilsTest.tempdir, "eiger_479.h5")
         r = numpy.random.randint(0, 100, size=(100, 101))
