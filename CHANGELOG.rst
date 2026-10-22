@@ -1,1 +1,1 @@
-Please see doc/sources/Changlog.rst
+Please see doc/source/Changlog.rst

@@ -10,7 +10,9 @@ FabIO reads/writes 2D X-ray detector images (~30 formats: EDF, CBF, TIFF, HDF5/E
 
 - Tests: use the `test` skill (`.agents/skills/test/SKILL.md`); `python run_tests.py` builds with meson then runs the suite.
 - Run code against the sources (compiled, no install): use the `bootstrap` skill (`.agents/skills/bootstrap/SKILL.md`), e.g. `python bootstrap.py -c "import fabio; ..."`.
+- Triage a GitHub issue (read-only, minimal reproducer): `issue` skill. Prepare its resolution (branch `XXX_short_description`, failing regression test, `ISSUE_XXX.md`, changelog line): `prepare-fix` skill.
 - Build a wheel/sdist: `python -m build` (or `pip install .`)
+- Changelog: `doc/source/Changelog.rst` (the root `CHANGELOG.rst` only points to it); one line per change, ending with the issue number, e.g. `(#612)`.
 - Lint (as in CI): `ruff check src` — rules are an explicit allow-list in `pyproject.toml`; only add rules the codebase already complies with. Formatting with ruff is not enforced.
 
 ## Architecture
