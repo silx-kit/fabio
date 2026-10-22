@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
 Bootstrap helps you to test scripts without installing them
 by patching your PYTHONPATH on the fly
@@ -62,25 +63,18 @@ def build_project(name, root_dir):
         libdir = "Lib"
         extra = ["-Dbuildtype=plain"]
 
-    build = os.path.join(root_dir, "build")
+    build_dir = f"build_py{sys.version_info[0]}{sys.version_info[1]}"
+    build = os.path.join(root_dir, build_dir)
     if not(os.path.isdir(build) and os.path.isdir(os.path.join(build, name))):
-        cmd = ["meson", "setup", "build"] + extra
-        print(" ".join(cmd))
-        p = subprocess.Popen(cmd,
+        p = subprocess.Popen(["meson", "setup", build_dir],
                          shell=False, cwd=root_dir, env=os.environ)
-        print(f"`meson setup` ended with rc= {p.wait()}")
-
-    cmd = ["meson", "configure", "--prefix", "/"] + extra
-    print(" ".join(cmd))
-    p = subprocess.Popen(cmd,
+        p.wait()
+    p = subprocess.Popen(["meson", "configure", "--prefix", "/"] + extra,
                      shell=False, cwd=build, env=os.environ)
-    print(f"`meson configure` ended with rc= {p.wait()}")
-
-    cmd = ["meson", "install", "--destdir", "."]
-    print(" ".join(cmd))
-    p = subprocess.Popen(cmd,
+    p.wait()
+    p = subprocess.Popen(["meson", "install", "--destdir", "."],
                      shell=False, cwd=build, env=os.environ)
-    print(f"`meson install` ended with rc= {p.wait()}")
+    logger.debug("meson install ended with rc= %s", p.wait())
 
     home = None
     if os.environ.get("PYBUILD_NAME") == name:
@@ -97,12 +91,14 @@ def build_project(name, root_dir):
                 home = os.path.join(build, libdir, python_version, "site-packages")
             home = os.path.abspath(home)
 
-    cnt = 0
+    tmp = []
     while not os.path.isdir(home):
-        cnt += 1
-        home = os.path.split(home)[0]
-    for _ in range(cnt):
-        n = os.listdir(home)[0]
+        home, last = os.path.split(home)
+        tmp.append(last)
+    for _ in tmp:
+        for n in os.listdir(home):
+            if os.path.isdir(os.path.join(home, n)):
+                break
         home = os.path.join(home, n)
 
     logger.warning("Building %s to %s", name, home)
@@ -212,7 +208,7 @@ def find_executable(target):
 
     for script, entry_point in scripts.items():
         if script == target:
-            print(script, entry_point)
+            #print(script, entry_point)
             return ("entry_point", target, entry_point)
     return None, None
 
@@ -296,9 +292,11 @@ def main(argv):
         else:
             start_ipython(argv=[])
 
+
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_NAME = get_project_name(PROJECT_DIR)
 logger.info("Project name: %s", PROJECT_NAME)
+
 
 if __name__ == "__main__":
     home = os.path.dirname(os.path.abspath(__file__))
