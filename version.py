@@ -89,6 +89,9 @@ class _VersionInfo(NamedTuple):
     releaselevel: str
     serial: int
 
+class _DatedVersion(NamedTuple):
+    version: str
+    date: str
 
 version_info = _VersionInfo(MAJOR, MINOR, MICRO, RELEV, SERIAL)
 
@@ -103,6 +106,7 @@ if version_info.releaselevel != "final":
         else f"~{_prerelease}{version_info[-1]}"
     )
     strictversion += _prerelease + str(version_info[-1])
+dated_version = _DatedVersion(version=version, date=date)
 
 
 def calc_hexversion(major=0, minor=0, micro=0, releaselevel="dev", serial=0):
@@ -113,8 +117,23 @@ def calc_hexversion(major=0, minor=0, micro=0, releaselevel="dev", serial=0):
     :param micro: integer
     :param relev: integer or string
     :param serial: integer
+    :param string: version number as a string
     :return: integer always increasing with revision numbers
     """
+    if string is not None:
+        global _PATTERN
+        if _PATTERN is None:
+            import re
+            _PATTERN = re.compile(r"(\d+)\.(\d+)\.(\d+)(\w+)?$")
+        result = _PATTERN.match(string)
+        if result is None:
+            raise ValueError(f"'{string}' is not a valid version")
+        result = result.groups()
+        major, minor, micro = int(result[0]), int(result[1]), int(result[2])
+        releaselevel = result[3]
+        if releaselevel is None:
+            releaselevel = 0
+
     try:
         releaselevel = int(releaselevel)
     except ValueError:
@@ -129,6 +148,20 @@ def calc_hexversion(major=0, minor=0, micro=0, releaselevel="dev", serial=0):
 
 
 hexversion = calc_hexversion(*version_info)
+citation = "doi:10.1107/S0021889813000150"
 
 if __name__ == "__main__":
-    print(version)
+    from argparse import ArgumentParser
+
+    parser = ArgumentParser(usage="print the version of the software")
+    parser.add_argument("--wheel", action="store_true", dest="wheel", default=None,
+                        help="print version formated for wheel")
+    parser.add_argument("--debian", action="store_true", dest="debian", default=None,
+                        help="print version formated for debian")
+    options = parser.parse_args()
+    if options.debian:
+        print(debianversion)
+    elif options.wheel:
+        print(strictversion)
+    else:
+        print(version)
