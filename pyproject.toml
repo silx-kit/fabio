@@ -95,6 +95,7 @@ directory = "coverage_html_report"
 [tool.ruff]
 line-length = 127
 target-version = "py311"
+include = ["pyproject.toml", "src/**/*.py"]
 extend-exclude = [
     "build",
     "doc/source/tutorials",  # notebooks rely on IPython magics (%%cython, %pylab, ...)
