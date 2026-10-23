@@ -43,10 +43,10 @@ Layout:
 # Issue #XXX: <title>
 
 ## Actions
-- [x] Issue read and reproduced
-- [x] Branch `XXX_short_description` in use
-- [x] Regression test `<path>::<test name>` added (fails before the fix)
-- [x] Changelog entry added
+- [ ] Issue read and reproduced
+- [ ] Branch `XXX_short_description` in use
+- [ ] Regression test `<path>::<test name>` added (fails before the fix)
+- [ ] Changelog entry added
 - [ ] Fix implemented
 - [ ] Regression test passes
 - [ ] Full test suite and `ruff check src` pass
@@ -61,6 +61,10 @@ Layout:
 
 ## Analysis
 <suspected `path:line`, likely cause, confidence>
+
+## Agents
+< each agent should describe itself to know which model was used for each part of the work, one per line in a list>
+- agent_name: LLM model used
 
 ## Notes
 <comments left by whoever works on an item: date/agent name, the action concerned, what was done or found, dead ends. Append, do not rewrite others' notes.>
