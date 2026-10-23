@@ -112,7 +112,14 @@ def build_project(name, root_dir):
     if not os.path.isfile(os.path.join(build, "build.ninja")):
         p = subprocess.Popen(["meson", "setup", build_dir],
                          shell=False, cwd=root_dir, env=os.environ)
-        p.wait()
+        if p.wait() != 0:
+            log = os.path.join(build, "meson-logs", "meson-log.txt")
+            try:
+                with open(log, errors="replace") as f:
+                    logger.error("End of %s:\n%s", log, "".join(f.readlines()[-40:]))
+            except OSError:
+                pass
+            raise RuntimeError(f"`meson setup {build_dir}` failed, see the messages above and {log}")
     p = subprocess.Popen(["meson", "configure", "--prefix", "/"] + extra,
                      shell=False, cwd=build, env=os.environ)
     p.wait()
