@@ -1,6 +1,10 @@
 Changelog
 =========
 
+FabIO-2026.10.0:
+................
+- Close the HTTP response when downloading test data (fixes a ``ResourceWarning`` on unclosed sockets) (#678)
+
 FabIO-2026.6.0:
 ...............
 - Migrate viewer application to `qtpy` for Qt-version independence (PySide6/PyQt5/PyQt6)
