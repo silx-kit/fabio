@@ -26,7 +26,7 @@ All following steps are done on that branch/worktree.
 
 ## 3. Regression test
 
-- Add the test to the existing test module of the affected format (`src/fabio/test/codecs/test_<format>image.py`) or of the affected feature (`src/fabio/test/test_*.py`). Create a new module only if none fits; then register it in the matching `meson.build` **and** in `src/fabio/test/test_all.py` (or `src/fabio/test/codecs/__init__.py`).
+- Add the test to the existing test module of the affected format (`src/fabio/test/codecs/test_<format>image.py`) or of the affected feature (`src/fabio/test/test_*.py`). Create a new module only if none fits; then register it in the matching `meson.build` **and** in `src/fabio/test/test_all.py` (or `src/fabio/test/codecs/__init__.py`) **and** perform a `git add src/fabio/test/test_*.py`.
 - Follow the style of the surrounding tests (`unittest`, `suite()` registration, `UtilsTest` helpers). Build the data in the test (numpy arrays, `io.BytesIO`, temporary directory) rather than adding sample files; if a sample file is unavoidable, say so in `ISSUE_XXX.md` instead of committing a binary.
 - Name the test after the issue, e.g. `test_bug_XXX`, and add a short docstring/comment mentioning `#XXX`.
 - Derive it from the minimal reproducer of the `issue` skill: assert the **expected** behaviour, so the test fails today and passes once the bug is fixed.
