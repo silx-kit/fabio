@@ -110,7 +110,11 @@ def build_project(name, root_dir):
     build_dir = f"build_py{sys.version_info[0]}{sys.version_info[1]}"
     build = os.path.join(root_dir, build_dir)
     if not os.path.isfile(os.path.join(build, "build.ninja")):
-        p = subprocess.Popen(["meson", "setup", build_dir],
+        # On Windows, meson only activates the Visual Studio environment when no
+        # other compiler (clang, gcc, cc) is in the PATH, which otherwise wins over MSVC.
+        # The option is stored in the build directory and reused by `meson install`.
+        setup_extra = ["--vsenv"] if sys.platform == "win32" else []
+        p = subprocess.Popen(["meson", "setup", *setup_extra, build_dir],
                          shell=False, cwd=root_dir, env=os.environ)
         if p.wait() != 0:
             log = os.path.join(build, "meson-logs", "meson-log.txt")
