@@ -36,6 +36,13 @@ calc_hexversion = fabio_version.calc_hexversion
 
 
 class TestHexVersion(unittest.TestCase):
+    @staticmethod
+    def _expected_hexversion():
+        """Version strings write a "dev" release as an alpha"""
+        v = fabio_version
+        level = "alpha" if v.RELEV == "dev" else v.RELEV
+        return calc_hexversion(v.MAJOR, v.MINOR, v.MICRO, level, v.SERIAL)
+
     def test_documented_examples(self):
         """Examples given in the documentation of `fabio.version`"""
         self.assertEqual(calc_hexversion(2, 1, 0, "alpha", 3), 0x020100A3)
@@ -52,12 +59,12 @@ class TestHexVersion(unittest.TestCase):
         self.assertEqual(calc_hexversion(string="1.2.3a4"), calc_hexversion(1, 2, 3, "alpha", 4))
         self.assertEqual(calc_hexversion(string="1.2.3b4"), 0x010203B4)
         self.assertEqual(calc_hexversion(string="1.2.3rc1"), calc_hexversion(1, 2, 3, "candidate", 1))
-        self.assertEqual(calc_hexversion(string=fabio_version.strictversion), fabio_version.hexversion)
+        self.assertEqual(calc_hexversion(string=fabio_version.strictversion), self._expected_hexversion())
 
     def test_string_with_dash(self):
         """The `version` attribute is formatted like "1.2.3-beta4" or "1.2.3-a4"."""
         self.assertEqual(calc_hexversion(string="1.2.3-b4"), calc_hexversion(1, 2, 3, "beta", 4))
-        self.assertEqual(calc_hexversion(string=fabio_version.version), fabio_version.hexversion)
+        self.assertEqual(calc_hexversion(string=fabio_version.version), self._expected_hexversion())
 
     def test_field_overflow(self):
         """Fields wider than their bits would silently corrupt the neighbouring field"""
