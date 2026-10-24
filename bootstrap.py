@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
 Bootstrap helps you to test scripts without installing them
 by patching your PYTHONPATH on the fly
 
 example: ./bootstrap.py ipython
+         ./bootstrap.py -c "import fabio; print(fabio.version)"
 """
 
 __authors__ = ["Frédéric-Emmanuel Picca", "Jérôme Kieffer"]
@@ -12,6 +14,7 @@ __license__ = "MIT"
 __date__ = "12/03/2026"
 
 import argparse
+import json
 import logging
 import os
 import subprocess
@@ -48,61 +51,103 @@ def is_debug_python():
     return hasattr(sys, "gettotalrefcount")
 
 
+def find_install_dir(build, name):
+    """Locate the directory (in the *build* tree) in which meson installed the package.
+
+    The layout depends on the platform, the distribution and the meson/python
+    installation: `lib/python3.13/site-packages` (Linux, macOS), `lib64/...`
+    (Fedora), `lib/python3/dist-packages` (Debian), `Lib/site-packages`
+    (Windows)... so the path is not guessed but asked to meson.
+    If this fails, the build tree is searched for the package.
+
+    :param str build: meson build directory, installed with `--destdir <build>`
+    :param str name: name of the package (directory holding `__init__.py`)
+    :return: the directory containing the package, or None if not found
+    """
+    marker = os.path.join(name, "__init__.py")
+    candidates = []
+
+    # 1. Ask meson where the package is installed (relative to the prefix)
+    try:
+        out = subprocess.run(["meson", "introspect", "--installed", build],
+                             capture_output=True, text=True, check=True, env=os.environ).stdout
+        for installed in json.loads(out).values():
+            installed = installed.replace("\\", "/")
+            if installed.endswith("/" + marker.replace(os.sep, "/")):
+                # like meson does with destdir: the drive letter is dropped
+                relative = os.path.splitdrive(installed)[1].lstrip("/")
+                candidates.append(os.path.join(build, *relative.split("/")[:-2]))
+    except (OSError, subprocess.CalledProcessError, ValueError) as err:
+        logger.warning("`meson introspect` failed (%s), searching the build tree", err)
+
+    # 2. Fallback: search the build tree, in a deterministic way
+    if not candidates:
+        for root, dirs, files in os.walk(build):
+            dirs.sort()
+            if root[len(build):].count(os.sep) >= 5:
+                dirs[:] = []
+            if os.path.basename(root) == name and "__init__.py" in files:
+                candidates.append(os.path.dirname(root))
+
+    candidates = [i for i in dict.fromkeys(os.path.abspath(i) for i in candidates)
+                  if os.path.isfile(os.path.join(i, marker))]
+    if len(candidates) > 1:
+        logger.warning("Several installations of %s found: %s. Using the first one.", name, candidates)
+    return candidates[0] if candidates else None
+
+
 def build_project(name, root_dir):
     """Build locally the project using meson
 
     :param str name: Name of the project.
     :param str root_dir: Root directory of the project
-    :return: The path to the directory were build was performed
+    :return: The path to the directory in which the package was installed (to be added to `sys.path`)
     """
     extra = []
-    libdir = "lib"
     if sys.platform == "win32":
-        libdir = "Lib"
         extra = ["-Dbuildtype=plain"]
 
-    build = os.path.join(root_dir, "build")
-    if not(os.path.isdir(build) and os.path.isdir(os.path.join(build, name))):
-        cmd = ["meson", "setup", "build"] + extra
-        print(" ".join(cmd))
-        p = subprocess.Popen(cmd,
+    build_dir = f"build_py{sys.version_info[0]}{sys.version_info[1]}"
+    build = os.path.join(root_dir, build_dir)
+    if not os.path.isfile(os.path.join(build, "build.ninja")):
+        # On Windows, meson only activates the Visual Studio environment when no
+        # other compiler (clang, gcc, cc) is in the PATH, which otherwise wins over MSVC.
+        # The option is stored in the build directory and reused by `meson install`.
+        # `buildtype` must also be given here: the default "debug" links against the
+        # debug Python library (python3XX_d.lib), which is checked during the setup.
+        setup_extra = ["--vsenv", *extra] if sys.platform == "win32" else []
+        p = subprocess.Popen(["meson", "setup", *setup_extra, build_dir],
                          shell=False, cwd=root_dir, env=os.environ)
-        print(f"`meson setup` ended with rc= {p.wait()}")
-
-    cmd = ["meson", "configure", "--prefix", "/"] + extra
-    print(" ".join(cmd))
-    p = subprocess.Popen(cmd,
+        if p.wait() != 0:
+            log = os.path.join(build, "meson-logs", "meson-log.txt")
+            try:
+                with open(log, errors="replace") as f:
+                    logger.error("End of %s:\n%s", log, "".join(f.readlines()[-40:]))
+            except OSError:
+                pass
+            raise RuntimeError(f"`meson setup {build_dir}` failed, see the messages above and {log}")
+    p = subprocess.Popen(["meson", "configure", "--prefix", "/"] + extra,
                      shell=False, cwd=build, env=os.environ)
-    print(f"`meson configure` ended with rc= {p.wait()}")
-
-    cmd = ["meson", "install", "--destdir", "."]
-    print(" ".join(cmd))
-    p = subprocess.Popen(cmd,
+    p.wait()
+    p = subprocess.Popen(["meson", "install", "--destdir", "."],
                      shell=False, cwd=build, env=os.environ)
-    print(f"`meson install` ended with rc= {p.wait()}")
+    logger.debug("meson install ended with rc= %s", p.wait())
 
     home = None
     if os.environ.get("PYBUILD_NAME") == name:
         # we are in the debian packaging way
         home = os.environ.get("PYTHONPATH", "").split(os.pathsep)[-1]
-    if not home:
-        if os.environ.get("BUILDPYTHONPATH"):
-            home = os.path.abspath(os.environ.get("BUILDPYTHONPATH", ""))
-        else:
-            if sys.platform == "win32":
-                home = os.path.join(build, libdir, "site-packages")
-            else:
-                python_version = f"python{sys.version_info.major}.{sys.version_info.minor}"
-                home = os.path.join(build, libdir, python_version, "site-packages")
-            home = os.path.abspath(home)
-
-    cnt = 0
-    while not os.path.isdir(home):
-        cnt += 1
-        home = os.path.split(home)[0]
-    for _ in range(cnt):
-        n = os.listdir(home)[0]
-        home = os.path.join(home, n)
+    elif os.environ.get("BUILDPYTHONPATH"):
+        home = os.path.abspath(os.environ.get("BUILDPYTHONPATH", ""))
+    if home:
+        if not os.path.isfile(os.path.join(home, name, "__init__.py")):
+            logger.warning("The package %s is not in %s (PYBUILD_NAME/PYTHONPATH/BUILDPYTHONPATH)", name, home)
+    else:
+        home = find_install_dir(build, name)
+        if home is None:
+            raise RuntimeError(f"Unable to find the installed package '{name}' in {build}: "
+                               "the build or `meson install` failed, see the messages above. "
+                               "Set BUILDPYTHONPATH to the directory containing the package to override.")
 
     logger.warning("Building %s to %s", name, home)
 
@@ -211,7 +256,7 @@ def find_executable(target):
 
     for script, entry_point in scripts.items():
         if script == target:
-            print(script, entry_point)
+            #print(script, entry_point)
             return ("entry_point", target, entry_point)
     return None, None
 
@@ -228,6 +273,15 @@ def main(argv):
         dest="module",
         help="run library module as a script (terminates option list)",
     )
+    group.add_argument(
+        "-c",
+        action="append",
+        dest="commands",
+        metavar="COMMAND",
+        help="execute the Python command(s) from the source checkout, like `python -c`. "
+        "Can be repeated: commands run in order and share the same namespace. "
+        "Extra arguments end up in sys.argv[1:]",
+    )
     # group.add_argument(
     #     "-j",
     #     "--jupyter",
@@ -236,7 +290,18 @@ def main(argv):
     # )
     options = parser.parse_args()
 
-    if options.script:
+    if options.commands:
+        logger.info("Running %d command(s) from source checkout", len(options.commands))
+        old = sys.argv
+        sys.argv = ["-c"] + options.script
+        namespace = {"__name__": "__main__"}
+        try:
+            for command in options.commands:
+                exec(compile(command, "<string>", "exec"), namespace)
+        finally:
+            sys.argv = old
+
+    elif options.script:
         logger.info("Executing %s from source checkout", options.script)
         script = options.script[0]
         argv = options.script[1:]
@@ -275,9 +340,11 @@ def main(argv):
         else:
             start_ipython(argv=[])
 
+
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_NAME = get_project_name(PROJECT_DIR)
 logger.info("Project name: %s", PROJECT_NAME)
+
 
 if __name__ == "__main__":
     home = os.path.dirname(os.path.abspath(__file__))

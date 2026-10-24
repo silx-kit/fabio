@@ -33,7 +33,7 @@ provides:
 * version = "1.2.3" or "1.2.3-beta4"
 * version_info = named tuple (1,2,3,"beta",4)
 * hexversion: 0x010203B4
-* strictversion = "1.2.3b4
+* strictversion = "1.2.3b4"
 * debianversion = "1.2.3~beta4"
 * calc_hexversion: the function to transform a version_tuple into an integer
 
@@ -41,7 +41,8 @@ This is called hexversion since it only really looks meaningful when viewed as t
 result of passing it to the built-in hex() function.
 The version_info value may be used for a more human-friendly encoding of the same information.
 
-The hexversion is a 32-bit number with the following layout:
+The hexversion is an integer with the following layout, taken from Python's `sys.hexversion`
+(the 4 lowest fields use 24 bits: 8 bits each for minor and micro, 4 bits each for level and serial):
 Bits (big endian order)     Meaning
 1-8     PY_MAJOR_VERSION (the 2 in 2.1.0a3)
 9-16     PY_MINOR_VERSION (the 1 in 2.1.0a3)
@@ -51,7 +52,19 @@ Bits (big endian order)     Meaning
 
 Thus 2.1.0a3 is hexversion 0x020100a3.
 
+The major version is the highest field and is *not* limited to 8 bits: FabIO uses the
+year as major version (2026.10.0), so `hexversion` is wider than 32 bits (0x7ea0a0000 for 2026.10.0a0).
+It still increases with the version number, which is what it is used for.
+The lower fields cannot overflow: minor and micro must be below 256, the serial below 16,
+otherwise `calc_hexversion` raises a `ValueError`.
+
+Version strings are accepted by `calc_hexversion(string=...)` in the forms "1.2.3" (final release),
+"1.2.3a4", "1.2.3-a4", "1.2.3b4", "1.2.3rc1" or with the long names ("1.2.3-beta4").
+A development version ("dev" release level, whose `version` string is written "-a0")
+is parsed as an alpha, since the strings do not distinguish them.
+
 """
+import re
 from typing import NamedTuple
 
 __author__ = "Jérôme Kieffer"
@@ -75,8 +88,22 @@ RELEASE_LEVEL_VALUE = {"dev": 0, "alpha": 10, "beta": 11, "candidate": 12, "fina
 
 PRERELEASE_NORMALIZED_NAME = {"dev": "a", "alpha": "a", "beta": "b", "candidate": "rc"}
 
+_PATTERN = re.compile(r"(\d+)\.(\d+)\.(\d+)(?:[-~.]?(dev|alpha|a|beta|b|candidate|rc|c)(\d*))?$")
+"""Version string: major.minor.micro, then optionally a release level (with optional separator) and a serial"""
+
+_LEVEL_ALIASES = {
+    "dev": "dev",
+    "a": "alpha",
+    "alpha": "alpha",
+    "b": "beta",
+    "beta": "beta",
+    "c": "candidate",
+    "rc": "candidate",
+    "candidate": "candidate",
+}
+
 MAJOR = 2026
-MINOR = 8
+MINOR = 10
 MICRO = 0
 RELEV = "dev"  # <16
 SERIAL = 0       # <16
@@ -89,6 +116,9 @@ class _VersionInfo(NamedTuple):
     releaselevel: str
     serial: int
 
+class _DatedVersion(NamedTuple):
+    version: str
+    date: str
 
 version_info = _VersionInfo(MAJOR, MINOR, MICRO, RELEV, SERIAL)
 
@@ -103,32 +133,71 @@ if version_info.releaselevel != "final":
         else f"~{_prerelease}{version_info[-1]}"
     )
     strictversion += _prerelease + str(version_info[-1])
+dated_version = _DatedVersion(version=version, date=date)
 
 
-def calc_hexversion(major=0, minor=0, micro=0, releaselevel="dev", serial=0):
+
+def calc_hexversion(major=0, minor=0, micro=0, releaselevel="dev", serial=0, string=None):
     """Calculate the hexadecimal version number from the tuple version_info:
 
-    :param major: integer
-    :param minor: integer
-    :param micro: integer
-    :param relev: integer or string
-    :param serial: integer
+    :param major: integer (not limited, see the module documentation)
+    :param minor: integer, from 0 to 255
+    :param micro: integer, from 0 to 255
+    :param releaselevel: integer (0 to 15) or string, one of the keys of `RELEASE_LEVEL_VALUE`
+    :param serial: integer, from 0 to 15
+    :param string: version number as a string like "1.2.3", "1.2.3a4", "1.2.3-beta4" or "1.2.3rc1".
+        When provided, it overrides the other parameters; a string without suffix is a final release.
     :return: integer always increasing with revision numbers
+    :raises ValueError: for an invalid string, an unknown release level or a field out of range
     """
+    if string is not None:
+        result = _PATTERN.match(string)
+        if result is None:
+            raise ValueError(f"'{string}' is not a valid version")
+        major, minor, micro = (int(i) for i in result.group(1, 2, 3))
+        if result.group(4) is None:
+            releaselevel, serial = "final", 0
+        else:
+            releaselevel = _LEVEL_ALIASES[result.group(4)]
+            serial = int(result.group(5) or 0)
+
     try:
         releaselevel = int(releaselevel)
     except ValueError:
-        releaselevel = RELEASE_LEVEL_VALUE.get(releaselevel, 0)
+        try:
+            releaselevel = RELEASE_LEVEL_VALUE[releaselevel]
+        except KeyError:
+            raise ValueError(f"Unknown release level '{releaselevel}'") from None
 
-    hex_version = int(serial)
-    hex_version |= releaselevel * 1 << 4
-    hex_version |= int(micro) * 1 << 8
-    hex_version |= int(minor) * 1 << 16
-    hex_version |= int(major) * 1 << 24
+    major, minor, micro, serial = int(major), int(minor), int(micro), int(serial)
+    for name, value, limit in (("major", major, None), ("minor", minor, 256), ("micro", micro, 256),
+                               ("releaselevel", releaselevel, 16), ("serial", serial, 16)):
+        if value < 0 or (limit is not None and value >= limit):
+            raise ValueError(f"The {name} number of the version is out of range: {value}")
+
+    hex_version = serial
+    hex_version |= releaselevel << 4
+    hex_version |= micro << 8
+    hex_version |= minor << 16
+    hex_version |= major << 24
     return hex_version
 
 
 hexversion = calc_hexversion(*version_info)
+citation = "doi:10.1107/S0021889813000150"
 
 if __name__ == "__main__":
-    print(version)
+    from argparse import ArgumentParser
+
+    parser = ArgumentParser(usage="print the version of the software")
+    parser.add_argument("--wheel", action="store_true", dest="wheel", default=None,
+                        help="print version formated for wheel")
+    parser.add_argument("--debian", action="store_true", dest="debian", default=None,
+                        help="print version formated for debian")
+    options = parser.parse_args()
+    if options.debian:
+        print(debianversion)
+    elif options.wheel:
+        print(strictversion)
+    else:
+        print(version)

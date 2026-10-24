@@ -1,6 +1,10 @@
 Changelog
 =========
 
+FabIO-2026.10.0:
+................
+- Fix version-string parsing in `calc_hexversion` and reject overflowing minor/micro/serial values (#676)
+
 FabIO-2026.6.0:
 ...............
 - Migrate viewer application to `qtpy` for Qt-version independence (PySide6/PyQt5/PyQt6)
