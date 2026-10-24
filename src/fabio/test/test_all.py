@@ -56,6 +56,7 @@ from . import (
     test_open_image,
     test_tiffio,
     test_utils_cli,
+    test_version,
 )
 
 logger = logging.getLogger(__name__)
@@ -87,6 +88,7 @@ def suite():
     testSuite.addTest(test_io_limits.suite())
     testSuite.addTest(test_utils_cli.suite())
     testSuite.addTest(test_import.suite())
+    testSuite.addTest(test_version.suite())
     return testSuite
 
 
