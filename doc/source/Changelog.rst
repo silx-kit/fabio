@@ -3,6 +3,7 @@ Changelog
 
 FabIO-2026.10.0 (unreleased):
 .............................
+- Fix Bruker (v86) writer losing overflow pixels: ``NOVERFL`` is now set from the data, and floating point images no longer fail to save
 - Close the HTTP response when downloading test data (fixes a ``ResourceWarning`` on unclosed sockets) (#678)
 - Fix version-string parsing in `calc_hexversion` and reject overflowing minor/micro/serial values (#676)
 - Ruff linting upgraded to 0.17

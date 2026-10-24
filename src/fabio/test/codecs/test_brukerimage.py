@@ -161,6 +161,36 @@ class TestBrukerLinear(unittest.TestCase):
             os.unlink(self.filename)
 
 
+class TestBrukerOverflow(unittest.TestCase):
+    """The overflow table must be counted in NOVERFL when writing new data"""
+
+    def setUp(self):
+        unittest.TestCase.setUp(self)
+        self.filename = os.path.join(UtilsTest.tempdir, "overflow.0000")
+
+    def tearDown(self):
+        unittest.TestCase.tearDown(self)
+        if os.path.exists(self.filename):
+            os.unlink(self.filename)
+
+    def test_integer(self):
+        data = numpy.zeros((64, 64), dtype=numpy.int32)
+        data[3, 5] = 70000
+        data[10, 10] = 300
+        brukerimage(data=data).write(self.filename)
+        new = brukerimage()
+        new.read(self.filename)
+        self.assertEqual(new.header["NOVERFL"], "2")
+        self.assertEqual(abs(new.data - data).max(), 0)
+
+    def test_float(self):
+        data = numpy.linspace(0, 1000, 84, dtype=numpy.float32).reshape(7, 12)
+        brukerimage(data=data).write(self.filename)
+        new = brukerimage()
+        new.read(self.filename)
+        self.assertLess(abs(new.data - data).max(), 1e-3)
+
+
 # statistics come from fit2d I think
 # filename dim1 dim2 min max mean stddev
 TESTIMAGES = """Cr8F8140k103.0026   512  512  0  145942 289.37  432.17
@@ -236,6 +266,7 @@ def suite():
     testsuite.addTest(loadTests(TestGzipBruker))
     testsuite.addTest(loadTests(TestRealImg))
     testsuite.addTest(loadTests(TestBrukerLinear))
+    testsuite.addTest(loadTests(TestBrukerOverflow))
     return testsuite
 
 

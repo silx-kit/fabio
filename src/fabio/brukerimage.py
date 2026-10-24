@@ -334,13 +334,15 @@ class BrukerImage(FabioImage):
         data = tmp_data.astype(stype)
         reset = numpy.where(tmp_data >= limit)
         data[reset] = limit
+        self.header["NOVERFL"] = str(reset[0].size)
+        overflow = self.gen_overflow(tmp_data)
         with self._open(fname, "wb") as bruker:
             bruker.write(self.gen_header().encode("ASCII"))
             if isinstance(bruker, io.BufferedWriter):
                 data.tofile(bruker)
             else:
                 bruker.write(data.tobytes())
-            bruker.write(self.gen_overflow().encode("ASCII"))
+            bruker.write(overflow.encode("ASCII"))
 
     def calc_bpp(self, data=None, max_entry=4096):
         """
@@ -404,12 +406,16 @@ class BrukerImage(FabioImage):
         )
         return res
 
-    def gen_overflow(self):
+    def gen_overflow(self, data=None):
         """
         Generate an overflow table
+
+        :param data: the integer data as written in the file, defaults to self.data
         """
+        if data is None:
+            data = self.data
         limit = 2 ** (8 * self.calc_bpp()) - 1
-        flat = self.data.ravel()  # flat memory view
+        flat = data.ravel()  # flat memory view
         overflow_pos = numpy.where(flat >= limit)[0]  # list of indexes
         overflow_val = flat[overflow_pos]
         overflow = "".join(
