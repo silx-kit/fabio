@@ -7,6 +7,7 @@ py.install_sources(
  'test_all.py',
  'test_compression.py',
  'test_densification.py',
+ 'test_external_resources.py',
  'test_fabio.py',
  'test_fabio_convert.py',
  'test_fabio_image.py',

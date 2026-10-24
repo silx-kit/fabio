@@ -36,6 +36,7 @@ from . import (
     test_agi_bitfield,
     test_compression,
     test_densification,
+    test_external_resources,
     test_fabio,
     test_fabio_convert,
     test_fabio_image,
@@ -64,6 +65,7 @@ logger = logging.getLogger(__name__)
 def suite():
     testSuite = unittest.TestSuite()
     testSuite.addTest(test_fabio_image.suite())
+    testSuite.addTest(test_external_resources.suite())
     testSuite.addTest(test_filenames.suite())
     testSuite.addTest(test_file_series.suite())
     testSuite.addTest(test_filename_steps.suite())
