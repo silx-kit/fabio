@@ -399,7 +399,9 @@ def compTY1(data):
     :return: 3-tuple of strings: raw_8,raw_16,raw_32 containing raw data with integer of the given size
 
     """
-    fdata = data.ravel()
+    # Work in int64 so that the differences of unsigned (or large int32)
+    # pixels do not wrap around
+    fdata = data.ravel().astype(numpy.int64)
     diff = numpy.zeros_like(fdata)
     diff[0] = fdata[0]
     diff[1:] = fdata[1:] - fdata[:-1]
