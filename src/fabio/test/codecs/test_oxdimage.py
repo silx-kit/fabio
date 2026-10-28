@@ -39,6 +39,8 @@ import logging
 import os
 import unittest
 
+import numpy
+
 import fabio
 from fabio.OXDimage import OXDimage
 
@@ -161,6 +163,25 @@ class TestOxdBig(unittest.TestCase):
         self.assertEqual(abs(df[0] - df[1]).max(), 0, "Data are the same")
 
 
+class TestOxdUnsigned(unittest.TestCase):
+    """Unsigned input must not wrap around when TY1-compressed"""
+
+    def test_unsigned(self):
+        for dtype in ("uint8", "uint16", "uint32"):
+            data = numpy.array(
+                [[0, 1, 0, 200, 0], [60000, 3, 0, 255, 254]], dtype="int64"
+            )
+            data = data.clip(0, numpy.iinfo(dtype).max).astype(dtype)
+            dst = os.path.join(UtilsTest.tempdir, f"unsigned_{dtype}.img")
+            OXDimage(data=data).write(dst)
+            other = fabio.open(dst)
+            self.assertTrue(
+                numpy.array_equal(other.data, data),
+                f"data are the same for {dtype}: {other.data} != {data}",
+            )
+            os.unlink(dst)
+
+
 class TestConvert(unittest.TestCase):
     def setUp(self):
         self.fn = {}
@@ -187,6 +208,7 @@ def suite():
     testsuite.addTest(loadTests(TestOxd))
     testsuite.addTest(loadTests(TestOxdSame))
     testsuite.addTest(loadTests(TestOxdBig))
+    testsuite.addTest(loadTests(TestOxdUnsigned))
     testsuite.addTest(loadTests(TestConvert))
     return testsuite
 
