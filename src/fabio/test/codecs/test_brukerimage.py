@@ -209,6 +209,14 @@ class TestBrukerOverflow(unittest.TestCase):
         self.assertEqual(new.header["NOVERFL"], "0")
         self.assertTrue(numpy.allclose(new.data, 2**32 - 2))
 
+    def test_integer_stale_linear(self):
+        """a LINEAR scaling inherited from a float frame must not be applied to integers"""
+        data = numpy.arange(84, dtype=numpy.int32).reshape(7, 12)
+        brukerimage(data=data, header={"LINEAR": "0.5 10"}).write(self.filename)
+        new = brukerimage()
+        new.read(self.filename)
+        self.assertEqual(abs(new.data - data).max(), 0)
+
     def test_rewrite(self):
         """bpp must be recalculated when the data changes between two writes"""
         img = brukerimage(data=numpy.zeros((128, 128), dtype=numpy.int32))

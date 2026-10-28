@@ -331,6 +331,14 @@ class BrukerImage(FabioImage):
             self.header["LINEAR"] = f"{slope} {offset}"
         else:
             tmp_data = self.data
+            if "LINEAR" in self.header:
+                # integers are written unscaled: a stale LINEAR would be applied on read
+                try:
+                    identity = [float(i) for i in self.header["LINEAR"].split()] == [1.0, 0.0]
+                except ValueError:
+                    identity = False
+                if not identity:
+                    self.header["LINEAR"] = "1.0 0.0"
         self.__bpp_file = None  # data may have changed since the last write
         bpp = self.calc_bpp(tmp_data)
         self.basic_translate(fname)
