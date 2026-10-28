@@ -161,6 +161,148 @@ class TestBrukerLinear(unittest.TestCase):
             os.unlink(self.filename)
 
 
+class TestBrukerOverflow(unittest.TestCase):
+    """The overflow table must be counted in NOVERFL when writing new data"""
+
+    def setUp(self):
+        unittest.TestCase.setUp(self)
+        self.filename = os.path.join(UtilsTest.tempdir, "overflow.0000")
+
+    def tearDown(self):
+        unittest.TestCase.tearDown(self)
+        if os.path.exists(self.filename):
+            os.unlink(self.filename)
+
+    def test_integer(self):
+        data = numpy.zeros((64, 64), dtype=numpy.int32)
+        data[3, 5] = 70000
+        data[10, 10] = 300
+        brukerimage(data=data).write(self.filename)
+        new = brukerimage()
+        new.read(self.filename)
+        self.assertEqual(new.header["NOVERFL"], "2")
+        self.assertEqual(abs(new.data - data).max(), 0)
+
+    def test_float(self):
+        data = numpy.linspace(0, 1000, 84, dtype=numpy.float32).reshape(7, 12)
+        brukerimage(data=data).write(self.filename)
+        new = brukerimage()
+        new.read(self.filename)
+        self.assertLess(abs(new.data - data).max(), 1e-3)
+
+    def test_float_below_offset(self):
+        """values below the LINEAR offset are clipped to the offset, not wrapped"""
+        data = numpy.linspace(-100, 1000, 84, dtype=numpy.float32).reshape(7, 12)
+        brukerimage(data=data, header={"LINEAR": "0.5 10"}).write(self.filename)
+        new = brukerimage()
+        new.read(self.filename)
+        expected = numpy.maximum(data, 10)
+        self.assertLess(abs(new.data - expected).max(), 0.5)
+
+    def test_float_above_range(self):
+        """values above the uint32 range are clipped, not wrapped"""
+        data = numpy.full((128, 128), 1e10, dtype=numpy.float32)
+        brukerimage(data=data, header={"LINEAR": "1.0 0.0"}).write(self.filename)
+        new = brukerimage()
+        new.read(self.filename)
+        self.assertEqual(int(new.header["NPIXELB"]), 4)
+        self.assertEqual(new.header["NOVERFL"], "0")
+        self.assertTrue(numpy.allclose(new.data, 2**32 - 2))
+
+    def test_integer_stale_linear(self):
+        """a LINEAR scaling inherited from a float frame must not be applied to integers"""
+        data = numpy.arange(84, dtype=numpy.int32).reshape(7, 12)
+        brukerimage(data=data, header={"LINEAR": "0.5 10"}).write(self.filename)
+        new = brukerimage()
+        new.read(self.filename)
+        self.assertEqual(abs(new.data - data).max(), 0)
+
+    def test_integer_negative(self):
+        """negative integers are clipped to 0, not wrapped"""
+        data = numpy.arange(-42, 42, dtype=numpy.int32).reshape(7, 12)
+        brukerimage(data=data).write(self.filename)
+        new = brukerimage()
+        new.read(self.filename)
+        self.assertEqual(new.header["NOVERFL"], "0")
+        self.assertEqual(abs(new.data - numpy.maximum(data, 0)).max(), 0)
+
+    def test_gen_overflow_float(self):
+        """gen_overflow without argument works on float data"""
+        data = numpy.linspace(0, 1000, 84, dtype=numpy.float32).reshape(7, 12)
+        overflow = brukerimage(data=data).gen_overflow()
+        self.assertEqual(len(overflow.rstrip(".")), 16 * 83)
+
+    def test_gen_overflow_data(self):
+        """gen_overflow uses the bpp of the data it is given"""
+        img = brukerimage(data=numpy.zeros((128, 128), dtype=numpy.float32))
+        overflow = img.gen_overflow(numpy.full((128, 128), 300, dtype=numpy.int32))
+        self.assertEqual(overflow.rstrip("."), "")
+
+    def test_fortran_order(self):
+        """overflow positions follow the C order of the file, whatever the memory layout"""
+        data = numpy.zeros((7, 12), dtype=numpy.int32)
+        data[1, 2] = 300
+        data[5, 0] = 70000
+        brukerimage(data=numpy.asfortranarray(data)).write(self.filename)
+        new = brukerimage()
+        new.read(self.filename)
+        self.assertEqual(new.header["NOVERFL"], "2")
+        self.assertEqual(abs(new.data - data).max(), 0)
+
+    def test_failed_write_keeps_header(self):
+        """the header is left untouched when the file cannot be written"""
+        data = numpy.full((7, 12), 300, dtype=numpy.int32)
+        header = {"LINEAR": "0.5 10", "NPIXELB": "4"}
+        img = brukerimage(data=data, header=header)
+        filename = os.path.join(UtilsTest.tempdir, "missing_dir", "overflow.0000")
+        with self.assertRaises(OSError):
+            img.write(filename)
+        self.assertEqual(dict(img.header), header)
+
+    def test_overflow_value_too_large(self):
+        """overflow values beyond 9 digits use a larger bpp instead"""
+        data = numpy.zeros((7, 12), dtype=numpy.int32)
+        data[1, 2] = 1_500_000_000
+        brukerimage(data=data).write(self.filename)
+        new = brukerimage()
+        new.read(self.filename)
+        self.assertEqual(int(new.header["NPIXELB"]), 4)
+        self.assertEqual(abs(new.data - data).max(), 0)
+
+    def test_overflow_position_too_large(self):
+        """overflow positions beyond 7 digits use a larger bpp instead"""
+        data = numpy.zeros((3200, 3200), dtype=numpy.uint16)
+        data[-1, -1] = 300
+        brukerimage(data=data).write(self.filename)
+        new = brukerimage()
+        new.read(self.filename)
+        self.assertEqual(int(new.header["NPIXELB"]), 2)
+        self.assertEqual(abs(new.data - data).max(), 0)
+
+    def test_overflow_not_storable(self):
+        """values beyond the uint32 range cannot be stored at all"""
+        data = numpy.zeros((7, 12), dtype=numpy.int64)
+        data[1, 2] = 5_000_000_000
+        img = brukerimage(data=data)
+        with self.assertRaises(ValueError):
+            img.write(self.filename)
+        self.assertFalse(os.path.exists(self.filename))
+        self.assertNotIn("NOVERFL", img.header)
+
+    def test_rewrite(self):
+        """bpp must be recalculated when the data changes between two writes"""
+        img = brukerimage(data=numpy.zeros((128, 128), dtype=numpy.int32))
+        img.write(self.filename)
+        data = numpy.full((128, 128), 300, dtype=numpy.int32)
+        img.data = data
+        img.write(self.filename)
+        new = brukerimage()
+        new.read(self.filename)
+        self.assertEqual(int(new.header["NPIXELB"]), 2)
+        self.assertEqual(new.header["NOVERFL"], "0")
+        self.assertEqual(abs(new.data - data).max(), 0)
+
+
 # statistics come from fit2d I think
 # filename dim1 dim2 min max mean stddev
 TESTIMAGES = """Cr8F8140k103.0026   512  512  0  145942 289.37  432.17
@@ -236,6 +378,7 @@ def suite():
     testsuite.addTest(loadTests(TestGzipBruker))
     testsuite.addTest(loadTests(TestRealImg))
     testsuite.addTest(loadTests(TestBrukerLinear))
+    testsuite.addTest(loadTests(TestBrukerOverflow))
     return testsuite
 
 

@@ -297,10 +297,13 @@ class BrukerImage(FabioImage):
         self.resetvals()
         return self
 
-    def write(self, fname):
+    def _integer_data(self):
         """
-        Write a bruker image
+        Convert self.data to the unsigned integers stored in the file.
 
+        Float data are scaled and LINEAR is updated accordingly.
+
+        :return: integer array
         """
         if numpy.issubdtype(self.data.dtype, numpy.floating):
             if "LINEAR" in self.header:
@@ -323,28 +326,62 @@ class BrukerImage(FabioImage):
                     slope = (max_data - offset) / float(max_range)
                 else:
                     slope = 1.0
-            tmp_data = numpy.round((self.data - offset) / slope).astype(numpy.uint32)
+            # float64: float32 cannot represent the upper bound exactly
+            tmp_data = numpy.round((self.data.astype(numpy.float64) - offset) / slope)
+            # out of range values would wrap around when cast to unsigned;
+            # 2**32-1 is reserved as overflow marker when bpp=4
+            tmp_data = numpy.clip(tmp_data, 0, 2**32 - 2).astype(numpy.uint32)
             self.header["LINEAR"] = f"{slope} {offset}"
         else:
             tmp_data = self.data
-        bpp = self.calc_bpp(tmp_data)
-        self.basic_translate(fname)
-        limit = 2 ** (8 * bpp) - 1
-        stype = self.get_stype(self.bpp_to_numpy[bpp], "little")
-        data = tmp_data.astype(stype)
-        reset = numpy.where(tmp_data >= limit)
-        data[reset] = limit
-        with self._open(fname, "wb") as bruker:
-            bruker.write(self.gen_header().encode("ASCII"))
-            if isinstance(bruker, io.BufferedWriter):
-                data.tofile(bruker)
-            else:
-                bruker.write(data.tobytes())
-            bruker.write(self.gen_overflow().encode("ASCII"))
+            if numpy.issubdtype(tmp_data.dtype, numpy.signedinteger):
+                # negative values would wrap around when cast to unsigned
+                tmp_data = numpy.clip(tmp_data, 0, None)
+            if "LINEAR" in self.header:
+                # integers are written unscaled: a stale LINEAR would be applied on read
+                try:
+                    identity = [float(i) for i in self.header["LINEAR"].split()] == [1.0, 0.0]
+                except ValueError:
+                    identity = False
+                if not identity:
+                    self.header["LINEAR"] = "1.0 0.0"
+        return tmp_data
+
+    def write(self, fname):
+        """
+        Write a bruker image
+
+        """
+        saved_header = self.header.copy()
+        try:
+            tmp_data = self._integer_data()
+            self.__bpp_file = None  # data may have changed since the last write
+            bpp = self.calc_bpp(tmp_data)
+            self.basic_translate(fname)
+            limit = 2 ** (8 * bpp) - 1
+            stype = self.get_stype(self.bpp_to_numpy[bpp], "little")
+            overflow_pos = numpy.flatnonzero(tmp_data >= limit)
+            data = tmp_data.astype(stype)
+            data.flat[overflow_pos] = limit
+            self.header["NOVERFL"] = str(overflow_pos.size)
+            overflow = self._format_overflow(tmp_data, overflow_pos)
+            with self._open(fname, "wb") as bruker:
+                bruker.write(self.gen_header().encode("ASCII"))
+                if isinstance(bruker, io.BufferedWriter):
+                    data.tofile(bruker)
+                else:
+                    bruker.write(data.tobytes())
+                bruker.write(overflow.encode("ASCII"))
+        except BaseException:
+            # leave the header as it was if the frame could not be written
+            self.header.clear()
+            self.header.update(saved_header)
+            raise
 
     def calc_bpp(self, data=None, max_entry=4096):
         """
-        Calculate the number of byte per pixel to get an optimal overflow table.
+        Calculate the number of byte per pixel to get an optimal overflow table,
+        whose entries all fit the format.
 
         :return: byte per pixel
         """
@@ -352,8 +389,14 @@ class BrukerImage(FabioImage):
             data = self.data
         if self.__bpp_file is None:
             for i in [1, 2]:
-                overflown = data >= (2 ** (8 * i) - 1)
-                if overflown.sum() < max_entry:
+                overflow_pos = numpy.flatnonzero(data >= (2 ** (8 * i) - 1))
+                if overflow_pos.size >= max_entry:
+                    continue
+                # entries must fit the 9 digit value + 7 digit position format
+                if overflow_pos.size == 0 or (
+                    overflow_pos[-1] < 10**7
+                    and data.ravel()[overflow_pos].max() < 10**9
+                ):
                     self.__bpp_file = i
                     break
             else:
@@ -404,14 +447,38 @@ class BrukerImage(FabioImage):
         )
         return res
 
-    def gen_overflow(self):
+    def gen_overflow(self, data=None):
         """
         Generate an overflow table
+
+        :param data: the integer data as written in the file, defaults to self.data converted to integers
         """
-        limit = 2 ** (8 * self.calc_bpp()) - 1
-        flat = self.data.ravel()  # flat memory view
-        overflow_pos = numpy.where(flat >= limit)[0]  # list of indexes
-        overflow_val = flat[overflow_pos]
+        if data is None:
+            data = self._integer_data()
+        limit = 2 ** (8 * self.calc_bpp(data)) - 1
+        return self._format_overflow(data, numpy.flatnonzero(data >= limit))
+
+    @staticmethod
+    def _format_overflow(data, overflow_pos):
+        """
+        Format the overflow table
+
+        :param data: the integer data as written in the file
+        :param overflow_pos: indexes of the overflown pixels in the flattened data
+        :return: the overflow table, padded to 512 bytes
+        """
+        overflow_val = data.ravel()[overflow_pos]
+        # each entry is 9 digits of value followed by 7 digits of position
+        if overflow_pos.size and overflow_pos.max() >= 10**7:
+            raise ValueError(
+                f"Overflow at pixel index {overflow_pos.max()} cannot be stored: "
+                "positions are limited to 7 digits in the Bruker format"
+            )
+        if overflow_val.size and overflow_val.max() >= 10**9:
+            raise ValueError(
+                f"Overflow value {overflow_val.max()} cannot be stored: "
+                "values are limited to 9 digits in the Bruker format"
+            )
         overflow = "".join(
             [f"{val:09d}{pos:07d}" for pos, val in zip(overflow_pos, overflow_val)]
         )
