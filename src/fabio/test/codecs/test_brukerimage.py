@@ -249,6 +249,16 @@ class TestBrukerOverflow(unittest.TestCase):
         self.assertEqual(new.header["NOVERFL"], "2")
         self.assertEqual(abs(new.data - data).max(), 0)
 
+    def test_failed_write_keeps_header(self):
+        """the header is left untouched when the file cannot be written"""
+        data = numpy.full((7, 12), 300, dtype=numpy.int32)
+        header = {"LINEAR": "0.5 10", "NPIXELB": "4"}
+        img = brukerimage(data=data, header=header)
+        filename = os.path.join(UtilsTest.tempdir, "missing_dir", "overflow.0000")
+        with self.assertRaises(OSError):
+            img.write(filename)
+        self.assertEqual(dict(img.header), header)
+
     def test_rewrite(self):
         """bpp must be recalculated when the data changes between two writes"""
         img = brukerimage(data=numpy.zeros((128, 128), dtype=numpy.int32))

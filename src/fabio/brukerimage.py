@@ -352,24 +352,31 @@ class BrukerImage(FabioImage):
         Write a bruker image
 
         """
-        tmp_data = self._integer_data()
-        self.__bpp_file = None  # data may have changed since the last write
-        bpp = self.calc_bpp(tmp_data)
-        self.basic_translate(fname)
-        limit = 2 ** (8 * bpp) - 1
-        stype = self.get_stype(self.bpp_to_numpy[bpp], "little")
-        overflow_pos = numpy.flatnonzero(tmp_data >= limit)
-        data = tmp_data.astype(stype)
-        data.flat[overflow_pos] = limit
-        self.header["NOVERFL"] = str(overflow_pos.size)
-        overflow = self._format_overflow(tmp_data, overflow_pos)
-        with self._open(fname, "wb") as bruker:
-            bruker.write(self.gen_header().encode("ASCII"))
-            if isinstance(bruker, io.BufferedWriter):
-                data.tofile(bruker)
-            else:
-                bruker.write(data.tobytes())
-            bruker.write(overflow.encode("ASCII"))
+        saved_header = self.header.copy()
+        try:
+            tmp_data = self._integer_data()
+            self.__bpp_file = None  # data may have changed since the last write
+            bpp = self.calc_bpp(tmp_data)
+            self.basic_translate(fname)
+            limit = 2 ** (8 * bpp) - 1
+            stype = self.get_stype(self.bpp_to_numpy[bpp], "little")
+            overflow_pos = numpy.flatnonzero(tmp_data >= limit)
+            data = tmp_data.astype(stype)
+            data.flat[overflow_pos] = limit
+            self.header["NOVERFL"] = str(overflow_pos.size)
+            overflow = self._format_overflow(tmp_data, overflow_pos)
+            with self._open(fname, "wb") as bruker:
+                bruker.write(self.gen_header().encode("ASCII"))
+                if isinstance(bruker, io.BufferedWriter):
+                    data.tofile(bruker)
+                else:
+                    bruker.write(data.tobytes())
+                bruker.write(overflow.encode("ASCII"))
+        except BaseException:
+            # leave the header as it was if the frame could not be written
+            self.header.clear()
+            self.header.update(saved_header)
+            raise
 
     def calc_bpp(self, data=None, max_entry=4096):
         """
