@@ -327,6 +327,7 @@ class BrukerImage(FabioImage):
             self.header["LINEAR"] = f"{slope} {offset}"
         else:
             tmp_data = self.data
+        self.__bpp_file = None  # data may have changed since the last write
         bpp = self.calc_bpp(tmp_data)
         self.basic_translate(fname)
         limit = 2 ** (8 * bpp) - 1

@@ -190,6 +190,19 @@ class TestBrukerOverflow(unittest.TestCase):
         new.read(self.filename)
         self.assertLess(abs(new.data - data).max(), 1e-3)
 
+    def test_rewrite(self):
+        """bpp must be recalculated when the data changes between two writes"""
+        img = brukerimage(data=numpy.zeros((128, 128), dtype=numpy.int32))
+        img.write(self.filename)
+        data = numpy.full((128, 128), 300, dtype=numpy.int32)
+        img.data = data
+        img.write(self.filename)
+        new = brukerimage()
+        new.read(self.filename)
+        self.assertEqual(int(new.header["NPIXELB"]), 2)
+        self.assertEqual(new.header["NOVERFL"], "0")
+        self.assertEqual(abs(new.data - data).max(), 0)
+
 
 # statistics come from fit2d I think
 # filename dim1 dim2 min max mean stddev
