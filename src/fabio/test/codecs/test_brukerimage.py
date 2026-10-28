@@ -217,6 +217,15 @@ class TestBrukerOverflow(unittest.TestCase):
         new.read(self.filename)
         self.assertEqual(abs(new.data - data).max(), 0)
 
+    def test_integer_negative(self):
+        """negative integers are clipped to 0, not wrapped"""
+        data = numpy.arange(-42, 42, dtype=numpy.int32).reshape(7, 12)
+        brukerimage(data=data).write(self.filename)
+        new = brukerimage()
+        new.read(self.filename)
+        self.assertEqual(new.header["NOVERFL"], "0")
+        self.assertEqual(abs(new.data - numpy.maximum(data, 0)).max(), 0)
+
     def test_rewrite(self):
         """bpp must be recalculated when the data changes between two writes"""
         img = brukerimage(data=numpy.zeros((128, 128), dtype=numpy.int32))

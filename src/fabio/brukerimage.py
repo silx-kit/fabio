@@ -331,6 +331,9 @@ class BrukerImage(FabioImage):
             self.header["LINEAR"] = f"{slope} {offset}"
         else:
             tmp_data = self.data
+            if numpy.issubdtype(tmp_data.dtype, numpy.signedinteger):
+                # negative values would wrap around when cast to unsigned
+                tmp_data = numpy.clip(tmp_data, 0, None)
             if "LINEAR" in self.header:
                 # integers are written unscaled: a stale LINEAR would be applied on read
                 try:
