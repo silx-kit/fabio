@@ -259,6 +259,36 @@ class TestBrukerOverflow(unittest.TestCase):
             img.write(filename)
         self.assertEqual(dict(img.header), header)
 
+    def test_overflow_value_too_large(self):
+        """overflow values beyond 9 digits use a larger bpp instead"""
+        data = numpy.zeros((7, 12), dtype=numpy.int32)
+        data[1, 2] = 1_500_000_000
+        brukerimage(data=data).write(self.filename)
+        new = brukerimage()
+        new.read(self.filename)
+        self.assertEqual(int(new.header["NPIXELB"]), 4)
+        self.assertEqual(abs(new.data - data).max(), 0)
+
+    def test_overflow_position_too_large(self):
+        """overflow positions beyond 7 digits use a larger bpp instead"""
+        data = numpy.zeros((3200, 3200), dtype=numpy.uint16)
+        data[-1, -1] = 300
+        brukerimage(data=data).write(self.filename)
+        new = brukerimage()
+        new.read(self.filename)
+        self.assertEqual(int(new.header["NPIXELB"]), 2)
+        self.assertEqual(abs(new.data - data).max(), 0)
+
+    def test_overflow_not_storable(self):
+        """values beyond the uint32 range cannot be stored at all"""
+        data = numpy.zeros((7, 12), dtype=numpy.int64)
+        data[1, 2] = 5_000_000_000
+        img = brukerimage(data=data)
+        with self.assertRaises(ValueError):
+            img.write(self.filename)
+        self.assertFalse(os.path.exists(self.filename))
+        self.assertNotIn("NOVERFL", img.header)
+
     def test_rewrite(self):
         """bpp must be recalculated when the data changes between two writes"""
         img = brukerimage(data=numpy.zeros((128, 128), dtype=numpy.int32))

@@ -380,7 +380,8 @@ class BrukerImage(FabioImage):
 
     def calc_bpp(self, data=None, max_entry=4096):
         """
-        Calculate the number of byte per pixel to get an optimal overflow table.
+        Calculate the number of byte per pixel to get an optimal overflow table,
+        whose entries all fit the format.
 
         :return: byte per pixel
         """
@@ -388,8 +389,14 @@ class BrukerImage(FabioImage):
             data = self.data
         if self.__bpp_file is None:
             for i in [1, 2]:
-                overflown = data >= (2 ** (8 * i) - 1)
-                if overflown.sum() < max_entry:
+                overflow_pos = numpy.flatnonzero(data >= (2 ** (8 * i) - 1))
+                if overflow_pos.size >= max_entry:
+                    continue
+                # entries must fit the 9 digit value + 7 digit position format
+                if overflow_pos.size == 0 or (
+                    overflow_pos[-1] < 10**7
+                    and data.ravel()[overflow_pos].max() < 10**9
+                ):
                     self.__bpp_file = i
                     break
             else:
@@ -461,6 +468,17 @@ class BrukerImage(FabioImage):
         :return: the overflow table, padded to 512 bytes
         """
         overflow_val = data.ravel()[overflow_pos]
+        # each entry is 9 digits of value followed by 7 digits of position
+        if overflow_pos.size and overflow_pos.max() >= 10**7:
+            raise ValueError(
+                f"Overflow at pixel index {overflow_pos.max()} cannot be stored: "
+                "positions are limited to 7 digits in the Bruker format"
+            )
+        if overflow_val.size and overflow_val.max() >= 10**9:
+            raise ValueError(
+                f"Overflow value {overflow_val.max()} cannot be stored: "
+                "values are limited to 9 digits in the Bruker format"
+            )
         overflow = "".join(
             [f"{val:09d}{pos:07d}" for pos, val in zip(overflow_pos, overflow_val)]
         )
