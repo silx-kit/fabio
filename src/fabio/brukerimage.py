@@ -323,7 +323,11 @@ class BrukerImage(FabioImage):
                     slope = (max_data - offset) / float(max_range)
                 else:
                     slope = 1.0
-            tmp_data = numpy.round((self.data - offset) / slope).astype(numpy.uint32)
+            # float64: float32 cannot represent the upper bound exactly
+            tmp_data = numpy.round((self.data.astype(numpy.float64) - offset) / slope)
+            # out of range values would wrap around when cast to unsigned;
+            # 2**32-1 is reserved as overflow marker when bpp=4
+            tmp_data = numpy.clip(tmp_data, 0, 2**32 - 2).astype(numpy.uint32)
             self.header["LINEAR"] = f"{slope} {offset}"
         else:
             tmp_data = self.data

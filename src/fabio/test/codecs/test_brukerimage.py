@@ -190,6 +190,25 @@ class TestBrukerOverflow(unittest.TestCase):
         new.read(self.filename)
         self.assertLess(abs(new.data - data).max(), 1e-3)
 
+    def test_float_below_offset(self):
+        """values below the LINEAR offset are clipped to the offset, not wrapped"""
+        data = numpy.linspace(-100, 1000, 84, dtype=numpy.float32).reshape(7, 12)
+        brukerimage(data=data, header={"LINEAR": "0.5 10"}).write(self.filename)
+        new = brukerimage()
+        new.read(self.filename)
+        expected = numpy.maximum(data, 10)
+        self.assertLess(abs(new.data - expected).max(), 0.5)
+
+    def test_float_above_range(self):
+        """values above the uint32 range are clipped, not wrapped"""
+        data = numpy.full((128, 128), 1e10, dtype=numpy.float32)
+        brukerimage(data=data, header={"LINEAR": "1.0 0.0"}).write(self.filename)
+        new = brukerimage()
+        new.read(self.filename)
+        self.assertEqual(int(new.header["NPIXELB"]), 4)
+        self.assertEqual(new.header["NOVERFL"], "0")
+        self.assertTrue(numpy.allclose(new.data, 2**32 - 2))
+
     def test_rewrite(self):
         """bpp must be recalculated when the data changes between two writes"""
         img = brukerimage(data=numpy.zeros((128, 128), dtype=numpy.int32))
