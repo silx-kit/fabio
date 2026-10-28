@@ -238,6 +238,17 @@ class TestBrukerOverflow(unittest.TestCase):
         overflow = img.gen_overflow(numpy.full((128, 128), 300, dtype=numpy.int32))
         self.assertEqual(overflow.rstrip("."), "")
 
+    def test_fortran_order(self):
+        """overflow positions follow the C order of the file, whatever the memory layout"""
+        data = numpy.zeros((7, 12), dtype=numpy.int32)
+        data[1, 2] = 300
+        data[5, 0] = 70000
+        brukerimage(data=numpy.asfortranarray(data)).write(self.filename)
+        new = brukerimage()
+        new.read(self.filename)
+        self.assertEqual(new.header["NOVERFL"], "2")
+        self.assertEqual(abs(new.data - data).max(), 0)
+
     def test_rewrite(self):
         """bpp must be recalculated when the data changes between two writes"""
         img = brukerimage(data=numpy.zeros((128, 128), dtype=numpy.int32))

@@ -358,11 +358,11 @@ class BrukerImage(FabioImage):
         self.basic_translate(fname)
         limit = 2 ** (8 * bpp) - 1
         stype = self.get_stype(self.bpp_to_numpy[bpp], "little")
+        overflow_pos = numpy.flatnonzero(tmp_data >= limit)
         data = tmp_data.astype(stype)
-        reset = numpy.where(tmp_data >= limit)
-        data[reset] = limit
-        self.header["NOVERFL"] = str(reset[0].size)
-        overflow = self.gen_overflow(tmp_data)
+        data.flat[overflow_pos] = limit
+        self.header["NOVERFL"] = str(overflow_pos.size)
+        overflow = self._format_overflow(tmp_data, overflow_pos)
         with self._open(fname, "wb") as bruker:
             bruker.write(self.gen_header().encode("ASCII"))
             if isinstance(bruker, io.BufferedWriter):
@@ -442,9 +442,18 @@ class BrukerImage(FabioImage):
         if data is None:
             data = self._integer_data()
         limit = 2 ** (8 * self.calc_bpp(data)) - 1
-        flat = data.ravel()  # flat memory view
-        overflow_pos = numpy.where(flat >= limit)[0]  # list of indexes
-        overflow_val = flat[overflow_pos]
+        return self._format_overflow(data, numpy.flatnonzero(data >= limit))
+
+    @staticmethod
+    def _format_overflow(data, overflow_pos):
+        """
+        Format the overflow table
+
+        :param data: the integer data as written in the file
+        :param overflow_pos: indexes of the overflown pixels in the flattened data
+        :return: the overflow table, padded to 512 bytes
+        """
+        overflow_val = data.ravel()[overflow_pos]
         overflow = "".join(
             [f"{val:09d}{pos:07d}" for pos, val in zip(overflow_pos, overflow_val)]
         )
