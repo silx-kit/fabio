@@ -226,6 +226,18 @@ class TestBrukerOverflow(unittest.TestCase):
         self.assertEqual(new.header["NOVERFL"], "0")
         self.assertEqual(abs(new.data - numpy.maximum(data, 0)).max(), 0)
 
+    def test_gen_overflow_float(self):
+        """gen_overflow without argument works on float data"""
+        data = numpy.linspace(0, 1000, 84, dtype=numpy.float32).reshape(7, 12)
+        overflow = brukerimage(data=data).gen_overflow()
+        self.assertEqual(len(overflow.rstrip(".")), 16 * 83)
+
+    def test_gen_overflow_data(self):
+        """gen_overflow uses the bpp of the data it is given"""
+        img = brukerimage(data=numpy.zeros((128, 128), dtype=numpy.float32))
+        overflow = img.gen_overflow(numpy.full((128, 128), 300, dtype=numpy.int32))
+        self.assertEqual(overflow.rstrip("."), "")
+
     def test_rewrite(self):
         """bpp must be recalculated when the data changes between two writes"""
         img = brukerimage(data=numpy.zeros((128, 128), dtype=numpy.int32))

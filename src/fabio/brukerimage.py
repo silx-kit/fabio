@@ -297,10 +297,13 @@ class BrukerImage(FabioImage):
         self.resetvals()
         return self
 
-    def write(self, fname):
+    def _integer_data(self):
         """
-        Write a bruker image
+        Convert self.data to the unsigned integers stored in the file.
 
+        Float data are scaled and LINEAR is updated accordingly.
+
+        :return: integer array
         """
         if numpy.issubdtype(self.data.dtype, numpy.floating):
             if "LINEAR" in self.header:
@@ -342,6 +345,14 @@ class BrukerImage(FabioImage):
                     identity = False
                 if not identity:
                     self.header["LINEAR"] = "1.0 0.0"
+        return tmp_data
+
+    def write(self, fname):
+        """
+        Write a bruker image
+
+        """
+        tmp_data = self._integer_data()
         self.__bpp_file = None  # data may have changed since the last write
         bpp = self.calc_bpp(tmp_data)
         self.basic_translate(fname)
@@ -426,11 +437,11 @@ class BrukerImage(FabioImage):
         """
         Generate an overflow table
 
-        :param data: the integer data as written in the file, defaults to self.data
+        :param data: the integer data as written in the file, defaults to self.data converted to integers
         """
         if data is None:
-            data = self.data
-        limit = 2 ** (8 * self.calc_bpp()) - 1
+            data = self._integer_data()
+        limit = 2 ** (8 * self.calc_bpp(data)) - 1
         flat = data.ravel()  # flat memory view
         overflow_pos = numpy.where(flat >= limit)[0]  # list of indexes
         overflow_val = flat[overflow_pos]
