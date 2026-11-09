@@ -296,7 +296,23 @@ class Bruker100Image(BrukerImage):
         else:
             to_merge["baseline"] = int(self.header["NEXP"].split()[2])
 
-        self.data = _merge_data(**to_merge)
+        data = _merge_data(**to_merge)
+
+        # Handle float images, written with a LINEAR scale and offset
+        if "LINEAR" in self.header:
+            try:
+                slope, offset = self.header["LINEAR"].split(None, 1)
+                slope = float(slope)
+                offset = float(offset)
+            except Exception:
+                logger.warning(
+                    "Error in converting to float data with linear parameter: %s",
+                    self.header["LINEAR"],
+                )
+                slope, offset = 1.0, 0.0
+            if (slope != 1) or (offset != 0):
+                data = (data * slope + offset).astype(numpy.float32)
+        self.data = data
         self.resetvals()
         return self
 
@@ -371,7 +387,7 @@ class Bruker100Image(BrukerImage):
         Write a bruker100 format  image
 
         """
-        if numpy.issubdtype(self.data.dtype, float):
+        if numpy.issubdtype(self.data.dtype, numpy.floating):
             if "LINEAR" in self.header:
                 try:
                     slope, offset = self.header["LINEAR"].split(None, 1)
