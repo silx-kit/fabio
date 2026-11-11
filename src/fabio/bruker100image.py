@@ -411,7 +411,7 @@ class Bruker100Image(BrukerImage):
             self.header["LINEAR"] = f"{slope} {offset}"
         else:
             tmp_data = self.data
-            self.header["LINEAR"] = "1 0"
+            self.header["LINEAR"] = "1.000000                            0.000000"
 
         if int(self.header.get("NOVERFL", "-1").split()[0]) == -1:
             baseline = False
