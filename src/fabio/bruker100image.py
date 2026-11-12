@@ -48,7 +48,7 @@ __authors__ = [
     "Sigmund Neher",
 ]
 __status__ = "production"
-__copyright__ = "2007-2009 Risoe National Laboratory; 2015-2020 ESRF, 2016 GWDG"
+__copyright__ = "2007-2009 Risoe National Laboratory; 2015-2026 ESRF, 2016 GWDG"
 __licence__ = "MIT"
 
 import io
@@ -296,7 +296,23 @@ class Bruker100Image(BrukerImage):
         else:
             to_merge["baseline"] = int(self.header["NEXP"].split()[2])
 
-        self.data = _merge_data(**to_merge)
+        data = _merge_data(**to_merge)
+
+        # Handle float images, written with a LINEAR scale and offset
+        if "LINEAR" in self.header:
+            try:
+                slope, offset = self.header["LINEAR"].split(None, 1)
+                slope = float(slope)
+                offset = float(offset)
+            except Exception:
+                logger.warning(
+                    "Error in converting to float data with linear parameter: %s",
+                    self.header["LINEAR"],
+                )
+                slope, offset = 1.0, 0.0
+            if (slope != 1) or (offset != 0):
+                data = (data * slope + offset).astype(numpy.float32)
+        self.data = data
         self.resetvals()
         return self
 
@@ -371,7 +387,7 @@ class Bruker100Image(BrukerImage):
         Write a bruker100 format  image
 
         """
-        if numpy.issubdtype(self.data.dtype, float):
+        if numpy.issubdtype(self.data.dtype, numpy.floating):
             if "LINEAR" in self.header:
                 try:
                     slope, offset = self.header["LINEAR"].split(None, 1)
@@ -383,7 +399,6 @@ class Bruker100Image(BrukerImage):
                         self.header["LINEAR"],
                     )
                     slope, offset = 1.0, 0.0
-
             else:
                 offset = self.data.min()
                 max_data = self.data.max()
@@ -396,6 +411,7 @@ class Bruker100Image(BrukerImage):
             self.header["LINEAR"] = f"{slope} {offset}"
         else:
             tmp_data = self.data
+            self.header["LINEAR"] = "1.000000                            0.000000"
 
         if int(self.header.get("NOVERFL", "-1").split()[0]) == -1:
             baseline = False

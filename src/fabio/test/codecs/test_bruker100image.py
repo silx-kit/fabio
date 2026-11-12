@@ -127,6 +127,16 @@ class TestBruker100(unittest.TestCase):
                 numpy.allclose(obt, ref), f"data are the same, baseline={baseline}"
             )
 
+    def test_float(self):
+        "float32 and float64 data are stored with a LINEAR scale and read back"
+        fname = os.path.join(UtilsTest.tempdir, "float_bruker100.sfrm")
+        for dtype in ("float32", "float64"):
+            data = numpy.linspace(-10.25, 1000.5, 84).astype(dtype).reshape(7, 12)
+            Bruker100Image(data=data).write(fname)
+            other = openimage(fname)
+            self.assertLess(abs(other.data - data).max(), 1e-3, f"data are the same for {dtype}")
+        os.unlink(fname)
+
     def test_conversion(self):
         fname = UtilsTest.getimage("testcbf.cbf.bz2")[:-4]
         c = openimage(fname)
