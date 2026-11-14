@@ -3,6 +3,7 @@ Changelog
 
 FabIO-2026.10.0 (unreleased):
 .............................
+- Fix pytest collecting the EDF frame-checking helper as a standalone test (#660)
 - Fix Bruker100 float images: float32 data was truncated to integers on write, and the ``LINEAR`` scale was ignored on read
 - Fix Bruker (v86) writer losing overflow pixels: ``NOVERFL`` is now set from the data, and floating point images no longer fail to save
 - Fix OXD (TY1) writer corrupting unsigned integer images such as uint8 masks or uint16 TIFF data
