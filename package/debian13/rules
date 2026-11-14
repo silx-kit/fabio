@@ -3,8 +3,7 @@
 export PYBUILD_NAME=fabio
 export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 
-TESTS_TO_EXCLUDE="not test_00 and \
-not test_openimage and \
+TESTS_TO_EXCLUDE="not test_openimage and \
 not test_frames_abort_iteration and \
 not test_frames_full_iteration and \
 not test_frames_random_access"

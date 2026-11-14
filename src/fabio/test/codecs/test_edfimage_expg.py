@@ -112,8 +112,8 @@ def get_data_counts(shape=None):
 # ============================================
 
 
-# Hint: Must be defined outside the test case class, otherwise used as test
-def test_00(cls, filename, avglist=None, keylist=None):
+# Shared assertion helper; the name must not be collected as a pytest test.
+def check_edf_frames(cls, filename, avglist=None, keylist=None):
     """
     Checks the correct shape of the data arrays.
     Compares the mean value of each data frame array, with the number given in avglist.
@@ -272,14 +272,14 @@ class EdfBlockBoundaryCases(unittest.TestCase):
 
         avglist = [0.0, 1.0, 2.0, 3.0, 4.0]
         filename = os.path.join(self.root, "00_edfblocktypes/multi5.edf.gz")
-        test_00(self, filename, avglist)
+        check_edf_frames(self, filename, avglist)
         keylist = ["DefaultKey"]  # the defaultkey is coming from the general block
         filename = os.path.join(self.root, "00_edfblocktypes/multi5+gblk.edf.gz")
-        test_00(self, filename, avglist, keylist)
+        check_edf_frames(self, filename, avglist, keylist)
         filename = os.path.join(self.root, "00_edfblocktypes/multi5+gblk_gzip.edf")
-        test_00(self, filename, avglist)
+        check_edf_frames(self, filename, avglist)
         filename = os.path.join(self.root, "00_edfblocktypes/multi5_gzip.edf")
-        test_00(self, filename, avglist)
+        check_edf_frames(self, filename, avglist)
 
     def test_edfsingle_raw_bf_gblk(self):
         """
@@ -294,7 +294,7 @@ class EdfBlockBoundaryCases(unittest.TestCase):
             self.root, "01_single_raw_bf_gblk/pj19_frelon_00028_raw.ehf"
         )
         keylist = ["ExperimentInfo"]
-        test_00(self, filename, avglist, keylist)
+        check_edf_frames(self, filename, avglist, keylist)
 
     def test_edfmulti_raw_bf_gblk(self):
         """
@@ -333,7 +333,7 @@ class EdfBlockBoundaryCases(unittest.TestCase):
         filename = os.path.join(
             self.root, "02_multi_raw_bf_gblk/rh28a_saxs_00022_raw_binned.ehf"
         )
-        test_00(self, filename, avglist)
+        check_edf_frames(self, filename, avglist)
 
     def test_edfmulti_raw_dark_raw_bf_gblk(self):
         """
@@ -352,12 +352,12 @@ class EdfBlockBoundaryCases(unittest.TestCase):
         filename = os.path.join(
             self.root, "03_multi_raw_dark_bf_gblk/rh28a_saxs_00003_dark_binned.ehf"
         )
-        test_00(self, filename, avglist)
+        check_edf_frames(self, filename, avglist)
         avglist = [9651.25]
         filename = os.path.join(
             self.root, "03_multi_raw_dark_bf_gblk/rh28a_saxs_00003_raw_binned.ehf"
         )
-        test_00(self, filename, avglist)
+        check_edf_frames(self, filename, avglist)
 
     def test_edfsingle_raw_bf_gblk_gz(self):
         """
@@ -370,7 +370,7 @@ class EdfBlockBoundaryCases(unittest.TestCase):
         filename = os.path.join(
             self.root, "04_single_raw_bf_gblk_gz/pj19_frelon_00028_raw.ehf.gz"
         )
-        test_00(self, filename, avglist)
+        check_edf_frames(self, filename, avglist)
 
     def test_edf6_single_raw_bf_gblk_gz(self):
         """
@@ -383,7 +383,7 @@ class EdfBlockBoundaryCases(unittest.TestCase):
         filename = os.path.join(
             self.root, "06_single_raw_bf_gblk_gz/pj19_frelon_00028_raw.ehf"
         )
-        test_00(self, filename, avglist)
+        check_edf_frames(self, filename, avglist)
 
     def test_edfmulti_raw_bf_gblk_gz(self):
         """
@@ -426,7 +426,7 @@ class EdfBlockBoundaryCases(unittest.TestCase):
         filename = os.path.join(
             self.root, "07_multi_raw_bf_gblk_gz/rh28a_saxs_00022_raw_binned.ehf.gz"
         )
-        test_00(self, filename, avglist)
+        check_edf_frames(self, filename, avglist)
 
     def test_pitfalls(self):
         """
@@ -441,29 +441,29 @@ class EdfBlockBoundaryCases(unittest.TestCase):
         # edf1 file => must always work
         avglist = [0, 1, 2, 3, 4]
         filename = os.path.join(self.root, "08_pitfalls/multi5+pitfalls_edf1.edf.gz")
-        test_00(self, filename, avglist)
+        check_edf_frames(self, filename, avglist)
 
         # edf1 file with header end pattern in binary blob => must always work
         avglist = [18312, 18312, 18312, 18312, 18312]
         filename = os.path.join(self.root, "08_pitfalls/multi5+headerblob_edf1.edf.gz")
-        test_00(self, filename, avglist)
+        check_edf_frames(self, filename, avglist)
 
         # edf1 file with header end pattern in Title value and binary blob
         # => must always work
         filename = os.path.join(
             self.root, "08_pitfalls/multi5+headerblob+headerendinheader_edf1.edf.gz"
         )
-        test_00(self, filename, avglist)
+        check_edf_frames(self, filename, avglist)
 
         # edf0 file => must always work
         avglist = [0, 1, 2, 3, 4]
         filename = os.path.join(self.root, "08_pitfalls/multi5+pitfalls_edf0.edf.gz")
-        test_00(self, filename, avglist)
+        check_edf_frames(self, filename, avglist)
 
         # edf0 file with header end pattern in binary blob => must always work
         avglist = [18312, 18312, 18312, 18312, 18312]
         filename = os.path.join(self.root, "08_pitfalls/multi5+headerblob_edf0.edf.gz")
-        test_00(self, filename, avglist)
+        check_edf_frames(self, filename, avglist)
 
         # edf0 file with header end pattern in Title value and binary blob
         # => usually fails, because the header end pattern is searched
@@ -478,7 +478,7 @@ class EdfBlockBoundaryCases(unittest.TestCase):
         # instead of searching through the whole header byte for
         # byte would allow reading most of such files, but success is not
         # guaranteed. => Do not write special character to the header
-        # test_00(self,"08_pitfalls/multi5+headerblob+headerendinheader_edf0.edf.gz",avglist)
+        # check_edf_frames(self,"08_pitfalls/multi5+headerblob+headerendinheader_edf0.edf.gz",avglist)
 
     def test_special(self):
         """
@@ -491,7 +491,7 @@ class EdfBlockBoundaryCases(unittest.TestCase):
 
         avglist = [0.178897]
         filename = os.path.join(self.root, "09_special/face_ok.edf.gz")
-        test_00(self, filename, avglist)
+        check_edf_frames(self, filename, avglist)
 
         # The next 3 tests check that edf files can be
         # read where the header end pattern spreads over a
@@ -507,17 +507,17 @@ class EdfBlockBoundaryCases(unittest.TestCase):
         filename = os.path.join(
             self.root, "09_special/face_headerendatboundary1.edf.gz"
         )
-        test_00(self, filename, avglist)
+        check_edf_frames(self, filename, avglist)
         # first part of header end pattern '}\r' at BLOCKSIZE-2 followed by '\n' at BLOCKSIZE
         filename = os.path.join(
             self.root, "09_special/face_headerendatboundary2.edf.gz"
         )
-        test_00(self, filename, avglist)
+        check_edf_frames(self, filename, avglist)
         # header end character '}' at BLOCKSIZE-1 followed by '\n' at BLOCKSIZE
         filename = os.path.join(
             self.root, "09_special/face_headerendatboundary3.edf.gz"
         )
-        test_00(self, filename, avglist)
+        check_edf_frames(self, filename, avglist)
 
         # Here, the binary blob is too short
         # like 09_special/face_headerendatboundary1.edf.gz, but in addition
@@ -526,7 +526,7 @@ class EdfBlockBoundaryCases(unittest.TestCase):
         # is truncated
         # avglist=[0.178897]
         # filename = os.path.join(self.root,"09_special/face_tooshort.edf.gz")
-        # test_00(self,filename,avglist)
+        # check_edf_frames(self,filename,avglist)
 
     # test files 10 and 11 for testing with to be copied and added later
 

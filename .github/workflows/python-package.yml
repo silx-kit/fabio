@@ -47,3 +47,6 @@ jobs:
       - name: Run tests
         run: |
           python run_tests.py
+      - name: Check EDF tests with pytest
+        run: |
+          python bootstrap.py -m pytest --pyargs fabio.test.codecs.test_edfimage_expg

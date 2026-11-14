@@ -17,3 +17,4 @@ pyqt6
 matplotlib
 hdf5plugin
 filelock
+pytest
