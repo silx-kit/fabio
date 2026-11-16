@@ -69,6 +69,12 @@ except ImportError:
     logger.error("Unable to import zlib module: disabling zlib compression")
     zlib = None
 
+try:
+    import lzma
+except ImportError:
+    logger.warning("Unable to import lzma module: disabling XZ compression")
+    lzma = None
+
 if sys.platform != "win32":
     WindowsError = OSError
 

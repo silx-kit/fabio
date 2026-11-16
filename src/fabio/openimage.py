@@ -48,7 +48,6 @@ from . import (
     fabioformats,
     fabioutils,
 )
-from .compression import ExternalCompressors
 from .fabioimage import FabioImage
 from .fabioutils import BytesIO, FilenameObject
 
@@ -179,7 +178,7 @@ def _do_magic(byts:bytes, filename:str="") -> str:
                 # Might be GE with an EDF header. Check the extension.
                 extension = dot_splitted[-1]
                 # If it is a compression extension, check the next one up.
-                if f".{extension}" in ExternalCompressors.COMMANDS:
+                if extension.lower() in fabioutils.COMPRESSED_EXTENSIONS:
                     extension = dot_splitted[-2]
 
                 # If the extension is `ge` plus a number, assume it is GE

@@ -856,6 +856,12 @@ class FabioImage(_FabioArray):
             fileObject = self._compressed_stream(
                 fname, COMPRESSORS[".bz2"], fabioutils.BZ2File, mode
             )
+        elif comp_type == ".xz":
+            if fabioutils.XZFile is None:
+                raise OSError("XZ compression requires the lzma module")
+            fileObject = self._compressed_stream(
+                fname, None, fabioutils.XZFile, mode
+            )
         #
         # Here we return the file even though it may be bzipped or gzipped
         # but named incorrectly...
