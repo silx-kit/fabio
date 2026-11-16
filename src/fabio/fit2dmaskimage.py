@@ -87,29 +87,10 @@ class Fit2dMaskImage(FabioImage):
         assert len(data) == total
         fin.close()
 
-        # Now to unpack it
-        data = numpy.frombuffer(data, "<u4").view(numpy.uint8)
-
+        data = numpy.frombuffer(data, numpy.uint8)
         data = numpy.reshape(data, (dim2, num_ints * 4))
-
-        result = numpy.zeros((dim2, num_ints * 4 * 8), numpy.uint8)
-
-        # Unpack using bitwise comparisons to 2**n
-        bits = numpy.ones((1), numpy.uint8)
-        for i in range(8):
-            temp = numpy.bitwise_and(bits, data)
-            result[:, i::8] = temp.astype(numpy.uint8)
-            bits = bits * 2
-        # Extra rows needed for packing odd dimensions
-        spares = num_ints * 4 * 8 - dim1
-        if spares == 0:
-            data = numpy.where(result == 0, 0, 1)
-        else:
-            data = numpy.where(result[:, :-spares] == 0, 0, 1)
-        # Transpose appears to be needed to match edf reader (scary??)
-        # self.data = numpy.transpose(self.data)
-        self.data = numpy.ascontiguousarray(data, dtype=numpy.uint8)
-        self.data = self.data.reshape(self._shape)
+        # Bits run from least to most significant; discard each row's padding.
+        self.data = numpy.unpackbits(data, axis=1, count=dim1, bitorder="little")
         self._shape = None
         return self
 
@@ -127,11 +108,9 @@ class Fit2dMaskImage(FabioImage):
         header[16:20] = struct.pack("<I", dim1)
         header[20:24] = struct.pack("<I", dim2)
         compact_array = numpy.zeros((dim2, ((dim1 + 31) // 32) * 4), dtype=numpy.uint8)
-        large_array = numpy.zeros((dim2, ((dim1 + 31) // 32) * 32), dtype=numpy.uint8)
-        large_array[:dim2, :dim1] = self.data != 0
-        for i in range(8):
-            order = 1 << i
-            compact_array += large_array[:, i::8] * order
+        packed = numpy.packbits(self.data != 0, axis=1, bitorder="little")
+        # Fit2D pads each row to a 32-bit boundary, rather than just a byte.
+        compact_array[:, :packed.shape[1]] = packed
         with self._open(fname, mode="wb") as outfile:
             outfile.write(bytes(header))
             if isinstance(outfile, io.BufferedWriter):
