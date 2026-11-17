@@ -5,14 +5,16 @@ Purpose:
 --------
 
 `fabio-convert` is a portable image converter based on FabIO library.
-It best work when converting single-frame files from one format to another.
-For multi-frame files, the best is to use the Python API.
+By default, it converts the current image from each input file.
+Use ``--split`` to convert every frame of a multi-frame file into separate
+single-frame files. Combining files into a multi-frame image still requires
+the Python API.
 
 Usage:
 ------
 
 fabio-convert [-h] [-V] [-v] [-\-debug] [-l] [-o OUTPUT] [-F FORMAT] [-f] [-n] [-\-remove-destination] [-u] [-i]
-[-\-dry-run] [IMAGE ...]
+[-\-dry-run] [-\-split] [IMAGE ...]
 
 Positional arguments:
 +++++++++++++++++++++
@@ -49,6 +51,19 @@ Main arguments:
 
 Optional behaviour arguments:
 +++++++++++++++++++++++++++++
+
+**-\-split**
+   Write each frame to a separate file. Insert a zero-based frame number,
+   padded to at least four digits, before the output extension. For example,
+   ``fabio-convert --split stack.edf -F tif`` writes ``stack_0000.tif``,
+   ``stack_0001.tif``, and so on. A single-frame input gets ``_0000`` too.
+
+   With ``-o frames`` pointing to an existing directory, write the numbered
+   files there. For one input, ``-o result.edf`` instead uses names such as
+   ``result_0000.edf``. Multiple inputs require an output directory when
+   ``-o`` is specified. Existing overwrite options apply to each frame;
+   ``--dry-run`` writes no files. Inputs and duplicate destinations from
+   different input files are protected even with ``--force``.
 
 **-f**, **-\-force**
    if an existing destination file cannot be opened, remove it and try
