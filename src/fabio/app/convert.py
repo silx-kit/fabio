@@ -36,6 +36,7 @@ __date__ = "27/10/2025"
 __status__ = "production"
 
 import argparse
+from contextlib import nullcontext
 import logging
 import os
 import sys
@@ -110,13 +111,14 @@ def is_older(filename1, filename2):
     return time1 > time2
 
 
-def convert_one(input_filename, output_filename, options):
+def convert_one(input_filename, output_filename, options, source=None):
     """
     Convert a single file using options
 
     :param str input_filename: The input filename
     :param str output_filename: The output filename
     :param object options: List of options provided from the command line
+    :param source: Optional single-frame image already loaded by the caller
     :rtype: bool
     :returns: True is the conversion succeeded
     """
@@ -166,8 +168,8 @@ def convert_one(input_filename, output_filename, options):
         except OSError as e:
             logger.error(
                 'Removing previous file %s failed cause: "%s". Conversion skipped.',
-                e.message,
                 output_filename,
+                e,
             )
             logger.debug("Backtrace", exc_info=True)
             return False
@@ -177,51 +179,78 @@ def convert_one(input_filename, output_filename, options):
             print(f"Conversion to file {output_filename} skipped")
         return True
 
-    try:
-        logger.debug("Load '%s'", input_filename)
-        source = fabio.open(input_filename)
-    except KeyboardInterrupt:
-        raise
-    except Exception as e:
-        logger.error(
-            "Loading input file '%s' failed cause: \"%s\". Conversion skipped.",
-            input_filename,
-            e.message,
-        )
-        logger.debug("Backtrace", exc_info=True)
-        return False
+    own_source = source is None
+    if own_source:
+        try:
+            logger.debug("Load '%s'", input_filename)
+            source = fabio.open(input_filename)
+        except Exception as e:
+            logger.error(
+                "Loading input file '%s' failed cause: \"%s\". Conversion skipped.",
+                input_filename,
+                e,
+            )
+            logger.debug("Backtrace", exc_info=True)
+            return False
 
-    try:
-        logger.debug("Convert '%s' into '%s'", input_filename, options.format)
-        converted = source.convert(options.format)
-    except KeyboardInterrupt:
-        raise
-    except Exception as e:
-        logger.error(
-            "Converting input file '%s' failed cause: \"%s\". Conversion skipped.",
-            input_filename,
-            e.message,
-        )
-        logger.debug("Backtrace", exc_info=True)
-        return False
+    with source if own_source else nullcontext(source):
+        try:
+            logger.debug("Convert '%s' into '%s'", input_filename, options.format)
+            converted = source.convert(options.format)
+        except Exception as e:
+            logger.error(
+                "Converting input file '%s' failed cause: \"%s\". Conversion skipped.",
+                input_filename,
+                e,
+            )
+            logger.debug("Backtrace", exc_info=True)
+            return False
 
-    try:
-        logger.debug("Write '%s'", output_filename)
-        if not options.dry_run:
-            converted.write(output_filename)
-    except KeyboardInterrupt:
-        raise
-    except Exception as e:
-        logger.error(
-            "Saving output file '%s' failed cause: \"%s\". Conversion skipped.",
-            output_filename,
-            e.message,
-        )
-        logger.debug("Backtrace", exc_info=True)
-        return False
+        try:
+            logger.debug("Write '%s'", output_filename)
+            if not options.dry_run:
+                converted.write(output_filename)
+        except Exception as e:
+            logger.error(
+                "Saving output file '%s' failed cause: \"%s\". Conversion skipped.",
+                output_filename,
+                e,
+            )
+            logger.debug("Backtrace", exc_info=True)
+            return False
 
     # a success
     return True
+
+
+def split_one(input_filename, output_filename, options, destinations):
+    """Convert each frame, protecting inputs and earlier split destinations."""
+    try:
+        with fabio.open(input_filename) as source:
+            stem, extension = os.path.splitext(output_filename)
+            outputs = [f"{stem}_{i:04d}{extension}" for i in range(source.nframes)]
+            paths = [os.path.normcase(os.path.realpath(name)) for name in outputs]
+            # Validate every destination before writing any frame from this input.
+            for name, path in zip(outputs, paths):
+                if path in destinations:
+                    raise ValueError(f"Multiple input files would write '{name}'")
+                for filename in options.images:
+                    if path == os.path.normcase(os.path.realpath(filename)) or (
+                        os.path.exists(name) and os.path.exists(filename)
+                        and os.path.samefile(name, filename)
+                    ):
+                        raise ValueError(f"Split output '{name}' would overwrite an input file")
+            destinations.update(paths)
+            succeeded = True
+            for frame, name in zip(source.frames(), outputs):
+                # Keep the source format's conversion rules but only this frame.
+                image = source.__class__(data=frame.data, header=frame.header.copy())
+                succeeded = convert_one(input_filename, name, options, image) and succeeded
+            return succeeded
+    except Exception as e:
+        logger.error("Splitting input file '%s' failed: %s", input_filename, e)
+        logger.debug("Backtrace", exc_info=True)
+        return False
 
 
 def convert_all(options):
@@ -232,6 +261,7 @@ def convert_all(options):
     :returns: True is the conversion succeeded
     """
     succeeded = True
+    destinations = set()
     for filename in options.images:
         if options.output is None:
             output_filename = get_output_filename(filename, options.format)
@@ -243,7 +273,11 @@ def convert_all(options):
         else:
             output_filename = options.output
 
-        succeeded = succeeded and convert_one(filename, output_filename, options)
+        if options.split:
+            result = split_one(filename, output_filename, options, destinations)
+        else:
+            result = convert_one(filename, output_filename, options)
+        succeeded = result and succeeded
 
     return succeeded
 
@@ -344,6 +378,11 @@ def main():
 
     group = parser.add_argument_group("optional behaviour arguments")
     group.add_argument(
+        "--split",
+        action="store_true",
+        help="write each frame to a separate file, adding _0000, _0001, ... before the extension",
+    )
+    group.add_argument(
         "-f",
         "--force",
         dest="force",
@@ -412,6 +451,8 @@ def main():
         # the upper case IMAGE is used for the --help auto-documentation
         args.images = expand_args(args.IMAGE)
         args.images.sort()
+        if args.split and len(args.images) > 1 and args.output is not None and not os.path.isdir(args.output):
+            raise argparse.ArgumentError(None, "Splitting multiple inputs requires an output directory.")
 
         if args.format is None or not args.format.endswith("image"):
             if args.format is None:
