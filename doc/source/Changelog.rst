@@ -3,6 +3,7 @@ Changelog
 
 FabIO-2026.10.0 (unreleased):
 .............................
+- Support splitting multi-frame images with ``fabio-convert --split`` (#449)
 - Speed up Fit2D mask reading and writing with NumPy bit packing (#216)
 - Fix pytest collecting the EDF frame-checking helper as a standalone test (#660)
 - Fix Bruker100 float images: float32 data was truncated to integers on write, and the ``LINEAR`` scale was ignored on read
