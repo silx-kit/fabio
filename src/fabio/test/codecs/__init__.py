@@ -54,6 +54,7 @@ def suite():
         test_fit2dimage,
         test_fit2dmaskimage,
         test_fit2dspreadsheetimage,
+        test_ganeshaimage,
         test_geimage,
         test_hdf5image,
         test_hipicimage,
@@ -85,6 +86,7 @@ def suite():
     testSuite.addTest(test_dtrekimage.suite())
     testSuite.addTest(test_fit2dmaskimage.suite())
     testSuite.addTest(test_fit2dspreadsheetimage.suite())
+    testSuite.addTest(test_ganeshaimage.suite())
     testSuite.addTest(test_geimage.suite())
     testSuite.addTest(test_mar345image.suite())
     testSuite.addTest(test_brukerimage.suite())

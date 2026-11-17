@@ -75,6 +75,7 @@ _default_codecs = [
     ("dm3image", "Dm3Image"),
     ("HiPiCimage", "HipicImage"),
     ("pilatusimage", "PilatusImage"),
+    ("ganeshaimage", "GaneshaImage"),
     ("fit2dspreadsheetimage", "Fit2dSpreadsheetImage"),
     ("kcdimage", "KcdImage"),
     ("cbfimage", "CbfImage"),
