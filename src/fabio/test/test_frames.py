@@ -45,6 +45,36 @@ from .utilstest import UtilsTest
 logger = logging.getLogger(__name__)
 
 
+def _check_statistics(test, frame):
+    data = frame.data
+    test.assertEqual(frame.getmin(), data.min())
+    test.assertEqual(frame.getmax(), data.max())
+    test.assertEqual(frame.getmean(), data.mean(dtype=numpy.float64))
+    test.assertEqual(frame.getstddev(), data.std(dtype=numpy.float64))
+    region = (slice(0, 2), slice(1, 3))
+    test.assertEqual(frame.integrate_area(region), data[region].sum(dtype=numpy.float64))
+
+
+class TestFabioFrame(unittest.TestCase):
+    def test_statistics_501(self):
+        """Frame statistics have the same initialized cache as images (#501)."""
+        data = numpy.array([[1, 3, 9], [4, 8, 2]], dtype=numpy.uint16)
+        frames = [fabio.fabioimage.FabioFrame(data + offset) for offset in (0, 10)]
+        for frame in frames:
+            _check_statistics(self, frame)
+            _check_statistics(self, frame)
+        frames[0].data = data + 20
+        frames[0].resetvals()
+        _check_statistics(self, frames[0])
+        _check_statistics(self, frames[1])
+
+    def test_empty_statistics_501(self):
+        frame = fabio.fabioimage.FabioFrame()
+        self.assertIsNone(frame.getmin())
+        self.assertIsNone(frame.getmax())
+        self.assertEqual(frame.integrate_area((slice(None), slice(None))), 0)
+
+
 class _CommonTestFrames(unittest.TestCase):
     """Test generic tests which could append on frame iteration"""
 
@@ -122,6 +152,14 @@ class _CommonTestFrames(unittest.TestCase):
             self.assertIsNot(frame2, frame3)
             self.assertIsNot(frame3, frame1)
             self.assertEqual(image.nframes, self.meta.nframes)
+
+    def test_frame_statistics_501(self):
+        """Statistics work for both random access and frame iteration (#501)."""
+        with self.image() as image:
+            for index in (0, self.meta.nframes - 1):
+                _check_statistics(self, image.get_frame(index))
+            for frame in image.frames():
+                _check_statistics(self, frame)
 
 
 class TestVirtualEdf(_CommonTestFrames):
@@ -241,6 +279,12 @@ class TestFabioImage(unittest.TestCase):
                 self.fail()
 
 
+    def test_statistics_501(self):
+        data = numpy.array([[1, 2], [3, 4]], dtype=numpy.uint16)
+        image = fabio.fabioimage.FabioImage(data=data)
+        _check_statistics(self, image.get_frame(0))
+
+
 class TestFileSeries(_CommonTestFrames):
     @classmethod
     def getMeta(cls):
@@ -265,6 +309,7 @@ class TestFileSeries(_CommonTestFrames):
 def suite():
     loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
+    testsuite.addTest(loadTests(TestFabioFrame))
     testsuite.addTest(loadTests(TestFabioImage))
     testsuite.addTest(loadTests(TestVirtualEdf))
     testsuite.addTest(loadTests(TestEdf))
