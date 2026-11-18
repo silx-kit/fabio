@@ -48,7 +48,7 @@ from collections import OrderedDict as _OrderedDict
 from enum import StrEnum
 from math import ceil
 
-from .compression import bz2, gzip
+from .compression import bz2, gzip, lzma
 
 try:
     import pathlib
@@ -108,7 +108,7 @@ def getnum(name):
         return None
 
 
-COMPRESSED_EXTENSIONS = {"gz", "bz2"}
+COMPRESSED_EXTENSIONS = {"gz", "bz2", "xz"}
 """Set of compressed file extensions provided by Fabio"""
 
 
@@ -674,6 +674,52 @@ else:
             bz2.BZ2File.close(self)
 
 
+if lzma is None:
+    XZFile = None
+else:
+
+    class XZFile(lzma.LZMAFile):
+        """XZ stream with FabIO's locking and uncompressed size interface."""
+
+        def __init__(self, filename, mode="rb"):
+            super().__init__(filename, mode)
+            self.lock = threading.Semaphore()
+            self.__size = None
+            # LZMAFile only exposes name and mode starting with Python 3.13.
+            self._fabio_name = (
+                os.fspath(filename)
+                if isinstance(filename, (str, bytes, os.PathLike))
+                else getattr(filename, "name", "fabioStream")
+            )
+            self._fabio_mode = mode.replace("b", "") + "b"
+
+        @property
+        def name(self):
+            return self._fabio_name
+
+        @property
+        def mode(self):
+            return self._fabio_mode
+
+        def getSize(self):
+            if self.writable():
+                return self.tell()
+            if self.__size is None:
+                with self.lock:
+                    pos = self.tell()
+                    try:
+                        self.seek(0, os.SEEK_END)
+                        self.__size = self.tell()
+                    finally:
+                        self.seek(pos)
+            return self.__size
+
+        def setSize(self, value):
+            self.__size = value
+
+        size = property(getSize, setSize)
+
+
 class NotGoodReader(RuntimeError):
     """The reader used is probably not the good one"""
 
@@ -775,4 +821,6 @@ if GzipFile != UnknownCompressedFile:
     AVAILABLE_COMPRESSED_EXTENSIONS.add("gz")
 if BZ2File != UnknownCompressedFile:
     AVAILABLE_COMPRESSED_EXTENSIONS.add("bz2")
+if XZFile is not None:
+    AVAILABLE_COMPRESSED_EXTENSIONS.add("xz")
 
