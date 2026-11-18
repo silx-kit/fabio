@@ -327,6 +327,7 @@ class FabioFrame(_FabioArray):
         self._file_index = None
         self._container = None
         self._index = None
+        self.resetvals()
 
     def _set_file_container(self, fabio_image, index):
         """

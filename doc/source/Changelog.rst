@@ -1,9 +1,11 @@
 Changelog
 =========
 
-FabIO-2026.10.0 (unreleased):
+FabIO-2026.11.0 (unreleased):
 .............................
+
 - Support transparent XZ compression of image files (#648)
+- Fix statistics and region sums on frames returned by ``get_frame`` and file series (#501)
 - Support splitting multi-frame images with ``fabio-convert --split`` (#449)
 - Speed up Fit2D mask reading and writing with NumPy bit packing (#216)
 - Fix pytest collecting the EDF frame-checking helper as a standalone test (#660)
