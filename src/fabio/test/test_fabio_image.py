@@ -34,16 +34,26 @@ testsuite by Jerome Kieffer (Jerome.Kieffer@esrf.eu)
 import copy
 import logging
 import os
+import tempfile
 import unittest
+from unittest import mock
 
 import numpy
 
-from .. import fabioutils
+from .. import fabioutils, open as openimage, open_series
+from ..cbfimage import CbfImage
+from ..edfimage import EdfImage
 from ..fabioimage import FabioImage
+from ..openimage import _do_magic, openheader
 from ..utils import pilutils
 from .utilstest import UtilsTest
 
 logger = logging.getLogger(__name__)
+
+try:
+    import lzma
+except ImportError:
+    lzma = None
 
 try:
     import pathlib
@@ -186,6 +196,160 @@ class TestOpen(unittest.TestCase):
         res.close()
 
 
+@unittest.skipIf(lzma is None, "lzma is not available")
+class TestXZ(unittest.TestCase):
+    """Transparent XZ compression of detector images (#648)."""
+
+    def setUp(self):
+        directory = tempfile.TemporaryDirectory(dir=UtilsTest.tempdir)
+        self.addCleanup(directory.cleanup)
+        self.directory = directory.name
+        self.data = numpy.arange(12, dtype=numpy.uint16).reshape(3, 4)
+
+    def test_bug_648(self):
+        """Read an EDF compressed independently with the standard library."""
+        plain = os.path.join(self.directory, "image.edf")
+        compressed = plain + ".xz"
+        EdfImage(data=self.data, header={"Title": "XZ image"}).write(plain)
+        with open(plain, "rb") as stream:
+            payload = stream.read()
+        with lzma.open(compressed, "wb") as stream:
+            stream.write(payload)
+        with openimage(compressed) as image:
+            numpy.testing.assert_array_equal(image.data, self.data)
+            self.assertEqual(image.header["Title"], "XZ image")
+
+    def test_cbf_read(self):
+        plain = os.path.join(self.directory, "image.cbf")
+        data = self.data.astype(numpy.int32) - 5
+        CbfImage(data=data).write(plain)
+        with open(plain, "rb") as source, lzma.open(plain + ".xz", "wb") as target:
+            target.write(source.read())
+        with openimage(plain + ".xz") as image:
+            numpy.testing.assert_array_equal(image.data, data)
+
+    def test_edf_write(self):
+        filename = os.path.join(self.directory, "image.edf.xz")
+        EdfImage(data=self.data, header={"Title": "XZ image"}).write(filename)
+        with open(filename, "rb") as stream:
+            compressed = stream.read()
+        self.assertTrue(compressed.startswith(b"\xfd7zXZ\x00"))
+        # Use an independent decompressor, not a round-trip through XZFile.
+        with openimage(fabioutils.BytesIO(lzma.decompress(compressed))) as image:
+            numpy.testing.assert_array_equal(image.data, self.data)
+            self.assertEqual(image.header["Title"], "XZ image")
+
+    def test_multiframe(self):
+        filename = os.path.join(self.directory, "frames.edf.xz")
+        image = EdfImage(data=self.data, header={"Frame": "0"})
+        for index in range(1, 3):
+            image.append_frame(data=self.data + index, header={"Frame": str(index)})
+        image.write(filename)
+        with openimage(filename) as image:
+            self.assertEqual(image.nframes, 3)
+            for index in (2, 0, 1):
+                frame = image.get_frame(index)
+                numpy.testing.assert_array_equal(frame.data, self.data + index)
+                self.assertEqual(frame.header["Frame"], str(index))
+        with openheader(filename) as header:
+            self.assertEqual(header.header["Frame"], "0")
+
+    def test_numbered_series(self):
+        filenames = [os.path.join(self.directory, f"image_{i:04d}.edf.xz") for i in range(2)]
+        for index, filename in enumerate(filenames):
+            EdfImage(data=self.data + index).write(filename)
+        name = fabioutils.FilenameObject(filename=filenames[0])
+        self.assertEqual(name.num, 0)
+        self.assertIn("edf", name.format)
+        self.assertEqual(name.tostring(), filenames[0])
+        self.assertEqual(fabioutils.next_filename(filenames[0]), filenames[1])
+        self.assertEqual(fabioutils.previous_filename(filenames[1]), filenames[0])
+        with openimage(name) as first, first.next() as second:
+            numpy.testing.assert_array_equal(second.data, self.data + 1)
+        with open_series(filenames=filenames) as series:
+            frames = [frame.data.copy() for frame in series.frames()]
+        self.assertEqual(len(frames), 2)
+        for index, data in enumerate(frames):
+            numpy.testing.assert_array_equal(data, self.data + index)
+
+    def test_stream_metadata_and_position(self):
+        filename = os.path.join(self.directory, "data.xz")
+        payload = b"FabIO compressed stream" * 10
+        with lzma.open(filename, "wb") as stream:
+            stream.write(payload)
+        with FabioImage()._open(pathlib.Path(filename)) as stream:
+            self.assertEqual(stream.name, filename)
+            self.assertEqual(stream.mode, "rb")
+            self.assertTrue(stream.lock.acquire(blocking=False))
+            stream.lock.release()
+            self.assertEqual(stream.read(7), payload[:7])
+            self.assertEqual(stream.size, len(payload))
+            self.assertEqual(stream.tell(), 7)
+            self.assertEqual(stream.read(), payload[7:])
+            stream.seek(0)
+            self.assertEqual(stream.read(), payload)
+        self.assertTrue(stream.closed)
+        with self.assertRaises(ValueError):
+            stream.read(1)
+
+    def test_write_size(self):
+        filename = os.path.join(self.directory, "data.xz")
+        with FabioImage()._open(filename, "wb") as stream:
+            stream.write(b"abc")
+            self.assertEqual(stream.size, 3)
+            stream.write(b"def")
+            self.assertEqual(stream.size, 6)
+        with lzma.open(filename, "rb") as stream:
+            self.assertEqual(stream.read(), b"abcdef")
+
+    def test_codec_stream_requirements(self):
+        filename = os.path.join(self.directory, "data.xz")
+        payload = b"{ decompressed data }"
+        with lzma.open(filename, "wb") as stream:
+            stream.write(payload)
+        for flag in ("_need_a_seek_to_read", "_need_a_real_file"):
+            with self.subTest(flag=flag):
+                image = FabioImage()
+                setattr(image, flag, True)
+                stream = image._open(filename)
+                try:
+                    self.assertEqual(stream.read(), payload)
+                    stream.seek(2)
+                    self.assertEqual(stream.read(4), payload[2:6])
+                    if flag == "_need_a_real_file":
+                        temporary_name = stream.name
+                        self.assertTrue(os.path.isfile(temporary_name))
+                finally:
+                    stream.close()
+                if flag == "_need_a_real_file":
+                    self.assertFalse(os.path.exists(temporary_name))
+
+    def test_invalid_stream(self):
+        filename = os.path.join(self.directory, "broken.xz")
+        for data, error in ((b"not an XZ stream", lzma.LZMAError),
+                            (lzma.compress(b"payload")[:-12], EOFError)):
+            with self.subTest(error=error):
+                with open(filename, "wb") as stream:
+                    stream.write(data)
+                with FabioImage()._open(filename) as stream, self.assertRaises(error):
+                    stream.read()
+
+    def test_missing_lzma(self):
+        filename = os.path.join(self.directory, "missing.edf.xz")
+        with mock.patch.object(fabioutils, "XZFile", None):
+            for mode in ("rb", "wb"):
+                with self.subTest(mode=mode), self.assertRaisesRegex(OSError, "lzma"):
+                    FabioImage()._open(filename, mode)
+        self.assertFalse(os.path.exists(filename))
+
+    def test_ge_extension_detection(self):
+        # GE files can have an EDF header; preserve the extension discriminator.
+        for suffix in ("", ".gz", ".bz2", ".xz"):
+            with self.subTest(suffix=suffix):
+                self.assertEqual(_do_magic(b"{\n", "image.edf.ge5" + suffix), "GE")
+                self.assertEqual(_do_magic(b"{\n", "image.edf" + suffix), "edf")
+
+
 class TestPilImage(unittest.TestCase):
     """check PIL creation"""
 
@@ -295,6 +459,7 @@ def suite():
     testsuite.addTest(loadTests(Test50000))
     testsuite.addTest(loadTests(TestSlices))
     testsuite.addTest(loadTests(TestOpen))
+    testsuite.addTest(loadTests(TestXZ))
     testsuite.addTest(loadTests(TestPilImage))
     testsuite.addTest(loadTests(TestPilImage2))
     testsuite.addTest(loadTests(TestPilImage3))
