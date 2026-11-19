@@ -18,6 +18,7 @@ class TestImport(unittest.TestCase):
             "fabio.app.viewer",
             "fabio.qt.dialogs",
             "fabio.qt.matplotlib",
+            "fabio.qt.viewer",
         }
         with_qt = os.environ.get("WITH_QT_TEST", "True").lower() not in ("0", "false", "no")
     
