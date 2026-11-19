@@ -352,11 +352,6 @@ class ExternalResources:
         basefilename = os.path.basename(filename)
         fullfilename = os.path.abspath(os.path.join(self.data_home, basefilename))
 
-        if (filename in self.all_data and os.path.isfile(fullfilename)
-                and self.all_data[filename] == self.get_hash(filename)):
-            return fullfilename
-
-        # Else we download them all and decompress/recompress.
         if basefilename.endswith(".bz2"):
             bzip2name = basefilename
             basename = basefilename[:-4]
@@ -373,6 +368,18 @@ class ExternalResources:
         fullfilename_gz = os.path.abspath(os.path.join(self.data_home, gzipname))
         fullfilename_raw = os.path.abspath(os.path.join(self.data_home, basename))
         fullfilename_bz2 = os.path.abspath(os.path.join(self.data_home, bzip2name))
+
+        # A cached bzip2 original may still need its repacked variants.
+        if (
+            filename in self.all_data
+            and os.path.isfile(fullfilename)
+            and self.all_data[filename] == self.get_hash(filename)
+            and (
+                basefilename != bzip2name
+                or (os.path.isfile(fullfilename_raw) and os.path.isfile(fullfilename_gz))
+            )
+        ):
+            return fullfilename
 
         # The files are recreated from the bz2 file
         if not os.path.isfile(fullfilename_bz2):
