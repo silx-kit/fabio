@@ -4,6 +4,7 @@ Changelog
 FabIO-2026.11.0 (unreleased):
 .............................
 
+- Support reading SAXSLAB Ganesha TIFF metadata (#336)
 - Support transparent XZ compression of image files (#648)
 - Fix statistics and region sums on frames returned by ``get_frame`` and file series (#501)
 - Support splitting multi-frame images with ``fabio-convert --split`` (#449)
