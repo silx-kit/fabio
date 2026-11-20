@@ -48,8 +48,11 @@ The intention behind this development was to create a Python module
 which would enable easy reading of 2D data images, from any
 detector without having to worry about the file format. Therefore
 FabIO just needs a file name to open a file and it determines the
-file format automatically and deals with gzip, bzip2 and XZ
-compression transparently. Opening a file returns an object
+file format automatically and deals with gzip, bzip2, XZ and Zstandard
+compression transparently. For Zstandard (``.zst``), FabIO uses
+``compression.zstd`` on Python 3.14 and later. On earlier Python versions,
+install FabIO with the ``zstd`` extra (``pip install "fabio[zstd]"``).
+Opening a file returns an object
 which stores the image in memory as a 2D NumPy array
 and the metadata, called header, in a Python dictionary.
 Beside the data and header attributes, some methods are

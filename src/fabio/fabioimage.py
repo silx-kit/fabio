@@ -863,6 +863,12 @@ class FabioImage(_FabioArray):
             fileObject = self._compressed_stream(
                 fname, None, fabioutils.XZFile, mode
             )
+        elif comp_type == ".zst":
+            if fabioutils.ZstdFile is None:
+                raise OSError("Zstandard compression requires compression.zstd or backports.zstd")
+            fileObject = self._compressed_stream(
+                fname, None, fabioutils.ZstdFile, mode
+            )
         #
         # Here we return the file even though it may be bzipped or gzipped
         # but named incorrectly...

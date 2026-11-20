@@ -75,6 +75,14 @@ except ImportError:
     logger.warning("Unable to import lzma module: disabling XZ compression")
     lzma = None
 
+try:
+    from compression import zstd
+except ImportError:
+    try:
+        from backports import zstd
+    except ImportError:
+        zstd = None
+
 if sys.platform != "win32":
     WindowsError = OSError
 
