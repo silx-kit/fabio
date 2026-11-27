@@ -26,11 +26,15 @@
 #  THE SOFTWARE.
 """Tests for the download of test data (`fabio.utils.ExternalResources`)"""
 
+import bz2
+import gzip
 import io
+import json
 import os
 import tempfile
 import unittest
 import urllib.error
+from pathlib import Path
 from unittest import mock
 
 from ..utils.ExternalResources import ExternalResources
@@ -65,6 +69,27 @@ class TestDownload(unittest.TestCase):
         with mock.patch("urllib.request.urlopen", side_effect=error), self.assertRaises(unittest.SkipTest):
             self.resources.getfile("file.bin")
         self.assertTrue(fp.closed)
+
+
+    def test_bug_153(self):
+        """Reuse cached bzip2 test data when the repacked files are missing (#153)."""
+        cache = Path(self.tmp.name)
+        data = b"fixture data"
+        compressed = cache / "image.bin.bz2"
+        compressed.write_bytes(bz2.compress(data))
+        (cache / "all_testdata.json").write_text(
+            json.dumps({compressed.name: self.resources.get_hash(compressed.name)}),
+            encoding="utf-8",
+        )
+
+        with mock.patch("urllib.request.urlopen") as urlopen:
+            filename = self.resources.get_file_and_repack(compressed.name)
+
+        urlopen.assert_not_called()
+        self.assertEqual(Path(filename), compressed)
+        self.assertTrue((cache / "image.bin").is_file())
+        self.assertEqual((cache / "image.bin").read_bytes(), data)
+        self.assertEqual(gzip.decompress((cache / "image.bin.gz").read_bytes()), data)
 
 
 def suite():
