@@ -347,6 +347,7 @@ uses extensions as a fallback if that fails.
    "Fit2D", "Fit2D binary format", ".f2d", "Yes", "No", "No"
    "Fit2D mask", "Fit2D mask", ".msk ", "Yes", "No", "Yes"
    "Fit2D spreadsheet", "Fit2D Ascii format", ".spr ", "Yes", "No", "Yes"
+   "Ganesha", "SAXSLAB Ganesha TIFF (explicit reader)", ".tif", "Yes", "No", "No"
    "GE", "General Electric", "", "Yes", "Yes ", "No"
    "JPEG", "Joint Photographic Experts Group", ".jpg", "Yes", "No", "No"
    "JPEG2k", "JPEG 2000", ".jpx", "Yes", "No", "No"
@@ -366,6 +367,15 @@ uses extensions as a fallback if that fails.
    "spe", "Princeton instrumentation", ".spe", "Yes", "Yes", "No"
    "TIFF", "Tagged Image File Format", ".tif", "Yes", "Yes", "Yes"
    "Xcalibur", "mask format used by CrysalisPro", ".ccd", "Yes", "No", "Yes" 
+
+SAXSLAB Ganesha TIFF files require explicit codec selection to expose both
+the Pilatus detector header and the SAXSLAB experiment parameters::
+
+    image = fabio.factory("ganeshaimage").read("measurement.tiff")
+    print(image.header["Exposure_time"])
+    print(image.header["detector_dist"])
+
+The generic TIFF reader exposes the unparsed SAXSLAB XML as ``header["artist"]``.
 
 Adding new file formats
 .......................

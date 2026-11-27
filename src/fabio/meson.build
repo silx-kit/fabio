@@ -46,6 +46,7 @@ py.install_sources([
 	'openimage.py',
 	'OXDimage.py',
 	'pilatusimage.py',
+	'ganeshaimage.py',
 	'pixiimage.py',
 	'pnmimage.py',
 	'raxisimage.py',

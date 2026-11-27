@@ -211,6 +211,14 @@ FabIO Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`fabio.ganeshaimage` Module
+--------------------------------
+
+.. automodule:: fabio.ganeshaimage
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`fabio.pilatusimage` Module
 --------------------------------
 

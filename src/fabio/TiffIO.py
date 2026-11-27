@@ -54,6 +54,7 @@ TAG_ID = {
     279: "StripByteCounts",  # S or L, The number of bytes in the strip AFTER any compression
     305: "Software",  # ASCII
     306: "Date",  # ASCII
+    315: "Artist",  # ASCII
     320: "Colormap",  # Colormap of Palette-color Images
     339: "SampleFormat",  # SHORT Interpretation of data in each pixel
 }
@@ -72,6 +73,7 @@ TAG_ROWS_PER_STRIP = 278
 TAG_STRIP_BYTE_COUNTS = 279
 TAG_SOFTWARE = 305
 TAG_DATE = 306
+TAG_ARTIST = 315
 TAG_COLORMAP = 320
 TAG_SAMPLE_FORMAT = 339
 
@@ -464,6 +466,14 @@ class TiffIO:
         else:
             model = None
 
+        artist = None
+        if TAG_ARTIST in tagIDList:
+            artist = self._readIFDEntry(
+                TAG_ARTIST, tagIDList, fieldTypeList, nValuesList, valueOffsetList
+            )
+            if isinstance(artist, (tuple, list)):
+                artist = "".join(artist)
+
         defaultSoftware = "Unknown Software"
 
         if TAG_SOFTWARE in tagIDList:
@@ -560,6 +570,9 @@ class TiffIO:
         info["photometricInterpretation"] = interpretation
         if model is not None:
             info["model"] = model
+
+        if artist is not None:
+            info["artist"] = artist
 
         infoDict = {}
         testString = "PyMca"

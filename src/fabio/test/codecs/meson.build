@@ -12,6 +12,7 @@ py.install_sources(
  'test_fit2dimage.py',
  'test_fit2dmaskimage.py',
  'test_fit2dspreadsheetimage.py',
+ 'test_ganeshaimage.py',
  'test_geimage.py',
  'test_hdf5image.py',
  'test_hipicimage.py',
