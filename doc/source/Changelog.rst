@@ -5,6 +5,7 @@ FabIO-2026.11.0 (unreleased):
 .............................
 
 - Support transparent XZ compression of image files (#648)
+- Support transparent Zstandard compression of image files (#648)
 - Fix statistics and region sums on frames returned by ``get_frame`` and file series (#501)
 - Support splitting multi-frame images with ``fabio-convert --split`` (#449)
 - Repack cached bzip2 test data when its raw or gzip variants are missing (#153)

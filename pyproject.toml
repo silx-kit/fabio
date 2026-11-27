@@ -60,7 +60,8 @@ requires = [
 ]
 [project.optional-dependencies]
 gui = [ "qtpy", "pyside6", "matplotlib", "packaging" ]
-all = [ "qtpy", "pyside6", "matplotlib", "packaging" ]
+zstd = [ "backports.zstd; python_version < '3.14'" ]
+all = [ "qtpy", "pyside6", "matplotlib", "packaging", "backports.zstd; python_version < '3.14'" ]
 
 [project.urls]
 homepage = 'http://www.silx.org'

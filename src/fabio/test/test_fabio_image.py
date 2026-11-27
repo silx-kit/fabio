@@ -344,10 +344,94 @@ class TestXZ(unittest.TestCase):
 
     def test_ge_extension_detection(self):
         # GE files can have an EDF header; preserve the extension discriminator.
-        for suffix in ("", ".gz", ".bz2", ".xz"):
+        for suffix in ("", ".gz", ".bz2", ".xz", ".zst"):
             with self.subTest(suffix=suffix):
                 self.assertEqual(_do_magic(b"{\n", "image.edf.ge5" + suffix), "GE")
                 self.assertEqual(_do_magic(b"{\n", "image.edf" + suffix), "edf")
+
+
+class TestZstandard(unittest.TestCase):
+    """Transparent Zstandard compression of detector images (#648)."""
+
+    def setUp(self):
+        directory = tempfile.TemporaryDirectory(dir=UtilsTest.tempdir)
+        self.addCleanup(directory.cleanup)
+        self.directory = pathlib.Path(directory.name)
+        self.data = numpy.arange(12, dtype=numpy.uint16).reshape(3, 4)
+
+    def _backend(self):
+        try:
+            from compression import zstd
+        except ImportError:
+            try:
+                from backports import zstd
+            except ImportError:
+                self.skipTest("Zstandard is not available")
+        return zstd
+
+    def test_bug_648_zstd(self):
+        backend = self._backend()
+        plain = self.directory / "image.edf"
+        compressed = self.directory / "image.edf.zst"
+        EdfImage(data=self.data, header={"Title": "Zstandard image"}).write(plain)
+        compressed.write_bytes(backend.compress(plain.read_bytes()))
+        with openimage(compressed) as image:
+            numpy.testing.assert_array_equal(image.data, self.data)
+            self.assertEqual(image.header["Title"], "Zstandard image")
+
+    def test_edf_write_and_frame_seeking(self):
+        backend = self._backend()
+        compressed = self.directory / "frames.edf.zst"
+        image = EdfImage(data=self.data, header={"Frame": "0"})
+        image.append_frame(data=self.data + 1, header={"Frame": "1"})
+        image.write(compressed)
+        payload = compressed.read_bytes()
+        self.assertTrue(payload.startswith(b"\x28\xb5\x2f\xfd"))
+        with openimage(fabioutils.BytesIO(backend.decompress(payload))) as image:
+            numpy.testing.assert_array_equal(image.get_frame(1).data, self.data + 1)
+        with openimage(compressed) as image, openheader(compressed) as header:
+            self.assertEqual(image.nframes, 2)
+            self.assertEqual(header.header["Frame"], "0")
+            for index in (1, 0):
+                numpy.testing.assert_array_equal(image.get_frame(index).data, self.data + index)
+
+    def test_numbered_series(self):
+        self._backend()
+        filenames = [str(self.directory / f"image_{index:04d}.edf.zst") for index in range(2)]
+        for index, filename in enumerate(filenames):
+            EdfImage(data=self.data + index).write(filename)
+        name = fabioutils.FilenameObject(filename=filenames[0])
+        self.assertEqual(name.num, 0)
+        self.assertEqual(name.tostring(), filenames[0])
+        self.assertEqual(fabioutils.next_filename(filenames[0]), filenames[1])
+        with openimage(name) as first, first.next() as second:
+            numpy.testing.assert_array_equal(second.data, self.data + 1)
+
+    def test_stream_metadata_and_size(self):
+        backend = self._backend()
+        compressed = self.directory / "data.zst"
+        data = b"compressed data" * 16
+        with FabioImage()._open(compressed, "wb") as stream:
+            stream.write(data)
+            self.assertEqual(stream.size, len(data))
+        self.assertEqual(backend.decompress(compressed.read_bytes()), data)
+        with FabioImage()._open(compressed) as stream:
+            self.assertEqual(stream.name, str(compressed))
+            self.assertEqual(stream.mode, "rb")
+            self.assertTrue(stream.lock.acquire(blocking=False))
+            stream.lock.release()
+            self.assertEqual(stream.read(7), data[:7])
+            self.assertEqual(stream.size, len(data))
+            self.assertEqual(stream.tell(), 7)
+            self.assertEqual(stream.read(), data[7:])
+
+    def test_unavailable_backend(self):
+        compressed = self.directory / "missing.edf.zst"
+        with mock.patch.object(fabioutils, "ZstdFile", None):
+            for mode in ("rb", "wb"):
+                with self.subTest(mode=mode), self.assertRaisesRegex(OSError, "backports.zstd"):
+                    FabioImage()._open(compressed, mode)
+        self.assertFalse(compressed.exists())
 
 
 class TestPilImage(unittest.TestCase):
@@ -460,6 +544,7 @@ def suite():
     testsuite.addTest(loadTests(TestSlices))
     testsuite.addTest(loadTests(TestOpen))
     testsuite.addTest(loadTests(TestXZ))
+    testsuite.addTest(loadTests(TestZstandard))
     testsuite.addTest(loadTests(TestPilImage))
     testsuite.addTest(loadTests(TestPilImage2))
     testsuite.addTest(loadTests(TestPilImage3))
